@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurelion Lores</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-dark: #07090e;
+            --bg-card: rgba(17, 22, 34, 0.75);
+            --bg-sidebar: rgba(10, 13, 20, 0.95);
+            --gold-primary: #d4af37;
+            --gold-secondary: #f3e5ab;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-gold: rgba(212, 175, 55, 0.2);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            
+            --loop1-color: #f59e0b;
+            --loop2-color: #ef4444;
+            --loop3-color: #3b82f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
+                radial-gradient(at 50% 0%, rgba(59, 130, 246, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(239, 68, 68, 0.02) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.4);
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: 280px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-gold);
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .sidebar-header svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--gold-primary);
+            filter: drop-shadow(0 0 8px var(--gold-glow));
+        }
+
+        .sidebar-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--gold-secondary) 0%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .nav-item {
+            width: 100%;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1.25rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 1px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .nav-link.active {
+            color: var(--gold-secondary);
+            background: rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(212, 175, 55, 0.05);
+            font-weight: 600;
+        }
+
+        .nav-link.active svg {
+            fill: var(--gold-secondary);
+            filter: drop-shadow(0 0 5px var(--gold-glow));
+        }
+
+        .nav-link:not(.active):hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateX(5px);
+        }
+
+        .nav-link svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-secondary);
+            transition: fill 0.3s ease;
+        }
+
+        .nav-link.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .nav-link.disabled:hover {
+            transform: none;
+            background: transparent;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.4);
+            text-align: center;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 1.5rem;
+        }
+
+        /* Main Content Styling */
+        main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 3rem 4rem;
+            max-width: 1200px;
+        }
+
+        header {
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -1.5rem;
+            left: 0;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold-primary), transparent);
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-primary);
+            font-size: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 800px;
+        }
+
+        /* Timeline / Loops Container */
+        .timeline {
+            position: relative;
+            margin: 4rem 0;
+            padding-left: 2.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--loop1-color) 0%, var(--loop2-color) 50%, var(--loop3-color) 100%);
+            border-radius: 1px;
+            opacity: 0.7;
+        }
+
+        .loop-card {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 3.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+
+        .loop-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .loop-card::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 2.2rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            z-index: 5;
+        }
+
+        /* Loop specific styles */
+        #loop-1 { border-left: 4px solid var(--loop1-color); }
+        #loop-1::before { border: 4px solid var(--loop1-color); box-shadow: 0 0 10px var(--loop1-color); }
+
+        #loop-2 { border-left: 4px solid var(--loop2-color); }
+        #loop-2::before { border: 4px solid var(--loop2-color); box-shadow: 0 0 10px var(--loop2-color); }
+
+        #loop-3 { border-left: 4px solid var(--loop3-color); }
+        #loop-3::before { border: 4px solid var(--loop3-color); box-shadow: 0 0 10px var(--loop3-color); }
+
+        .loop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .loop-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .loop-1-text { color: var(--loop1-color); }
+        .loop-2-text { color: var(--loop2-color); }
+        .loop-3-text { color: var(--loop3-color); }
+
+        .loop-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            flex-basis: 100%;
+            margin-top: 0.25rem;
+        }
+
+        .loop-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            text-align: justify;
+        }
+
+        .loop-card strong {
+            color: var(--text-primary);
+        }
+
+        /* Alert / Highlight Callouts */
+        .callout {
+            background: rgba(212, 175, 55, 0.03);
+            border: 1px solid var(--border-gold);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .callout::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--gold-primary);
+        }
+
+        .callout-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--gold-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .callout-title svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--gold-secondary);
+        }
+
+        .callout-content {
+            font-size: 0.98rem !important;
+            margin-bottom: 0 !important;
+            color: var(--text-secondary);
+        }
+
+        /* Cosmic Collision Alert */
+        .cosmic-alert {
+            background: rgba(59, 130, 246, 0.03);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            position: relative;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.05);
+        }
+
+        .cosmic-alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--loop3-color);
+        }
+
+        .cosmic-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--loop3-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        .cosmic-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .cosmic-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .cosmic-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .cosmic-item-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0.5rem;
+        }
+
+        .cosmic-item-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* Effect Cards */
+        .effects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        @media (min-width: 768px) {
+            .effects-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .effect-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .effect-card:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(212, 175, 55, 0.1);
+        }
+
+        .effect-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .effect-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .effect-desc {
+            font-size: 0.98rem;
+            color: var(--text-secondary);
+        }
+
+        /* Party Composition Cards */
+        .party-section {
+            margin-top: 4rem;
+        }
+
+        .party-title-main {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: var(--text-primary);
+            position: relative;
+        }
+
+        .party-title-main::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: var(--gold-primary);
+        }
+
+        .party-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        @media (min-width: 992px) {
+            .party-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .character-card {
+            background: linear-gradient(180deg, rgba(25, 30, 45, 0.8) 0%, rgba(15, 18, 28, 0.9) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2.25rem 1.75rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .character-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .character-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        /* Character types coloring */
+        .char-anchor { border-color: rgba(245, 158, 11, 0.2); }
+        .char-anchor::after { background: var(--loop1-color); }
+        .char-anchor:hover { border-color: rgba(245, 158, 11, 0.4); }
+
+        .char-passenger { border-color: rgba(168, 85, 247, 0.2); }
+        .char-passenger::after { background: #a855f7; }
+        .char-passenger:hover { border-color: rgba(168, 85, 247, 0.4); }
+
+        .char-oblivious { border-color: rgba(148, 163, 184, 0.2); }
+        .char-oblivious::after { background: var(--text-secondary); }
+        .char-oblivious:hover { border-color: rgba(148, 163, 184, 0.4); }
+
+        .char-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            font-size: 1.5rem;
+        }
+
+        .char-anchor .char-icon { border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); }
+        .char-passenger .char-icon { border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.05); }
+        .char-oblivious .char-icon { border-color: rgba(148, 163, 184, 0.3); background: rgba(148, 163, 184, 0.05); }
+
+        .char-type {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .char-anchor .char-type { color: var(--loop1-color); background: rgba(245, 158, 11, 0.1); }
+        .char-passenger .char-type { color: #c084fc; background: rgba(168, 85, 247, 0.1); }
+        .char-oblivious .char-type { color: var(--text-secondary); background: rgba(148, 163, 184, 0.1); }
+
+        .char-qty {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            font-family: 'Cinzel', serif;
+        }
+
+        .char-qty span {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 400;
+        }
+
+        .char-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside>
+        <div class="sidebar-header">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/>
+            </svg>
+            <span class="sidebar-title">AURELION</span>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#intro" class="nav-link active">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                    </svg>
+                    Intro & Ringkasan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link disabled">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
+                    Sesi 1 (Locked)
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link disabled">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
+                    Sesi 2 (Locked)
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            Solythis D&D Campaign © 2026
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="intro">
+        <header>
+            <div class="subtitle">Skenario Aurelion — Benua Solmarch</div>
+            <h1>Siklus Waktu & Kausalitas</h1>
+            <p class="section-desc">Peta kronologis rekonstruksi takdir Kerajaan Aurelion, dari tragedi pemberontakan kosmik hingga era kedamaian semu dalam sangkar emas Dewi Keabadian.</p>
+        </header>
+
+        <!-- Timeline for the Loops -->
+        <section class="timeline">
+            
+            <!-- LOOP 1 CARD -->
+            <div class="loop-card" id="loop-1">
+                <div class="loop-header">
+                    <span class="loop-number loop-1-text">Siklus Ke-1</span>
+                    <h2 class="loop-title">Tragedi Party A, Pemberontakan, dan Motif Rahasia Dewi</h2>
+                </div>
+                <p>Semuanya bermula di tahun <strong>1385 AGKW</strong> ketika makam pahlawan kuno Prosperina di Eldenfall meledak oleh kutukan <em>undead</em>. <strong>Party A</strong> maju menghadapi ancaman tersebut, mengalahkan Prosperina, dan berhasil membebaskan jiwanya dari kontrak iblis Belzareth.</p>
+                <p>Namun, begitu mereka melangkah keluar dari makam dan masuk ke Kerajaan Keabadian (Tokoshie), mereka dijebak oleh <strong>Dewi Keabadian (Kurumagatsu)</strong> untuk dijadikan subjek eksperimen kosmik dan baterai <strong>"Jangkar"</strong> waktu. <strong>Jangkar</strong> ini bertindak sebagai pembatas (<em>restriction</em>) bagi Dewi Keabadian; tanpa adanya Jangkar aktif sebagai tumpuan kausalitas, sang Dewi tidak akan memiliki kekuatan untuk memutar atau me-<em>looping</em> waktu. Di sana, mereka terkena <em>wipeout</em> (mati) dan di-<em>reset</em> terus-menerus dalam siklus pengejaran kesempurnaan absolut milik sang Dewi.</p>
+                <p>Sadar bahwa mereka hanya dijadikan komponen abadi, Party A melakukan pemberontakan. Namun, <strong>pemberontakan tersebut gagal total</strong> karena kekuatan Dewi terlalu perkasa di domainnya. Di ambang kehancuran total, Party A mengambil langkah nekat: mereka mengorbankan diri demi mengutus <strong>1 orang untuk kabur menembus ruang-waktu</strong> ke dunia luar membawa memori asli mereka.</p>
+                
+                <div class="callout">
+                    <div class="callout-title">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        Eksistensi Jangkar &amp; Mega-Loop
+                    </div>
+                    <p class="callout-content">
+                        Melihat pelarian itu, Dewi Keabadian menyadari kalkulasi kesempurnaannya cacat. Mengetahui si pelarian adalah <strong>Jangkar terakhir</strong> yang tersisa, sang Dewi sengaja <strong>menggunakan esensi si Jangkar yang kabur sebagai pemantik paksa untuk melakukan <em>mega-loop</em></strong>—menarik mundur seluruh garis waktu dunia luar jauh ke belakang ke titik sebelum pertarungan melawan Prosperina dimulai. Dewi ingin mencari kandidat Jangkar baru yang jauh lebih kuat dan sempurna di loop selanjutnya.
+                    </p>
+                </div>
+            </div>
+
+            <!-- LOOP 2 CARD -->
+            <div class="loop-card" id="loop-2">
+                <div class="loop-header">
+                    <span class="loop-number loop-2-text">Siklus Ke-2</span>
+                    <h2 class="loop-title">Kegagalan Party B &amp; Pembajakan Makam</h2>
+                </div>
+                <p>Di dalam realitas baru pasca <em>mega-loop</em>, dunia luar berjalan dengan takdir yang bergeser. Kali ini, giliran <strong>Party B</strong> yang tiba di makam Prosperina. Mereka berhasil menang, namun dengan cara yang brutal—langsung menghancurkan Prosperina menjadi abu tanpa pernah mencoba berdialog atau memastikan kematiannya secara tuntas.</p>
+                <p>Bagi Dewi Keabadian yang perfeksionis, cara ini dinilai cacat dan gagal memenuhi standar kesempurnaan.</p>
+                <p>Namun, di momen rentan saat tubuh Prosperina hancur menjadi abu, Dewi Keabadian langsung mengintervensi dunia luar. Sang Dewi membajak makam tersebut, lalu <strong>mengekang dan mengunci jiwa Prosperina tepat di dalam makamnya sendiri di Eldenfall</strong>.</p>
+                <p>Dewi mengubah fungsi jiwa Prosperina menjadi boneka penguji mandiri yang dikendalikan penuh oleh kesadaran sang Dewi sendiri, demi menyaring petualang baru (kandidat Jangkar) yang jauh lebih tangguh di <em>loop</em> berikutnya. Begitu proses penguncian jiwa selesai, Dewi Keabadian kembali menekan tombol <em>looping</em>.</p>
+            </div>
+
+            <!-- LOOP 3 CARD -->
+            <div class="loop-card" id="loop-3">
+                <div class="loop-header">
+                    <span class="loop-number loop-3-text">Siklus Ke-3</span>
+                    <h2 class="loop-title">Penarikan Jiwa Kosmik &amp; Terciptanya Kedamaian Semu</h2>
+                </div>
+                <p>Di sinilah momen krusial itu terjadi. Si Jangkar dari Party A yang berada di luar ruang-waktu <strong>sudah merasakan bahwa riak anomali <em>looping</em> akan terjadi sekali lagi</strong>. Sebelum kilatan <em>reset</em> realitas itu menghantam, dalam sepersekian detik kosmik, si Jangkar dengan cepat <strong>meraih dan menarik fisik dua orang dari Party B</strong> yang saat itu berada di dekatnya.</p>
+                
+                <div class="cosmic-alert">
+                    <div class="cosmic-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        Tabrakan Kausalitas Gelombang Reset
+                    </div>
+                    <div class="cosmic-grid">
+                        <div class="cosmic-item">
+                            <div class="cosmic-item-title">Si Jangkar (Party A)</div>
+                            <div class="cosmic-item-desc">Karena dia adalah Jangkar sah yang memicu <em>mega-loop</em> pertama, ruang dan waktu melindunginya. Dia terbangun dengan <strong>tubuh yang sama dan ingatan yang utuh</strong>.</div>
+                        </div>
+                        <div class="cosmic-item">
+                            <div class="cosmic-item-title">Dua Penumpang (Party B)</div>
+                            <div class="cosmic-item-desc">Hukum waktu menolak mereplikasi fisik lama mereka karena bukan Jangkar sah. Tubuh asli mereka terhapus, namun jiwa &amp; ingatan lama mereka berhasil lolos dari penghapusan dan <strong>bereinkarnasi ke dalam tubuh baru yang sepenuhnya berbeda</strong>.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>Ketika <em>Loop</em> ke-3 ini tercipta, intervensi Dewi yang mengekang jiwa Prosperina di dalam makam pada <em>loop</em> sebelumnya membawa dampak <em>butterfly effect</em> yang masif ke dunia luar:</p>
+                
+                <div class="effects-grid">
+                    <div class="effect-card">
+                        <span class="effect-icon">🛡️</span>
+                        <div class="effect-title">Lumpuhnya Kontrak Iblis</div>
+                        <div class="effect-desc">Karena jiwa Prosperina telah disita dan dikunci oleh kekuatan Dewi Keabadian, kontrak iblis Belzareth kehilangan wadah utamanya di makam. Ledakan wabah <em>undead</em> yang seharusnya menghancurkan kota Eldenfall dan Graymere di tahun 1385 AGKW tidak pernah terjadi.</div>
+                    </div>
+                    <div class="effect-card">
+                        <span class="effect-icon">🤝</span>
+                        <div class="effect-title">Terciptanya Gencatan Senjata</div>
+                        <div class="effect-desc">Tanpa adanya ancaman kosmik <em>undead</em> yang menguras logistik dan moral bangsa, konflik konvensional antara Kerajaan Aurelion dan Dominion Varkath mereda. Kedua kerajaan setuju untuk mengambil jalan <strong>gencatan senjata (damai bersyarat)</strong>.</div>
+                    </div>
+                </div>
+
+                <p>Dunia luar tiba-tiba menjadi damai, dan Aurelion pun menggelar perayaan megah <strong>Aurelion Harvest Festival</strong>.</p>
+            </div>
+
+        </section>
+
+        <!-- Party Composition Section -->
+        <section class="party-section">
+            <h2 class="party-title-main">Komposisi Anggota Party C</h2>
+            <p style="text-align: center; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem auto;">Di sinilah kelima orang ini akhirnya dipertemukan oleh takdir baru di garis waktu Siklus Ke-3 yang penuh kedamaian semu.</p>
+            
+            <div class="party-grid">
+                
+                <!-- Party Member 1 -->
+                <div class="character-card char-anchor">
+                    <div class="char-icon">⏳</div>
+                    <span class="char-type">Jangkar Asli</span>
+                    <div class="char-qty">1 <span>Karakter</span></div>
+                    <p class="char-desc">Berasal dari <strong>Party A</strong>. Terbangun dengan tubuh yang sama dan ingatan utuh tentang kegagalan pemberontakan di Tokoshie. Membawa beban berat sebagai pelarian waktu.</p>
+                </div>
+
+                <!-- Party Member 2 -->
+                <div class="character-card char-passenger">
+                    <div class="char-icon">🌀</div>
+                    <span class="char-type">Penumpang Memori</span>
+                    <div class="char-qty">2 <span>Karakter</span></div>
+                    <p class="char-desc">Berasal dari <strong>Party B</strong>. Memiliki jiwa dan ingatan lama tentang pertarungan brutal di makam Prosperina, namun dipaksa bereinkarnasi ke dalam wadah/tubuh baru yang asing.</p>
+                </div>
+
+                <!-- Party Member 3 -->
+                <div class="character-card char-oblivious">
+                    <div class="char-icon">👁️‍🗨️</div>
+                    <span class="char-type">Warga Asli</span>
+                    <div class="char-qty">2 <span>Karakter</span></div>
+                    <p class="char-desc">Warga asli dunia baru yang lahir dan hanya mengetahui kedamaian era gencatan senjata. Tidak sadar bahwa dunia mereka sebenarnya adalah sangkar emas yang menanti di-<em>reset</em>.</p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
