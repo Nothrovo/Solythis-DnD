@@ -392,6 +392,7 @@
     //   SCENE DATA
     // ══════════════════════════════════════════
     const SCENES = [
+        { id:'prehighspire-1', file:'Scenes/PreHighspire.png',  chapter:'Pre-Highspire',   label:'Scene 1', sceneTitle:'Sebelum Highspire'     },
         { id:'highspire-1', file:'Scenes/Highspire1.png',       chapter:'Highspire',       label:'Scene 1', sceneTitle:'Kota Highspire'      },
         { id:'highspire-2', file:'Scenes/Highspire2.png',       chapter:'Highspire',       label:'Scene 2', sceneTitle:'Jalan Highspire'      },
         { id:'highspire-3', file:'Scenes/Highspire3.png',       chapter:'Highspire',       label:'Scene 3', sceneTitle:'Guild Kerajaan'        },
@@ -405,6 +406,7 @@
     ];
 
     const CHAPTER_COLORS = {
+        'Pre-Highspire':   '#cbd5e1',
         'Highspire':       '#d4af37',
         'Breckenford':     '#8fba6e',
         'Old Battlefield': '#9b7de8',
@@ -675,9 +677,10 @@
                 case 'Escape':      if (drawerOpen) closeDrawer(); break;
                 case 'Home':        e.preventDefault(); goTo(0); break;
                 case 'End':         e.preventDefault(); goTo(SCENES.length - 1); break;
-                case '1': jumpToChapter('Highspire'); break;
-                case '2': jumpToChapter('Breckenford'); break;
-                case '3': jumpToChapter('Old Battlefield'); break;
+                case '1': jumpToChapter('Pre-Highspire'); break;
+                case '2': jumpToChapter('Highspire'); break;
+                case '3': jumpToChapter('Breckenford'); break;
+                case '4': jumpToChapter('Old Battlefield'); break;
             }
         });
     }
