@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Combat Tracker — Aurelion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=MedievalSharp&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0f1a;
+            --panel-bg: rgba(15, 18, 32, 0.95);
+            --card-bg: rgba(22, 26, 46, 0.9);
+            --border: rgba(180, 140, 60, 0.25);
+            --border-bright: rgba(212, 175, 55, 0.7);
+            --gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --ally-color: #22d3ee;
+            --ally-bg: rgba(34, 211, 238, 0.15);
+            --ally-border: rgba(34, 211, 238, 0.6);
+            --enemy-color: #f87171;
+            --enemy-bg: rgba(248, 113, 113, 0.15);
+            --enemy-border: rgba(248, 113, 113, 0.6);
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --panel-w: 320px;
+            --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── TOP HEADER ── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, rgba(15,18,32,0.98) 0%, rgba(22,26,46,0.98) 100%);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .brand {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 1.3rem;
+            color: #fff;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .brand span { color: var(--gold); }
+
+        /* Map selector */
+        .map-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .map-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.45rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .map-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212,175,55,0.05);
+        }
+        .map-btn.active {
+            border-color: var(--gold);
+            color: var(--bg);
+            background: var(--gold);
+            font-weight: 700;
+            box-shadow: 0 0 12px var(--gold-glow);
+        }
+
+        /* Token add buttons */
+        .token-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .add-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.45rem 1rem;
+            border-radius: 6px;
+            border: 1px solid;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .add-ally {
+            background: var(--ally-bg);
+            border-color: var(--ally-border);
+            color: var(--ally-color);
+        }
+        .add-ally:hover {
+            background: rgba(34,211,238,0.25);
+            box-shadow: 0 0 10px rgba(34,211,238,0.2);
+        }
+        .add-enemy {
+            background: var(--enemy-bg);
+            border-color: var(--enemy-border);
+            color: var(--enemy-color);
+        }
+        .add-enemy:hover {
+            background: rgba(248,113,113,0.25);
+            box-shadow: 0 0 10px rgba(248,113,113,0.2);
+        }
+
+        /* Grid controls */
+        .grid-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .grid-controls label { font-weight: 600; white-space: nowrap; }
+        .grid-controls input[type=range] {
+            -webkit-appearance: none;
+            width: 80px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.1);
+            cursor: pointer;
+        }
+        .grid-controls input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            box-shadow: 0 0 6px var(--gold-glow);
+        }
+        .grid-val {
+            color: var(--gold);
+            font-weight: 700;
+            min-width: 26px;
+            text-align: right;
+        }
+
+        /* Number input for grid size */
+        .grid-num-input {
+            -moz-appearance: textfield;
+            width: 52px;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(212,175,55,0.3);
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.3rem 0.2rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .grid-num-input::-webkit-inner-spin-button,
+        .grid-num-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+        .grid-num-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+        .grid-num-input:hover {
+            border-color: rgba(212,175,55,0.6);
+        }
+        .grid-unit {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /* Toggle initiative panel */
+        .toggle-panel-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.45rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        .toggle-panel-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212,175,55,0.06);
+        }
+        .toggle-panel-btn.active {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212,175,55,0.1);
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+
+        /* ── MAIN LAYOUT ── */
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ── BATTLEFIELD AREA ── */
+        .battlefield-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            position: relative;
+            background:
+                radial-gradient(circle at 30% 40%, rgba(139,92,246,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(212,175,55,0.02) 0%, transparent 50%);
+        }
+
+        /* canvas wrapper — fixed 16:9, clips tokens inside grid */
+        #mapWrapper {
+            position: relative;
+            display: none; /* shown by JS */
+            width: 1280px;
+            height: 720px;
+            overflow: hidden;
+            user-select: none;
+            flex-shrink: 0;
+            cursor: crosshair;
+        }
+
+        #mapImg {
+            display: block;
+            width: 1280px;
+            height: 720px;
+            object-fit: cover;
+            object-position: center center;
+        }
+
+        #gridCanvas {
+            position: absolute;
+            top: 0; left: 0;
+            pointer-events: none;
+        }
+
+        /* Token layer */
+        #tokenLayer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* tokens handle their own */
+        }
+
+        /* Coordinate tooltip */
+        #coordTip {
+            position: fixed;
+            background: rgba(0,0,0,0.75);
+            color: var(--gold);
+            font-size: 0.72rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        /* Placeholder when no map */
+        .no-map {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: var(--muted);
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            height: 100%;
+            width: 100%;
+        }
+        .no-map svg { opacity: 0.3; }
+
+        /* ── TOKEN ── */
+        .token {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: grab;
+            pointer-events: all;
+            user-select: none;
+            transition: transform 0.1s ease, box-shadow 0.15s ease;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            z-index: 50;
+            border: 3px solid;
+            flex-direction: column;
+            gap: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .token:hover { transform: scale(1.12); z-index: 60; }
+        .token.dragging { cursor: grabbing; transform: scale(1.18); z-index: 200; opacity: 0.9; }
+
+        .token.ally {
+            background-color: #0077b6;
+            background-image: radial-gradient(circle at 35% 35%, #48cae4 0%, #0077b6 60%, #023e8a 100%);
+            border-color: var(--ally-color);
+            box-shadow: 0 0 10px rgba(34,211,238,0.5), 0 3px 8px rgba(0,0,0,0.6);
+        }
+        .token.enemy {
+            background-color: #c0392b;
+            background-image: radial-gradient(circle at 35% 35%, #ff9a8b 0%, #c0392b 60%, #7b0a0a 100%);
+            border-color: var(--enemy-color);
+            box-shadow: 0 0 10px rgba(248,113,113,0.5), 0 3px 8px rgba(0,0,0,0.6);
+        }
+        .token.ally.active-turn {
+            box-shadow: 0 0 0 3px #fff, 0 0 16px 2px var(--ally-color), 0 3px 8px rgba(0,0,0,0.6);
+        }
+        .token.enemy.active-turn {
+            box-shadow: 0 0 0 3px #fff, 0 0 16px 2px var(--enemy-color), 0 3px 8px rgba(0,0,0,0.6);
+        }
+
+        .token-label {
+            font-size: 0.6em;
+            line-height: 1.1;
+            text-align: center;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .token-num {
+            font-size: 0.55em;
+            opacity: 0.8;
+        }
+
+        .token-name-tag {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(13, 15, 26, 0.85);
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            white-space: nowrap;
+            pointer-events: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 0.03em;
+            z-index: 70;
+            transition: opacity 0.15s;
+        }
+        .token.dragging .token-name-tag {
+            opacity: 0;
+        }
+
+        /* Right-click context menu */
+        #contextMenu {
+            position: fixed;
+            background: var(--card-bg);
+            border: 1px solid var(--border-bright);
+            border-radius: 10px;
+            padding: 0.4rem;
+            z-index: 9999;
+            display: none;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+            min-width: 170px;
+        }
+        .ctx-item {
+            padding: 0.55rem 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: background 0.15s;
+        }
+        .ctx-item:hover { background: rgba(255,255,255,0.07); }
+        .ctx-item.danger { color: var(--danger); }
+        .ctx-item.danger:hover { background: rgba(239,68,68,0.12); }
+        .ctx-separator { height: 1px; background: var(--border); margin: 0.3rem 0; }
+        .ctx-header {
+            padding: 0.35rem 0.9rem 0.2rem;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        /* ── INITIATIVE PANEL ── */
+        #initiativePanel {
+            width: var(--panel-w);
+            background: var(--panel-bg);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+            transform: translateX(0);
+            transition: width 0.3s cubic-bezier(0.4,0,0.2,1), border 0.3s ease;
+            z-index: 50;
+        }
+        #initiativePanel.hidden {
+            width: 0;
+            border-left-color: transparent;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.2rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .panel-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+
+        .round-counter {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        .round-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+        .round-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 900;
+            color: var(--gold);
+            min-width: 24px;
+            text-align: center;
+        }
+        .round-btn {
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.3);
+            color: var(--gold);
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .round-btn:hover {
+            background: rgba(212,175,55,0.25);
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .panel-body::-webkit-scrollbar { width: 4px; }
+        .panel-body::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 2px; }
+
+        .empty-initiative {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 0.8rem;
+            color: var(--muted);
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 2rem;
+        }
+        .empty-initiative svg { opacity: 0.3; margin-bottom: 0.5rem; }
+
+        /* Initiative Row */
+        .init-row {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.7rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        .init-row:hover { border-color: rgba(255,255,255,0.2); }
+        .init-row.active-turn {
+            border-color: var(--gold);
+            background: rgba(212,175,55,0.07);
+            box-shadow: 0 0 12px rgba(212,175,55,0.15), inset 0 0 20px rgba(212,175,55,0.03);
+        }
+        .init-row.ally-row { border-left: 3px solid var(--ally-color); }
+        .init-row.enemy-row { border-left: 3px solid var(--enemy-color); }
+        .init-row.dead { opacity: 0.4; }
+
+        .init-color-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 0.7rem;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            border: 2px solid;
+            overflow: hidden;
+        }
+        .init-color-dot.ally {
+            background: radial-gradient(circle at 35% 35%, #48cae4, #0077b6);
+            border-color: var(--ally-color);
+        }
+        .init-color-dot.enemy {
+            background: radial-gradient(circle at 35% 35%, #ff9a8b, #c0392b);
+            border-color: var(--enemy-color);
+        }
+
+        .init-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .init-name {
+            font-weight: 700;
+            font-size: 0.88rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+        .init-type {
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .init-type.ally { color: var(--ally-color); }
+        .init-type.enemy { color: var(--enemy-color); }
+
+        /* Initiative number input */
+        .init-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+        .init-label-sm {
+            font-size: 0.65rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .init-score {
+            width: 56px;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(212,175,55,0.25);
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            font-size: 1.25rem;
+            font-weight: 900;
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.4rem 0.2rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .init-score:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+        .init-row.active-turn .init-score {
+            color: var(--gold);
+        }
+
+        /* HP input */
+        .hp-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.1rem;
+        }
+        .hp-label {
+            font-size: 0.65rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .hp-input {
+            width: 52px;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: var(--success);
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            font-weight: 900;
+            text-align: center;
+            border-radius: 5px;
+            padding: 0.4rem 0.1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .hp-input:focus { border-color: var(--success); box-shadow: 0 0 6px rgba(16,185,129,0.3); }
+
+        /* Condition badges area */
+        .cond-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.35rem;
+        }
+        .cond-badge {
+            font-size: 0.65rem;
+            padding: 0.1rem 0.45rem;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            border: 1px solid;
+            transition: opacity 0.15s;
+        }
+        .cond-badge:hover { opacity: 0.7; }
+        .cond-poisoned { background: rgba(34,197,94,0.1); color: #4ade80; border-color: rgba(34,197,94,0.3); }
+        .cond-stunned { background: rgba(251,191,36,0.1); color: #fbbf24; border-color: rgba(251,191,36,0.3); }
+        .cond-blinded { background: rgba(156,163,175,0.1); color: #9ca3af; border-color: rgba(156,163,175,0.3); }
+        .cond-prone { background: rgba(249,115,22,0.1); color: #fb923c; border-color: rgba(249,115,22,0.3); }
+        .cond-dead { background: rgba(239,68,68,0.1); color: #f87171; border-color: rgba(239,68,68,0.3); }
+        .cond-conc { background: rgba(139,92,246,0.1); color: #a78bfa; border-color: rgba(139,92,246,0.3); }
+
+        .panel-footer {
+            border-top: 1px solid var(--border);
+            padding: 0.8rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .panel-footer-btn {
+            flex: 1;
+            padding: 0.5rem 0.7rem;
+            border-radius: 8px;
+            border: 1px solid;
+            cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+        .next-turn-btn {
+            background: rgba(212,175,55,0.1);
+            border-color: rgba(212,175,55,0.4);
+            color: var(--gold);
+        }
+        .next-turn-btn:hover {
+            background: rgba(212,175,55,0.2);
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
+        .sort-btn {
+            background: rgba(255,255,255,0.03);
+            border-color: var(--border);
+            color: var(--muted);
+        }
+        .sort-btn:hover {
+            border-color: rgba(255,255,255,0.2);
+            color: var(--text);
+        }
+        .clear-btn {
+            background: rgba(239,68,68,0.05);
+            border-color: rgba(239,68,68,0.3);
+            color: var(--danger);
+        }
+        .clear-btn:hover {
+            background: rgba(239,68,68,0.1);
+        }
+
+        /* Inline name editor popup */
+        #nameModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        #nameModal.show { display: flex; }
+        .modal-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-bright);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 340px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        .modal-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+        .modal-input {
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem;
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            outline: none;
+            transition: var(--transition);
+            margin-bottom: 1rem;
+        }
+        .modal-input:focus { border-color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+        .modal-actions { display: flex; gap: 0.8rem; }
+        .modal-ok {
+            flex: 1;
+            padding: 0.65rem;
+            background: var(--gold);
+            border: none;
+            border-radius: 8px;
+            color: #0d0f1a;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-ok:hover { filter: brightness(1.1); }
+        .modal-cancel {
+            flex: 1;
+            padding: 0.65rem;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-cancel:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+        /* Grid toggle indicator */
+        .grid-toggle-wrap { display: flex; align-items: center; gap: 0.4rem; }
+        .toggle-switch {
+            position: relative;
+            width: 34px;
+            height: 18px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            left: 2px;
+            top: 2px;
+            background: var(--muted);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background: rgba(212,175,55,0.2); border-color: var(--gold); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); background: var(--gold); }
+        .toggle-label { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+
+        /* Enemy Spawn Modal & Gallery */
+        #enemyModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        #enemyModal.show { display: flex; }
+        .enemy-modal-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-bright);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 480px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        .enemy-gallery-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.3rem;
+            text-align: left;
+        }
+        .enemy-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.2rem;
+            max-height: 220px;
+            overflow-y: auto;
+            padding: 0.2rem;
+        }
+        .enemy-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+        }
+        .enemy-card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            background: rgba(212, 175, 55, 0.04);
+        }
+        .enemy-card.selected {
+            border-style: solid;
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
+        .enemy-card-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 0.4rem;
+            transition: var(--transition);
+        }
+        .enemy-card.selected .enemy-card-img {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+        .enemy-card-name {
+            font-size: 0.72rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .enemy-card.selected .enemy-card-name {
+            color: #fff;
+        }
+        .enemy-card.custom-upload-card {
+            justify-content: center;
+            min-height: 94px;
+        }
+        .enemy-card.custom-upload-card svg {
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+            transition: var(--transition);
+        }
+        .enemy-card.custom-upload-card:hover svg,
+        .enemy-card.custom-upload-card.selected svg {
+            color: var(--gold);
+            transform: scale(1.1);
+        }
+
+        /* Scrollbar utility */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.15); border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════ HEADER ═══════════════ -->
+    <header>
+        <div class="brand">D&amp;D <span>Aurelion</span> Combat</div>
+
+        <!-- Map picker -->
+        <div class="map-selector" id="mapSelector">
+            <!-- populated by JS -->
+        </div>
+
+        <!-- Token add buttons -->
+        <div class="token-controls">
+            <button class="add-btn add-ally" onclick="spawnToken('ally')">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                Tambah Kawan
+            </button>
+            <button class="add-btn add-enemy" onclick="spawnToken('enemy')">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                Tambah Lawan
+            </button>
+        </div>
+
+        <!-- Grid controls -->
+        <div class="grid-controls">
+            <div class="grid-toggle-wrap">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="gridToggle" checked onchange="toggleGrid()">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Grid</span>
+            </div>
+            <label>Ukuran:</label>
+            <input type="range" id="gridSizeSlider" min="10" max="120" value="40" oninput="onGridResize(this.value, 'slider')">
+            <input type="number" id="gridSizeNum" class="grid-num-input" min="10" max="120" value="40" oninput="onGridResize(this.value, 'num')">
+            <span class="grid-unit">px</span>
+        </div>
+
+        <!-- Initiative panel toggle -->
+        <button class="toggle-panel-btn active" id="panelToggleBtn" onclick="togglePanel()">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            Inisiatif
+        </button>
+    </header>
+
+    <!-- ═══════════════ WORKSPACE ═══════════════ -->
+    <div class="workspace">
+
+        <!-- BATTLEFIELD -->
+        <div class="battlefield-area" id="battlefieldArea">
+            <!-- shown when no map selected -->
+            <div class="no-map" id="noMapMsg">
+                <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+                    <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 16l4.553 2.276A1 1 0 0021 24.382V8.618a1 1 0 00-.553-.894L15 5m0 18V5M9 7l6-2"/>
+                </svg>
+                Pilih peta lokasi pertarungan di atas untuk memulai sesi combat.
+            </div>
+
+            <!-- Map + Grid canvas -->
+            <div id="mapWrapper" style="display:none;">
+                <img id="mapImg" src="" alt="Battle Map" draggable="false">
+                <canvas id="gridCanvas"></canvas>
+                <div id="tokenLayer"></div>
+            </div>
+        </div>
+
+        <!-- INITIATIVE PANEL -->
+        <div id="initiativePanel">
+            <div class="panel-header">
+                <span class="panel-title">⚔ Initiative Order</span>
+                <div class="round-counter">
+                    <span class="round-label">Round</span>
+                    <button class="round-btn" onclick="changeRound(-1)">−</button>
+                    <span class="round-num" id="roundNum">1</span>
+                    <button class="round-btn" onclick="changeRound(+1)">+</button>
+                </div>
+            </div>
+
+            <div class="panel-body" id="initiativeList">
+                <div class="empty-initiative">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    Tambahkan bidak ke battlefield untuk mengisi inisiatif.
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <button class="panel-footer-btn next-turn-btn" onclick="nextTurn()">
+                    <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    Giliran Berikutnya
+                </button>
+                <button class="panel-footer-btn sort-btn" onclick="sortInitiative()">
+                    <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
+                    Sort
+                </button>
+                <button class="panel-footer-btn clear-btn" onclick="clearAll()">
+                    <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ CONTEXT MENU ═══════════════ -->
+    <div id="contextMenu">
+        <div class="ctx-header" id="ctxHeader">Token</div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" onclick="renameToken()">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            Ganti Nama
+        </div>
+        <div class="ctx-item" onclick="toggleCondition('poisoned')">☠ Poisoned</div>
+        <div class="ctx-item" onclick="toggleCondition('stunned')">⚡ Stunned</div>
+        <div class="ctx-item" onclick="toggleCondition('blinded')">👁 Blinded</div>
+        <div class="ctx-item" onclick="toggleCondition('prone')">⬇ Prone</div>
+        <div class="ctx-item" onclick="toggleCondition('conc')">✦ Concentrating</div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" onclick="toggleCondition('dead')">💀 Mark Dead / Alive</div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item danger" onclick="removeToken()">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            Hapus Bidak
+        </div>
+    </div>
+
+    <!-- ═══════════════ NAME MODAL ═══════════════ -->
+    <div id="nameModal">
+        <div class="modal-box">
+            <div class="modal-title">🗡 Nama Bidak</div>
+            <input type="text" class="modal-input" id="nameInput" placeholder="Cth: Ser Aldric, Goblin A..." maxlength="20" onkeydown="if(event.key==='Enter') confirmName()">
+            <div class="modal-actions">
+                <button class="modal-ok" onclick="confirmName()">Konfirmasi</button>
+                <button class="modal-cancel" onclick="cancelName()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════ ENEMY SPAWN MODAL ═══════════════ -->
+    <div id="enemyModal">
+        <div class="enemy-modal-box">
+            <div class="modal-title">☠ Tambah Bidak Lawan</div>
+            
+            <div class="enemy-gallery-title">Pilih Gambar Musuh</div>
+            <div class="enemy-gallery" id="enemyGallery">
+                <!-- Populated by JS -->
+            </div>
+            
+            <input type="file" id="customEnemyFile" accept="image/*" style="display: none;" onchange="handleCustomEnemyUpload(event)">
+            
+            <div class="enemy-gallery-title">Nama Lawan</div>
+            <input type="text" class="modal-input" id="enemyNameInput" placeholder="Cth: Skeleton A, Spectre..." maxlength="20" onkeydown="if(event.key==='Enter') confirmEnemySpawn()">
+            
+            <div class="modal-actions">
+                <button class="modal-ok" onclick="confirmEnemySpawn()">Konfirmasi</button>
+                <button class="modal-cancel" onclick="cancelEnemySpawn()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coordinate tooltip -->
+    <div id="coordTip"></div>
+
+    <script>
+    'use strict';
+
+    // ══════════════════════════════
+    //  CONFIG
+    // ══════════════════════════════
+    const MAPS = [
+        {
+            id: 'highspire',
+            label: 'Highspire',
+            // relative to this HTML file
+            src: 'Aurelion/Highspire.png'
+        },
+        {
+            id: 'old-battlefield',
+            label: 'Old Battlefield',
+            src: 'Aurelion/Old Battlefield.jpeg'
+        }
+    ];
+
+    const PRESET_ENEMIES = [
+        { name: 'Skeleton', src: '../Creatures or Monsters/Images/Skeleton.jpeg' },
+        { name: 'Spectre', src: '../Creatures or Monsters/Images/Spectre.jpeg' }
+    ];
+
+    // ══════════════════════════════
+    //  STATE
+    // ══════════════════════════════
+    let gridSize   = 40;   // px per cell
+    let showGrid   = true;
+    let tokens     = [];   // { id, type, name, gridX, gridY, el, conditions, initScore, hp, initiativeEl, imgUrl }
+    let tokenCount = { ally: 0, enemy: 0 };
+    let activeTurnId   = null;
+    let selectedTokenId = null;  // for context menu
+    let pendingNameCallback = null;
+    let pendingEnemyCallback = null;
+    let customEnemies = [];
+    let selectedEnemyImg = '';
+    let round = 1;
+    let panelOpen = true;
+
+    // drag state
+    let dragState = null;
+
+    // ══════════════════════════════
+    //  INIT
+    // ══════════════════════════════
+    window.addEventListener('DOMContentLoaded', () => {
+        buildMapSelector();
+        document.addEventListener('click', hideContextMenu);
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.getElementById('mapImg').addEventListener('load', onMapLoaded);
+    });
+
+    // ══════════════════════════════
+    //  MAP SELECTOR
+    // ══════════════════════════════
+    function buildMapSelector() {
+        const sel = document.getElementById('mapSelector');
+        MAPS.forEach(m => {
+            const btn = document.createElement('button');
+            btn.className = 'map-btn';
+            btn.textContent = m.label;
+            btn.dataset.id = m.id;
+            btn.onclick = () => selectMap(m);
+            sel.appendChild(btn);
+        });
+    }
+
+    function selectMap(map) {
+        document.querySelectorAll('.map-btn').forEach(b => b.classList.toggle('active', b.dataset.id === map.id));
+        const img = document.getElementById('mapImg');
+        img.src = map.src;
+        document.getElementById('noMapMsg').style.display = 'none';
+    }
+
+    // Fixed 16:9 display resolution for all maps (CSS object-fit: cover handles the crop)
+    const MAP_DISPLAY_W = 1280;
+    const MAP_DISPLAY_H = 720;
+
+    function onMapLoaded() {
+        const wrapper = document.getElementById('mapWrapper');
+        wrapper.style.display = 'block';
+        drawGrid();
+        tokens.forEach(t => snapToken(t));
+    }
+
+    // ══════════════════════════════
+    //  GRID
+    // ══════════════════════════════
+    function drawGrid() {
+        const wrapper = document.getElementById('mapWrapper');
+        if (wrapper.style.display === 'none') return;
+        const canvas = document.getElementById('gridCanvas');
+        const W = MAP_DISPLAY_W;
+        const H = MAP_DISPLAY_H;
+
+        canvas.width  = W;
+        canvas.height = H;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, W, H);
+
+        if (!showGrid) return;
+
+        // ── Grid lines: thick amber outline + thinner inner fill ──
+        // Shadow lines (dark) drawn first for contrast on bright maps
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.lineWidth   = 2.4;
+        drawLines(ctx, W, H);
+
+        // Bright amber lines on top
+        ctx.strokeStyle = 'rgba(255, 180, 40, 0.75)';
+        ctx.lineWidth   = 1.2;
+        drawLines(ctx, W, H);
+
+        // ── Dot at each intersection ──
+        ctx.fillStyle = 'rgba(255, 200, 60, 0.6)';
+        for (let x = 0; x <= W; x += gridSize) {
+            for (let y = 0; y <= H; y += gridSize) {
+                ctx.beginPath();
+                ctx.arc(x, y, 1.8, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // ── Coordinate labels every 5 cells ──
+        // Draw with drop-shadow trick: dark text first, bright on top
+        const stepLabel = Math.max(1, Math.ceil(80 / gridSize));
+        ctx.font        = `bold ${Math.max(8, Math.round(gridSize * 0.22))}px "Plus Jakarta Sans", sans-serif`;
+        ctx.textAlign   = 'left';
+        ctx.textBaseline = 'top';
+
+        for (let row = 0; row * gridSize < H; row += stepLabel) {
+            for (let col = 0; col * gridSize < W; col += stepLabel) {
+                const tx = col * gridSize + 3;
+                const ty = row * gridSize + 3;
+                // shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                ctx.fillText(`${col},${row}`, tx + 1, ty + 1);
+                // label
+                ctx.fillStyle = 'rgba(255, 210, 80, 0.9)';
+                ctx.fillText(`${col},${row}`, tx, ty);
+            }
+        }
+    }
+
+    function drawLines(ctx, W, H) {
+        for (let x = 0; x <= W; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, H);
+            ctx.stroke();
+        }
+        for (let y = 0; y <= H; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
+        }
+    }
+
+    function toggleGrid() {
+        showGrid = document.getElementById('gridToggle').checked;
+        drawGrid();
+    }
+
+    function onGridResize(val, source) {
+        let n = parseInt(val);
+        if (isNaN(n)) return;
+        n = Math.max(10, Math.min(120, n));
+        gridSize = n;
+        // Sync the other control
+        if (source !== 'slider') document.getElementById('gridSizeSlider').value = n;
+        if (source !== 'num')    document.getElementById('gridSizeNum').value    = n;
+        drawGrid();
+        tokens.forEach(t => snapToken(t));
+    }
+
+    // ══════════════════════════════
+    //  TOKEN SPAWNING
+    // ══════════════════════════════
+    function spawnToken(type) {
+        const wrapper = document.getElementById('mapWrapper');
+        if (wrapper.style.display === 'none') {
+            alert('Pilih peta battlefield terlebih dahulu!');
+            return;
+        }
+
+        const label = type === 'ally' ? 'Kawan' : 'Lawan';
+        tokenCount[type]++;
+        const defaultName = `${label} ${tokenCount[type]}`;
+
+        if (type === 'ally') {
+            openNameModal(defaultName, (name) => {
+                if (name === null) return; // cancelled
+                createAndSpawn(name || defaultName, null);
+            });
+        } else {
+            openEnemyModal(defaultName, (enemyData) => {
+                if (!enemyData) return; // cancelled
+                createAndSpawn(enemyData.name || defaultName, enemyData.imgUrl);
+            });
+        }
+
+        function createAndSpawn(name, imgUrl) {
+            // Find a free cell (spiral search from centre)
+            const cols = Math.floor(MAP_DISPLAY_W / gridSize);
+            const rows = Math.floor(MAP_DISPLAY_H / gridSize);
+            const startCol = Math.floor(cols / 2);
+            const startRow = Math.floor(rows / 2);
+            const { gx, gy } = findFreeCell(startCol, startRow, cols, rows);
+
+            const id = `tok-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+            const token = {
+                id, type,
+                name: name,
+                imgUrl: imgUrl,
+                gridX: gx, gridY: gy,
+                el: null,
+                conditions: [],
+                initScore: '',
+                hp: '',
+                initiativeEl: null
+            };
+
+            createTokenElement(token);
+            tokens.push(token);
+            addInitiativeRow(token);
+            renderTokenPosition(token);
+        }
+    }
+
+    function findFreeCell(startCol, startRow, cols, rows) {
+        // BFS outward from start to find empty cell
+        const occupied = new Set(tokens.map(t => `${t.gridX},${t.gridY}`));
+        const queue = [[startCol, startRow]];
+        const visited = new Set([`${startCol},${startRow}`]);
+
+        while (queue.length) {
+            const [cx, cy] = queue.shift();
+            if (!occupied.has(`${cx},${cy}`) && cx >= 0 && cy >= 0 && cx < cols && cy < rows) {
+                return { gx: cx, gy: cy };
+            }
+            for (const [dx, dy] of [[0,1],[1,0],[0,-1],[-1,0],[1,1],[-1,-1],[1,-1],[-1,1]]) {
+                const nx = cx + dx, ny = cy + dy;
+                const key = `${nx},${ny}`;
+                if (!visited.has(key)) { visited.add(key); queue.push([nx, ny]); }
+            }
+        }
+        return { gx: startCol, gy: startRow };
+    }
+
+    function createTokenElement(token) {
+        const layer = document.getElementById('tokenLayer');
+        const el = document.createElement('div');
+        el.className = `token ${token.type}`;
+        el.id = token.id;
+
+        el.style.width  = (gridSize - 6) + 'px';
+        el.style.height = (gridSize - 6) + 'px';
+        el.style.fontSize = gridSize * 0.38 + 'px';
+
+        if (token.imgUrl) {
+            el.style.backgroundImage = `url('${token.imgUrl}')`;
+            el.innerHTML = '';
+        } else {
+            const abbrev = getAbbrev(token.name);
+            el.innerHTML = `<span class="token-label">${abbrev}</span>`;
+        }
+
+        // Add name tag below token
+        const nameTag = document.createElement('div');
+        nameTag.className = 'token-name-tag';
+        nameTag.textContent = token.name;
+        el.appendChild(nameTag);
+
+        // Drag
+        el.addEventListener('mousedown', onTokenMouseDown);
+        // Context menu
+        el.addEventListener('contextmenu', (e) => { e.stopPropagation(); openContextMenu(e, token.id); });
+
+        layer.appendChild(el);
+        token.el = el;
+    }
+
+    function getAbbrev(name) {
+        const words = name.trim().split(/\s+/);
+        if (words.length === 1) return name.slice(0, 3).toUpperCase();
+        return words.slice(0, 2).map(w => w[0]).join('').toUpperCase();
+    }
+
+    function renderTokenPosition(token) {
+        if (!token.el) return;
+        const px = token.gridX * gridSize + 3;
+        const py = token.gridY * gridSize + 3;
+        const s = gridSize - 6;
+        token.el.style.left      = px + 'px';
+        token.el.style.top       = py + 'px';
+        token.el.style.width     = s + 'px';
+        token.el.style.height    = s + 'px';
+        token.el.style.fontSize  = gridSize * 0.38 + 'px';
+        token.el.style.lineHeight = '1';
+    }
+
+    function snapToken(token) {
+        renderTokenPosition(token);
+    }
+
+    // ══════════════════════════════
+    //  DRAG & DROP
+    // ══════════════════════════════
+    function onTokenMouseDown(e) {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const tokId = e.currentTarget.id;
+        const token = tokens.find(t => t.id === tokId);
+        if (!token) return;
+
+        const wrapper = document.getElementById('mapWrapper');
+        const wRect   = wrapper.getBoundingClientRect();
+
+        const startMouseX = e.clientX;
+        const startMouseY = e.clientY;
+        const startPx = token.gridX * gridSize + 3;
+        const startPy = token.gridY * gridSize + 3;
+
+        dragState = { token, startMouseX, startMouseY, startPx, startPy, hasMoved: false };
+
+        token.el.classList.add('dragging');
+
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('mouseup',   onDragEnd);
+    }
+
+    function onDragMove(e) {
+        if (!dragState) return;
+        const { token, startMouseX, startMouseY, startPx, startPy } = dragState;
+
+        const dx = e.clientX - startMouseX;
+        const dy = e.clientY - startMouseY;
+        dragState.hasMoved = true;
+
+        const wrapper = document.getElementById('mapWrapper');
+        const wRect   = wrapper.getBoundingClientRect();
+        const cols    = Math.floor(MAP_DISPLAY_W / gridSize);
+        const rows    = Math.floor(MAP_DISPLAY_H / gridSize);
+
+        // Raw pixel position
+        let rawPx = startPx + dx;
+        let rawPy = startPy + dy;
+
+        // Snap to grid cell
+        let gx = Math.round((rawPx - 3) / gridSize);
+        let gy = Math.round((rawPy - 3) / gridSize);
+
+        // Clamp inside grid
+        gx = Math.max(0, Math.min(cols - 1, gx));
+        gy = Math.max(0, Math.min(rows - 1, gy));
+
+        // Visual live drag (pixel-accurate, clamped)
+        const clampedPx = Math.max(3, Math.min((cols - 1) * gridSize + 3, startPx + dx));
+        const clampedPy = Math.max(3, Math.min((rows - 1) * gridSize + 3, startPy + dy));
+        token.el.style.left = clampedPx + 'px';
+        token.el.style.top  = clampedPy + 'px';
+
+        // Show coordinate tooltip
+        const tip = document.getElementById('coordTip');
+        tip.textContent = `Col ${gx}, Row ${gy}`;
+        tip.style.left  = (e.clientX + 14) + 'px';
+        tip.style.top   = (e.clientY - 24) + 'px';
+        tip.style.opacity = '1';
+    }
+
+    function onDragEnd(e) {
+        if (!dragState) return;
+        const { token, startMouseX, startMouseY, startPx, startPy } = dragState;
+
+        window.removeEventListener('mousemove', onDragMove);
+        window.removeEventListener('mouseup',   onDragEnd);
+        token.el.classList.remove('dragging');
+
+        const dx = e.clientX - startMouseX;
+        const dy = e.clientY - startMouseY;
+
+        const wrapper = document.getElementById('mapWrapper');
+        const cols    = Math.floor(MAP_DISPLAY_W / gridSize);
+        const rows    = Math.floor(MAP_DISPLAY_H / gridSize);
+
+        let gx = Math.round((startPx + dx - 3) / gridSize);
+        let gy = Math.round((startPy + dy - 3) / gridSize);
+        gx = Math.max(0, Math.min(cols - 1, gx));
+        gy = Math.max(0, Math.min(rows - 1, gy));
+
+        // Check if another token occupies this cell
+        const occupied = tokens.find(t => t.id !== token.id && t.gridX === gx && t.gridY === gy);
+        if (!occupied) {
+            token.gridX = gx;
+            token.gridY = gy;
+        }
+
+        renderTokenPosition(token);
+
+        // Hide tooltip
+        document.getElementById('coordTip').style.opacity = '0';
+        dragState = null;
+    }
+
+    // ══════════════════════════════
+    //  CONTEXT MENU
+    // ══════════════════════════════
+    function openContextMenu(e, tokenId) {
+        selectedTokenId = tokenId;
+        const token = tokens.find(t => t.id === tokenId);
+        document.getElementById('ctxHeader').textContent = token ? token.name : 'Token';
+
+        const menu = document.getElementById('contextMenu');
+        menu.style.display = 'block';
+        menu.style.left = e.clientX + 'px';
+        menu.style.top  = e.clientY + 'px';
+
+        // Adjust if off screen
+        const rect = menu.getBoundingClientRect();
+        if (rect.right  > window.innerWidth)  menu.style.left = (e.clientX - rect.width)  + 'px';
+        if (rect.bottom > window.innerHeight) menu.style.top  = (e.clientY - rect.height) + 'px';
+
+        e.stopPropagation();
+    }
+
+    function hideContextMenu() {
+        document.getElementById('contextMenu').style.display = 'none';
+    }
+
+    function removeToken() {
+        hideContextMenu();
+        if (!selectedTokenId) return;
+        const idx = tokens.findIndex(t => t.id === selectedTokenId);
+        if (idx === -1) return;
+        const token = tokens[idx];
+        token.el?.remove();
+        token.initiativeEl?.remove();
+        tokens.splice(idx, 1);
+        if (activeTurnId === selectedTokenId) { activeTurnId = null; }
+        selectedTokenId = null;
+        renderInitiative();
+    }
+
+    function renameToken() {
+        hideContextMenu();
+        if (!selectedTokenId) return;
+        const token = tokens.find(t => t.id === selectedTokenId);
+        if (!token) return;
+        openNameModal(token.name, (name) => {
+            if (!name) return;
+            token.name = name;
+            // Update token element
+            const abbrev = getAbbrev(name);
+            const label = token.el.querySelector('.token-label');
+            if (label) label.textContent = abbrev;
+            
+            // Update name tag
+            const nameTag = token.el.querySelector('.token-name-tag');
+            if (nameTag) nameTag.textContent = name;
+            
+            // Update initiative
+            renderInitiative();
+        });
+    }
+
+    function toggleCondition(cond) {
+        hideContextMenu();
+        if (!selectedTokenId) return;
+        const token = tokens.find(t => t.id === selectedTokenId);
+        if (!token) return;
+        const idx = token.conditions.indexOf(cond);
+        if (idx > -1) token.conditions.splice(idx, 1);
+        else token.conditions.push(cond);
+        renderInitiative();
+        // Visual: token border flash
+        if (token.el) {
+            token.el.style.outline = '2px solid white';
+            setTimeout(() => { if (token.el) token.el.style.outline = ''; }, 300);
+        }
+    }
+
+    // ══════════════════════════════
+    //  INITIATIVE PANEL
+    // ══════════════════════════════
+    function addInitiativeRow(token) {
+        renderInitiative();
+    }
+
+    function renderInitiative() {
+        const list = document.getElementById('initiativeList');
+        list.innerHTML = '';
+
+        if (tokens.length === 0) {
+            list.innerHTML = `<div class="empty-initiative">
+                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                Tambahkan bidak ke battlefield untuk mengisi inisiatif.
+            </div>`;
+            return;
+        }
+
+        tokens.forEach(token => {
+            const row = document.createElement('div');
+            const isDead = token.conditions.includes('dead');
+            row.className = `init-row ${token.type}-row ${token.id === activeTurnId ? 'active-turn' : ''} ${isDead ? 'dead' : ''}`;
+            row.id = `init-${token.id}`;
+
+            const condBadges = token.conditions.map(c => {
+                const labels = { poisoned:'☠ Poisoned', stunned:'⚡ Stunned', blinded:'👁 Blinded', prone:'⬇ Prone', dead:'💀 Dead', conc:'✦ Conc' };
+                return `<span class="cond-badge cond-${c}" title="Click to remove" onclick="removeCond('${token.id}','${c}')">${labels[c]||c}</span>`;
+            }).join('');
+
+            row.innerHTML = `
+                <div class="init-color-dot ${token.type}">
+                    ${token.imgUrl ? `<img src="${token.imgUrl}" style="width:100%; height:100%; object-fit:cover; display:block;">` : getAbbrev(token.name)}
+                </div>
+                <div class="init-info">
+                    <div class="init-name">${token.name}</div>
+                    <div class="init-type ${token.type}">${token.type === 'ally' ? '⚔ Kawan' : '☠ Lawan'}</div>
+                    ${condBadges ? `<div class="cond-wrap">${condBadges}</div>` : ''}
+                </div>
+                <div class="hp-wrap">
+                    <span class="hp-label">HP</span>
+                    <input type="number" class="hp-input" value="${token.hp}" placeholder="—" min="0" data-tid="${token.id}" oninput="updateHP(this)">
+                </div>
+                <div class="init-input-wrap">
+                    <div>
+                        <div class="init-label-sm">INIT</div>
+                        <input type="number" class="init-score" value="${token.initScore}" placeholder="—" data-tid="${token.id}" oninput="updateInit(this)">
+                    </div>
+                </div>`;
+
+            // Click row to set as active turn
+            row.addEventListener('click', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.classList.contains('cond-badge')) return;
+                activeTurnId = (activeTurnId === token.id) ? null : token.id;
+                updateActiveTurnVisuals();
+            });
+
+            token.initiativeEl = row;
+            list.appendChild(row);
+        });
+    }
+
+    function updateInit(input) {
+        const token = tokens.find(t => t.id === input.dataset.tid);
+        if (token) token.initScore = input.value;
+    }
+
+    function updateHP(input) {
+        const token = tokens.find(t => t.id === input.dataset.tid);
+        if (token) token.hp = input.value;
+    }
+
+    function removeCond(tokenId, cond) {
+        const token = tokens.find(t => t.id === tokenId);
+        if (!token) return;
+        const idx = token.conditions.indexOf(cond);
+        if (idx > -1) token.conditions.splice(idx, 1);
+        renderInitiative();
+    }
+
+    function updateActiveTurnVisuals() {
+        document.querySelectorAll('.init-row').forEach(r => r.classList.remove('active-turn'));
+        document.querySelectorAll('.token').forEach(t => t.classList.remove('active-turn'));
+
+        if (activeTurnId) {
+            const row = document.getElementById(`init-${activeTurnId}`);
+            row?.classList.add('active-turn');
+            const tok = document.getElementById(activeTurnId);
+            tok?.classList.add('active-turn');
+        }
+    }
+
+    function nextTurn() {
+        if (tokens.length === 0) return;
+        const alive = tokens.filter(t => !t.conditions.includes('dead'));
+        if (alive.length === 0) return;
+
+        const idx = alive.findIndex(t => t.id === activeTurnId);
+        const nextIdx = (idx + 1) % alive.length;
+        if (nextIdx === 0) changeRound(+1);
+        activeTurnId = alive[nextIdx].id;
+        updateActiveTurnVisuals();
+
+        // Scroll into view
+        document.getElementById(`init-${activeTurnId}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function sortInitiative() {
+        tokens.sort((a, b) => {
+            const ia = parseFloat(a.initScore) || -Infinity;
+            const ib = parseFloat(b.initScore) || -Infinity;
+            return ib - ia;
+        });
+        renderInitiative();
+        updateActiveTurnVisuals();
+    }
+
+    function clearAll() {
+        if (!confirm('Reset semua bidak dan inisiatif? Tindakan ini tidak bisa dibatalkan.')) return;
+        tokens.forEach(t => t.el?.remove());
+        tokens = [];
+        tokenCount = { ally: 0, enemy: 0 };
+        activeTurnId = null;
+        round = 1;
+        document.getElementById('roundNum').textContent = '1';
+        renderInitiative();
+    }
+
+    function changeRound(delta) {
+        round = Math.max(1, round + delta);
+        document.getElementById('roundNum').textContent = round;
+    }
+
+    // ══════════════════════════════
+    //  PANEL TOGGLE
+    // ══════════════════════════════
+    function togglePanel() {
+        panelOpen = !panelOpen;
+        const panel = document.getElementById('initiativePanel');
+        const btn   = document.getElementById('panelToggleBtn');
+        panel.classList.toggle('hidden', !panelOpen);
+        btn.classList.toggle('active', panelOpen);
+    }
+
+    // ══════════════════════════════
+    //  NAME MODAL
+    // ══════════════════════════════
+    function openNameModal(defaultVal, callback) {
+        pendingNameCallback = callback;
+        const modal = document.getElementById('nameModal');
+        const input = document.getElementById('nameInput');
+        input.value = defaultVal;
+        modal.classList.add('show');
+        setTimeout(() => { input.focus(); input.select(); }, 100);
+    }
+
+    function confirmName() {
+        const val = document.getElementById('nameInput').value.trim();
+        document.getElementById('nameModal').classList.remove('show');
+        if (pendingNameCallback) pendingNameCallback(val || null);
+        pendingNameCallback = null;
+    }
+
+    function cancelName() {
+        document.getElementById('nameModal').classList.remove('show');
+        pendingNameCallback = null;
+    }
+
+    // ══════════════════════════════
+    //  ENEMY SPAWN MODAL
+    // ══════════════════════════════
+    function openEnemyModal(defaultName, callback) {
+        pendingEnemyCallback = callback;
+        const modal = document.getElementById('enemyModal');
+        const input = document.getElementById('enemyNameInput');
+        
+        input.value = defaultName;
+        modal.classList.add('show');
+        
+        // Select first preset by default
+        if (PRESET_ENEMIES.length > 0) {
+            selectedEnemyImg = PRESET_ENEMIES[0].src;
+            input.value = PRESET_ENEMIES[0].name;
+        } else {
+            selectedEnemyImg = '';
+        }
+        
+        renderEnemyGallery();
+        
+        setTimeout(() => { input.focus(); input.select(); }, 100);
+    }
+
+    function renderEnemyGallery() {
+        const gallery = document.getElementById('enemyGallery');
+        gallery.innerHTML = '';
+        
+        const allEnemies = [...PRESET_ENEMIES, ...customEnemies];
+        allEnemies.forEach(e => {
+            const card = document.createElement('div');
+            card.className = `enemy-card ${selectedEnemyImg === e.src ? 'selected' : ''}`;
+            card.onclick = () => {
+                selectedEnemyImg = e.src;
+                document.getElementById('enemyNameInput').value = e.name;
+                renderEnemyGallery();
+            };
+            
+            card.innerHTML = `
+                <img src="${e.src}" class="enemy-card-img" alt="${e.name}">
+                <span class="enemy-card-name">${e.name}</span>
+            `;
+            gallery.appendChild(card);
+        });
+        
+        // Custom upload card
+        const customCard = document.createElement('div');
+        customCard.className = `enemy-card custom-upload-card ${selectedEnemyImg.startsWith('blob:') ? 'selected' : ''}`;
+        customCard.onclick = () => {
+            document.getElementById('customEnemyFile').click();
+        };
+        customCard.innerHTML = `
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span class="enemy-card-name">Pilih File...</span>
+        `;
+        gallery.appendChild(customCard);
+    }
+
+    function handleCustomEnemyUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const name = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+        const src = URL.createObjectURL(file);
+        
+        const newEnemy = { name, src };
+        customEnemies.push(newEnemy);
+        selectedEnemyImg = src;
+        
+        document.getElementById('enemyNameInput').value = name;
+        renderEnemyGallery();
+        
+        // Reset file input
+        event.target.value = '';
+    }
+
+    function confirmEnemySpawn() {
+        const val = document.getElementById('enemyNameInput').value.trim();
+        document.getElementById('enemyModal').classList.remove('show');
+        if (pendingEnemyCallback) {
+            pendingEnemyCallback({ name: val || 'Lawan', imgUrl: selectedEnemyImg });
+        }
+        pendingEnemyCallback = null;
+    }
+
+    function cancelEnemySpawn() {
+        document.getElementById('enemyModal').classList.remove('show');
+        pendingEnemyCallback = null;
+    }
+
+    // ══════════════════════════════
+    //  MAP AREA — coordinate hover tip
+    // ══════════════════════════════
+    document.getElementById('battlefieldArea').addEventListener('mousemove', (e) => {
+        const wrapper = document.getElementById('mapWrapper');
+        if (wrapper.style.display === 'none') return;
+        if (dragState) return; // handled by drag
+
+        const wRect = wrapper.getBoundingClientRect();
+        const rx = e.clientX - wRect.left;
+        const ry = e.clientY - wRect.top;
+
+        const gx = Math.floor(rx / gridSize);
+        const gy = Math.floor(ry / gridSize);
+
+        if (rx >= 0 && ry >= 0 && rx < MAP_DISPLAY_W && ry < MAP_DISPLAY_H) {
+            const tip = document.getElementById('coordTip');
+            tip.textContent = `Col ${gx}, Row ${gy}`;
+            tip.style.left  = (e.clientX + 14) + 'px';
+            tip.style.top   = (e.clientY - 24) + 'px';
+            tip.style.opacity = '1';
+        }
+    });
+
+    document.getElementById('battlefieldArea').addEventListener('mouseleave', () => {
+        document.getElementById('coordTip').style.opacity = '0';
+    });
+
+    </script>
+</body>
+</html>

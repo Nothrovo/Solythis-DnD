@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurelion Lore Reveal Tracker - Solythis D&D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0c13;
+            --card-bg: rgba(18, 20, 35, 0.75);
+            --card-border: rgba(212, 175, 55, 0.15);
+            --card-border-active: rgba(212, 175, 55, 0.6);
+            --gold-primary: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --gold-dark: #aa841c;
+            --purple-magic: #8b5cf6;
+            --purple-glow: rgba(139, 92, 246, 0.3);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.5) 0%, rgba(11, 12, 19, 1) 100%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Ambient scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(11, 12, 19, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.4);
+        }
+
+        /* Container Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        }
+
+        .realm-subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.35em;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        h1 {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, #ffffff 30%, #e2e8f0 70%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+        }
+
+        .campaign-desc {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Progress Dashboard */
+        .dashboard {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .progress-circle-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .progress-svg {
+            width: 100px;
+            height: 100px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-svg circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .progress-bg {
+            stroke: rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-bar-fill {
+            stroke: var(--gold-primary);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 4px var(--gold-primary));
+        }
+
+        .progress-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-val {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1;
+            text-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.3rem;
+        }
+
+        .search-filter-box {
+            display: flex;
+            align-items: center;
+            background: rgba(11, 12, 19, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            flex-grow: 1;
+            max-width: 500px;
+            transition: var(--transition);
+        }
+
+        .search-filter-box:focus-within {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        .search-filter-box svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-secondary);
+            margin-right: 0.8rem;
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold-primary);
+            color: #ffffff;
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+
+        .btn-reset {
+            color: var(--text-muted);
+        }
+        .btn-reset:hover {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+            color: #ffffff;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Timeline Layout & Grid */
+        .timeline {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            position: relative;
+        }
+
+        /* Timeline vertical connector line */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            top: 20px;
+            bottom: 20px;
+            width: 2px;
+            background: linear-gradient(to bottom, 
+                var(--gold-primary) 0%, 
+                var(--purple-magic) 50%, 
+                rgba(139, 92, 246, 0.1) 100%
+            );
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Lore Card Styling */
+        .lore-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-left: 70px;
+            position: relative;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .lore-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* Revealed active state */
+        .lore-card.revealed {
+            border-color: var(--card-border-active);
+            box-shadow: 
+                0 0 20px var(--gold-glow),
+                0 8px 30px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, rgba(24, 25, 41, 0.85) 0%, rgba(18, 20, 35, 0.85) 100%);
+        }
+
+        .lore-card.revealed-undead {
+            border-color: var(--purple-magic);
+            box-shadow: 
+                0 0 20px var(--purple-glow),
+                0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Left-side node indicator */
+        .timeline-indicator {
+            position: absolute;
+            left: -58px;
+            top: 2rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1e293b;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            transition: var(--transition);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .timeline-indicator::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .lore-card.revealed .timeline-indicator {
+            border-color: var(--gold-primary);
+            background: #111827;
+            box-shadow: 0 0 15px var(--gold-primary);
+        }
+
+        .lore-card.revealed .timeline-indicator::after {
+            background: var(--gold-primary);
+            box-shadow: 0 0 8px var(--gold-primary);
+        }
+
+        .lore-card.revealed-undead .timeline-indicator {
+            border-color: var(--purple-magic);
+            background: #111827;
+            box-shadow: 0 0 15px var(--purple-magic);
+        }
+
+        .lore-card.revealed-undead .timeline-indicator::after {
+            background: var(--purple-magic);
+            box-shadow: 0 0 8px var(--purple-magic);
+        }
+
+        /* Card Header */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .step-num {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: var(--gold-primary);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: #ffffff;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .lore-card.revealed .card-title {
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            align-self: flex-start;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .lore-card.revealed .badge {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.3);
+            color: var(--gold-primary);
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
+        }
+
+        .checkbox-wrapper:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: var(--transition);
+        }
+
+        .lore-card.revealed .checkbox-label {
+            color: var(--gold-primary);
+        }
+        .lore-card.revealed-undead .checkbox-label {
+            color: var(--purple-magic);
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .checkbox-wrapper:hover .custom-checkbox {
+            border-color: var(--text-secondary);
+        }
+
+        .lore-card.revealed .custom-checkbox {
+            border-color: var(--gold-primary);
+            background: var(--gold-primary);
+        }
+
+        .lore-card.revealed-undead .custom-checkbox {
+            border-color: var(--purple-magic);
+            background: var(--purple-magic);
+        }
+
+        .custom-checkbox svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: #000000;
+            stroke-width: 3;
+            stroke-dasharray: 20;
+            stroke-dashoffset: 20;
+            transition: var(--transition);
+        }
+
+        .lore-card.revealed .custom-checkbox svg,
+        .lore-card.revealed-undead .custom-checkbox svg {
+            stroke-dashoffset: 0;
+        }
+
+        /* Card Content Layout */
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Left Side: Lore Data */
+        .lore-section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--gold-primary);
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .lore-card.revealed-undead .lore-section-title {
+            color: var(--purple-magic);
+        }
+
+        .lore-section-title svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .event-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Lora', serif;
+            font-size: 1.05rem;
+            border-left: 3px solid var(--text-muted);
+            color: var(--text-secondary);
+        }
+
+        .lore-card.revealed .event-box {
+            border-left-color: var(--gold-primary);
+            color: var(--text-primary);
+        }
+
+        .lore-card.revealed-undead .event-box {
+            border-left-color: var(--purple-magic);
+            color: var(--text-primary);
+        }
+
+        .fact-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .fact-item {
+            position: relative;
+            padding-left: 1.8rem;
+            font-size: 0.98rem;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .lore-card.revealed .fact-item {
+            color: var(--text-primary);
+        }
+
+        .fact-item::before {
+            content: '✦';
+            position: absolute;
+            left: 0.4rem;
+            top: 0;
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .lore-card.revealed .fact-item::before {
+            color: var(--gold-primary);
+            text-shadow: 0 0 5px var(--gold-glow);
+        }
+        .lore-card.revealed-undead .fact-item::before {
+            color: var(--purple-magic);
+            text-shadow: 0 0 5px var(--purple-glow);
+        }
+
+        .fact-sublist {
+            list-style: none;
+            margin-top: 0.5rem;
+            margin-left: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            border-left: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-left: 1rem;
+        }
+
+        .fact-subitem {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Specific styles for vision/quotes */
+        .vision-quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            background: rgba(139, 92, 246, 0.05);
+            border-left: 3px solid var(--purple-magic);
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 0;
+            border-radius: 0 8px 8px 0;
+            color: #d8b4fe;
+            position: relative;
+        }
+
+        .vision-quote::before {
+            content: '"';
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            position: absolute;
+            left: 0.5rem;
+            top: -0.5rem;
+            opacity: 0.1;
+            line-height: 1;
+        }
+
+        /* Right Side: Dungeon Master Notes */
+        .notes-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .notes-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .notes-title svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .save-indicator {
+            font-size: 0.75rem;
+            color: var(--success);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            font-weight: 500;
+        }
+
+        .notes-area {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 150px;
+            flex-grow: 1;
+            transition: var(--transition);
+        }
+
+        .notes-area:focus {
+            outline: none;
+            border-color: rgba(212, 175, 55, 0.4);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.05);
+        }
+
+        /* Special Nested Checklist for Tomb */
+        .dungeon-rooms-grid {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .dungeon-rooms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .room-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .room-item:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(139, 92, 246, 0.02);
+        }
+
+        .room-item.revealed {
+            border-color: var(--purple-magic);
+            background: rgba(139, 92, 246, 0.05);
+            box-shadow: 0 0 8px rgba(139, 92, 246, 0.1);
+        }
+
+        .room-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--text-muted);
+            border-radius: 3px;
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .room-item.revealed .room-checkbox {
+            border-color: var(--purple-magic);
+            background: var(--purple-magic);
+        }
+
+        .room-checkbox svg {
+            width: 10px;
+            height: 10px;
+            fill: none;
+            stroke: #000000;
+            stroke-width: 3.5;
+            stroke-dasharray: 15;
+            stroke-dashoffset: 15;
+            transition: var(--transition);
+        }
+
+        .room-item.revealed .room-checkbox svg {
+            stroke-dashoffset: 0;
+        }
+
+        .room-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .room-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .room-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .room-item.revealed .room-desc {
+            color: var(--text-primary);
+        }
+
+        /* Overlay/Instructions Panel */
+        .help-panel {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 2rem;
+        }
+
+        /* Hide elements when searched out */
+        .lore-card.hidden {
+            display: none;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        .locked-shield {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-muted);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .lore-card.revealed .locked-shield {
+            fill: var(--gold-primary);
+            animation: none;
+        }
+        .lore-card.revealed-undead .locked-shield {
+            fill: var(--purple-magic);
+            animation: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="realm-subtitle">Kingdom of Aurelion</div>
+            <h1 id="main-title">Lore Reveal Tracker</h1>
+            <p class="campaign-desc">Catat dan pantau progres penemuan fakta sejarah serta konspirasi seputar penyelamat Prosperina dan kontrak iblis di Kekaisaran Aurelion.</p>
+        </header>
+
+        <!-- Progress Dashboard -->
+        <section class="dashboard">
+            <div class="progress-circle-container">
+                <svg class="progress-svg">
+                    <circle class="progress-bg" cx="50" cy="50" r="40" />
+                    <circle class="progress-bar-fill" id="progressCircle" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="251.2" />
+                </svg>
+                <div class="progress-text">
+                    <span class="progress-val" id="progressPercent">0%</span>
+                    <span class="progress-label">Lore Terungkap</span>
+                </div>
+            </div>
+
+            <!-- Search Filter -->
+            <div class="search-filter-box">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" id="searchInput" class="search-input" placeholder="Cari nama, tempat, atau kata kunci lore..." oninput="filterLore()">
+            </div>
+
+            <!-- Actions -->
+            <div class="dashboard-actions">
+                <button class="btn" onclick="exportData()" title="Salin data progres ke clipboard">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="margin-right: 0.3rem;">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                    </svg>
+                    Export
+                </button>
+                <button class="btn btn-reset" onclick="resetProgress()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    Reset
+                </button>
+            </div>
+        </section>
+
+        <!-- Timeline / Cards List -->
+        <main class="timeline">
+
+            <!-- STEP 1: Highspire -->
+            <article class="lore-card" id="card-1" data-tags="highspire guild master corvin hale kerajaan aurelion tertutup kontrak">
+                <div class="timeline-indicator" onclick="toggleCard(1)"></div>
+                
+                <div class="card-header">
+                    <div class="header-left">
+                        <span class="step-num">Lokasi I — Awal Misi</span>
+                        <h2 class="card-title">Highspire (Guild Kerajaan)</h2>
+                        <span class="badge">Sesi Awal</span>
+                    </div>
+                    <div class="checkbox-wrapper" onclick="toggleCard(1)">
+                        <div class="custom-checkbox">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <span class="checkbox-label" id="label-card-1">Belum Terungkap</span>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card-left">
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            Kejadian & Pemicu
+                        </div>
+                        <div class="event-box">
+                            Party menerima kontrak penyelesaian gangguan di makam Prosperina dari Guild Master Corvin Hale.
+                        </div>
+
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 11.55C9.64 9.35 6.48 8 3 8v11c3.48 0 6.64 1.35 9 3.55 2.36-2.2 5.52-3.55 9-3.55V8c-3.48 0-6.64 1.35-9 3.55zM12 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+                            Lore Reveal: Politik & Kejanggalan
+                        </div>
+                        <ul class="fact-list">
+                            <li class="fact-item"><strong>Kerahasiaan Tingkat Tinggi:</strong> Kerajaan Aurelion terbukti sangat tertutup secara birokrasi dan informasi.</li>
+                            <li class="fact-item"><strong>Misi Minim Detail:</strong> Instruksi tertulis diberikan sangat minim. Guild Master meminta masalah diselesaikan secara "cepat dan senyap".</li>
+                            <li class="fact-item"><strong>Pengabaian Rakyat:</strong> Tidak ada perintah eksplisit untuk menolong atau melindungi warga sekitar makam. Fokus utama hanyalah stabilitas.</li>
+                            <li class="fact-item"><strong>Penyembunyian Sejarah:</strong> Guild Master Corvin Hale menolak membahas detail sejarah makam dan memilih memprioritaskan stabilitas kerajaan dibanding kebenaran historis.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card-right">
+                        <div class="notes-section">
+                            <div class="notes-header">
+                                <span class="notes-title">
+                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    Catatan DM / Reaksi Party
+                                </span>
+                                <span class="save-indicator" id="save-note-1">Saved</span>
+                            </div>
+                            <textarea id="note-1" class="notes-area" placeholder="Tulis catatan sesi, kecurigaan player, atau detail tambahan di sini..." oninput="saveNote(1)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- STEP 2: Brackenford -->
+            <article class="lore-card" id="card-2" data-tags="brackenford ser jorren feld veteran tua pengkhianatan legenda retak dituduh berkhianat">
+                <div class="timeline-indicator" onclick="toggleCard(2)"></div>
+                
+                <div class="card-header">
+                    <div class="header-left">
+                        <span class="step-num">Lokasi II — Jalur Perjalanan</span>
+                        <h2 class="card-title">Brackenford (Desa Jalur Perang)</h2>
+                        <span class="badge">Sesi Perjalanan</span>
+                    </div>
+                    <div class="checkbox-wrapper" onclick="toggleCard(2)">
+                        <div class="custom-checkbox">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <span class="checkbox-label" id="label-card-2">Belum Terungkap</span>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card-left">
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            Kejadian & Pemicu
+                        </div>
+                        <div class="event-box">
+                            Party singgah di desa kecil peninggalan jalur perang yang dipenuhi veteran tua.
+                        </div>
+
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 11.55C9.64 9.35 6.48 8 3 8v11c3.48 0 6.64 1.35 9 3.55 2.36-2.2 5.52-3.55 9-3.55V8c-3.48 0-6.64 1.35-9 3.55zM12 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+                            Lore Reveal: Retaknya Legenda Heroisme
+                        </div>
+                        <ul class="fact-list">
+                            <li class="fact-item"><strong>Kematian yang Ganjil:</strong> Seorang veteran perang tua (<strong>Ser Jorren Feld</strong>) membocorkan bahwa Prosperina <em>tidak mati di medan perang melawan musuh</em>, melainkan tewas secara misterius setelah perang selesai.</li>
+                            <li class="fact-item"><strong>Catatan yang Dihapus:</strong> Di sebuah penginapan tua, party menemukan dokumen/catatan sejarah lama. Satu baris tentang kematian Prosperina dicoret kasar dengan tulisan tangan yang berbunyi: <strong style="color: var(--danger);">"Dituduh berkhianat"</strong>.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card-right">
+                        <div class="notes-section">
+                            <div class="notes-header">
+                                <span class="notes-title">
+                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    Catatan DM / Reaksi Party
+                                </span>
+                                <span class="save-indicator" id="save-note-2">Saved</span>
+                            </div>
+                            <textarea id="note-2" class="notes-area" placeholder="Tulis catatan sesi, kecurigaan player, atau detail tambahan di sini..." oninput="saveNote(2)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- STEP 3: Old Battlefield -->
+            <article class="lore-card" id="card-3" data-tags="old battlefield hutan bekas medan perang undead terkoordinasi varkath liontin perwira visi mimpi prosperina dikhianati">
+                <div class="timeline-indicator" onclick="toggleCard(3)"></div>
+                
+                <div class="card-header">
+                    <div class="header-left">
+                        <span class="step-num">Lokasi III — Hutan Parit</span>
+                        <h2 class="card-title">Old Battlefield (Hutan Bekas Medan Perang)</h2>
+                        <span class="badge">Sesi Eksplorasi Luar</span>
+                    </div>
+                    <div class="checkbox-wrapper" onclick="toggleCard(3)">
+                        <div class="custom-checkbox">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <span class="checkbox-label" id="label-card-3">Belum Terungkap</span>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card-left">
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            Kejadian & Pemicu
+                        </div>
+                        <div class="event-box">
+                            Party dihadang oleh pasukan mayat hidup di parit-parit pertahanan bekas perang masa lalu.
+                        </div>
+
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 11.55C9.64 9.35 6.48 8 3 8v11c3.48 0 6.64 1.35 9 3.55 2.36-2.2 5.52-3.55 9-3.55V8c-3.48 0-6.64 1.35-9 3.55zM12 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+                            Lore Reveal: Anomali Kematian & Visi Mistis
+                        </div>
+                        <ul class="fact-list">
+                            <li class="fact-item"><strong>Undead Terkoordinasi:</strong> Mayat prajurit Aurelion dan musuh bebuyutannya (Varkath) bangkit dan bertarung secara berdampingan. Ada kebangkitan yang terkoordinasi secara taktis, bukan undead liar biasa.</li>
+                            <li class="fact-item"><strong>Lencana Kerajaan:</strong> Ditemukan <strong>liontin/lencana perwira tinggi Aurelion</strong> di antara kerangka undead, mengindikasikan adanya campur tangan/kendali spesifik dari dalam kerajaan.</li>
+                            <li class="fact-item"><strong>Malam Hari (Mimpi/Visi):</strong> Salah satu karakter mendapat penglihatan tentang aula istana Aurelion yang hangus. Sosok Prosperina tampak di sana—tidak marah, melainkan lelah dan berbisik:
+                                <div class="vision-quote">"Aku sudah bicara. Mereka memilih diam."</div>
+                                Hal ini mengindikasikan Prosperina bukanlah iblis jahat murni, melainkan sosok yang dikhianati dan dibungkam.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="card-right">
+                        <div class="notes-section">
+                            <div class="notes-header">
+                                <span class="notes-title">
+                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    Catatan DM / Reaksi Party
+                                </span>
+                                <span class="save-indicator" id="save-note-3">Saved</span>
+                            </div>
+                            <textarea id="note-3" class="notes-area" placeholder="Tulis catatan sesi, kecurigaan player, atau detail tambahan di sini..." oninput="saveNote(3)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- STEP 4: Graymere -->
+            <article class="lore-card" id="card-4" data-tags="graymere arsip kerajaan konspirasi eldenfall royal decree 1300-a varkath memo fitnah">
+                <div class="timeline-indicator" onclick="toggleCard(4)"></div>
+                
+                <div class="card-header">
+                    <div class="header-left">
+                        <span class="step-num">Lokasi IV — Pos Pengungsian</span>
+                        <h2 class="card-title">Graymere (Desa Pengungsian)</h2>
+                        <span class="badge">Sesi Investigasi Dokumen</span>
+                    </div>
+                    <div class="checkbox-wrapper" onclick="toggleCard(4)">
+                        <div class="custom-checkbox">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <span class="checkbox-label" id="label-card-4">Belum Terungkap</span>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card-left">
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            Kejadian & Pemicu
+                        </div>
+                        <div class="event-box">
+                            Party tiba di desa yang dipenuhi pengungsi kota Eldenfall. Militer Aurelion menjaga ketat perbatasan desa tanpa memberikan bantuan.
+                        </div>
+
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 11.55C9.64 9.35 6.48 8 3 8v11c3.48 0 6.64 1.35 9 3.55 2.36-2.2 5.52-3.55 9-3.55V8c-3.48 0-6.64 1.35-9 3.55zM12 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+                            Lore Reveal: Konspirasi Utuh di Arsip Kerajaan
+                        </div>
+                        <ul class="fact-list">
+                            <li class="fact-item"><strong>Sikap Pasif Militer:</strong> Tentara kerajaan membiarkan Eldenfall hancur, menolak membantu evakuasi pengungsi secara aktif, dan hanya melakukan karantina ketat di pinggiran.</li>
+                            <li class="fact-item"><strong>Arsip Rahasia Graymere (Sesi 2):</strong> Party berhasil menyusup ke Arsip Kerajaan dan menemukan dokumen krusial yang membuktikan Prosperina dijebak:
+                                <ul class="fact-sublist">
+                                    <li class="fact-subitem"><strong>Propaganda Varkath:</strong> Dokumen intelijen bersandi musuh yang menyebutkan <em>"Bibit telah ditanam"</em> untuk merusak reputasi sang pahlawan.</li>
+                                    <li class="fact-subitem"><strong>Royal Decree 1300-A:</strong> Surat perintah eksekusi resmi yang ditandatangani tergesa-gesa oleh Raja Aurelion karena paranoid terhadap pengaruh Prosperina.</li>
+                                    <li class="fact-subitem"><strong>Varkath Intelligence Memo:</strong> Dokumen berisi analisis musuh: <span style="font-style: italic; color: #f43f5e;">"Aurelion akan memakan pahlawannya sendiri."</span></li>
+                                </ul>
+                            </li>
+                            <li class="fact-item" style="color: #f87171;"><strong>Kesimpulan Mutlak:</strong> Prosperina difitnah secara terencana oleh Varkath, dan Kerajaan Aurelion termakan fitnah tersebut lalu mengeksekusi pahlawan mereka sendiri untuk menutupi keparanoian mereka.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card-right">
+                        <div class="notes-section">
+                            <div class="notes-header">
+                                <span class="notes-title">
+                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    Catatan DM / Reaksi Party
+                                </span>
+                                <span class="save-indicator" id="save-note-4">Saved</span>
+                            </div>
+                            <textarea id="note-4" class="notes-area" placeholder="Tulis catatan sesi, kecurigaan player, atau detail tambahan di sini..." oninput="saveNote(4)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- STEP 5: Eldenfall -->
+            <article class="lore-card" id="card-5" data-tags="eldenfall kota luluh lantak doa kosong makam prosperina anomali cahaya">
+                <div class="timeline-indicator" onclick="toggleCard(5)"></div>
+                
+                <div class="card-header">
+                    <div class="header-left">
+                        <span class="step-num">Lokasi V — Kota Mati</span>
+                        <h2 class="card-title">Eldenfall</h2>
+                        <span class="badge">Sesi Eksplorasi Kota</span>
+                    </div>
+                    <div class="checkbox-wrapper" onclick="toggleCard(5)">
+                        <div class="custom-checkbox">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <span class="checkbox-label" id="label-card-5">Belum Terungkap</span>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card-left">
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            Kejadian & Pemicu
+                        </div>
+                        <div class="event-box">
+                            Party memasuki reruntuhan Eldenfall yang hancur total akibat kepungan konstan mayat hidup.
+                        </div>
+
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 11.55C9.64 9.35 6.48 8 3 8v11c3.48 0 6.64 1.35 9 3.55 2.36-2.2 5.52-3.55 9-3.55V8c-3.48 0-6.64 1.35-9 3.55zM12 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+                            Lore Reveal: Titik Pusat Bencana
+                        </div>
+                        <ul class="fact-list">
+                            <li class="fact-item"><strong>Pola Serangan Taktis:</strong> Serangan undead sangat terkoordinasi dan secara dinamis memojokkan serta mengisolasi korban.</li>
+                            <li class="fact-item"><strong>Pusat Energi Anomali:</strong> Semua anomali sihir dan cahaya ungu pucat yang menguar di kota bersumber lurus ke arah Makam Prosperina di bawah alun-alun utama kota.</li>
+                            <li class="fact-item"><strong>Doa yang Hampa:</strong> Karakter religius (Cleric/Paladin) merasakan bahwa doa dan permohonan keagamaan yang ditujukan kepada Prosperina sebagai "Penyelamat" sudah kosong dan tidak lagi bersambut.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card-right">
+                        <div class="notes-section">
+                            <div class="notes-header">
+                                <span class="notes-title">
+                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    Catatan DM / Reaksi Party
+                                </span>
+                                <span class="save-indicator" id="save-note-5">Saved</span>
+                            </div>
+                            <textarea id="note-5" class="notes-area" placeholder="Tulis catatan sesi, kecurigaan player, atau detail tambahan di sini..." oninput="saveNote(5)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- STEP 6: Makam Prosperina -->
+            <article class="lore-card revealed-undead" id="card-6" data-tags="makam prosperina sepulcher of the savior dungeon iblis belzareth kontrak iblis boss battle relief kiamat undead">
+                <div class="timeline-indicator" onclick="toggleCard(6)"></div>
+                
+                <div class="card-header">
+                    <div class="header-left">
+                        <span class="step-num">Lokasi VI — Dungeon Akhir</span>
+                        <h2 class="card-title">Makam Prosperina (Sepulcher of the Savior)</h2>
+                        <span class="badge" style="color: var(--purple-magic); border-color: rgba(139, 92, 246, 0.4);">Sesi Konfrontasi Klimaks</span>
+                    </div>
+                    <div class="checkbox-wrapper" onclick="toggleCard(6)">
+                        <div class="custom-checkbox">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        </div>
+                        <span class="checkbox-label" id="label-card-6">Belum Terungkap</span>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card-left">
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            Kejadian & Pemicu
+                        </div>
+                        <div class="event-box">
+                            Eksplorasi dungeon inti di bawah reruntuhan kota, penuh teka-teki moral, pembuktian sejarah, dan pertempuran akhir.
+                        </div>
+
+                        <div class="lore-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 11.55C9.64 9.35 6.48 8 3 8v11c3.48 0 6.64 1.35 9 3.55 2.36-2.2 5.52-3.55 9-3.55V8c-3.48 0-6.64 1.35-9 3.55zM12 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
+                            Progres Penyelidikan Ruangan Makam
+                        </div>
+                        
+                        <!-- Sub-Checklist for dungeon rooms -->
+                        <div class="dungeon-rooms-grid">
+                            <div class="room-item" id="room-1" onclick="toggleRoom(1, event)">
+                                <div class="room-checkbox">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                </div>
+                                <div class="room-content">
+                                    <span class="room-name">1. Vestibule of Remembrance</span>
+                                    <span class="room-desc">Relief awal menunjukkan kejayaan Prosperina diagungkan sebagai pahlawan resmi Aurelion.</span>
+                                </div>
+                            </div>
+
+                            <div class="room-item" id="room-2" onclick="toggleRoom(2, event)">
+                                <div class="room-checkbox">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                </div>
+                                <div class="room-content">
+                                    <span class="room-name">2. Hall of Silenced Truths</span>
+                                    <span class="room-desc">Relief berubah kasar; rekan-rekan seperjuangan Prosperina dihapus paksa dari catatan sejarah.</span>
+                                </div>
+                            </div>
+
+                            <div class="room-item" id="room-3" onclick="toggleRoom(3, event)">
+                                <div class="room-checkbox">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                </div>
+                                <div class="room-content">
+                                    <span class="room-name">3. Chamber of Chains</span>
+                                    <span class="room-desc">Ditemukan rantai neraka (infernal). Terdengar bisikan ghaib: <em>"Janji telah dibayar."</em> (Petunjuk kontrak iblis).</span>
+                                </div>
+                            </div>
+
+                            <div class="room-item" id="room-4" onclick="toggleRoom(4, event)">
+                                <div class="room-checkbox">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                </div>
+                                <div class="room-content">
+                                    <span class="room-name">4. Archive of Ash</span>
+                                    <span class="room-desc">Sisa-sisa lembaran jurnal Prosperina yang terbakar, memuat keputusasaannya melihat rekan-rekannya disiksa.</span>
+                                </div>
+                            </div>
+
+                            <div class="room-item" id="room-5" onclick="toggleRoom(5, event)">
+                                <div class="room-checkbox">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                </div>
+                                <div class="room-content">
+                                    <span class="room-name">5. Threshold of the Savior</span>
+                                    <span class="room-desc">Teka-teki moral memicu visi saat Prosperina dipaksa menyaksikan eksekusi partinya oleh Raja Aurelion.</span>
+                                </div>
+                            </div>
+
+                            <div class="room-item" id="room-6" onclick="toggleRoom(6, event)">
+                                <div class="room-checkbox">
+                                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                </div>
+                                <div class="room-content">
+                                    <span class="room-name">6. Ruang Inti (Kebenaran Akhir)</span>
+                                    <span class="room-desc">Pertempuran bos & dialog kebenaran mutlak kontrak iblis Belzareth di tahun 1385.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem;">
+                            <div class="lore-section-title" style="color: var(--purple-magic);">
+                                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                                Rekap Kontrak Iblis & Kebenaran Pamungkas (Boss Room)
+                            </div>
+                            <div class="vision-quote" style="border-left-color: var(--gold-primary); background: rgba(212, 175, 55, 0.03); color: #fef08a;">
+                                "Karena rekan-rekanku dibantai oleh raja yang kami lindungi, keputusasaan menuntunku pada kegelapan. Kontrak diikat dengan Belzareth demi membalas Varkath. Namun iblis menagih upeti setelah 85 tahun..."
+                            </div>
+                            <ul class="fact-list">
+                                <li class="fact-item"><strong>Latar Belakang:</strong> Prosperina mengikat kontrak dengan <strong>Iblis Belzareth</strong> setelah kehilangan seluruh partynya karena dieksekusi raja Aurelion yang paranoid.</li>
+                                <li class="fact-item"><strong>Syarat Kebangkitan Wabah (Tahun 1385):</strong> Wabah undead bangkit karena 3 pemicu yang terpenuhi setelah 85 tahun:
+                                    <ul class="fact-sublist">
+                                        <li class="fact-subitem">Kebenaran kematian Prosperina terkubur dan dimanipulasi terlalu lama.</li>
+                                        <li class="fact-subitem">Kekaisaran Aurelion melemah secara militer akibat perang berkepanjangan.</li>
+                                        <li class="fact-subitem">Resonansi magis energi kebencian di dalam makam mencapai titik jenuh.</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card-right">
+                        <div class="notes-section">
+                            <div class="notes-header">
+                                <span class="notes-title">
+                                    <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                                    Catatan DM / Reaksi Party
+                                </span>
+                                <span class="save-indicator" id="save-note-6">Saved</span>
+                            </div>
+                            <textarea id="note-6" class="notes-area" placeholder="Tulis catatan sesi, kecurigaan player, atau detail tambahan di sini..." oninput="saveNote(6)"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </main>
+
+        <footer class="help-panel">
+            <p>Aurelion Lore Tracker — Dibuat untuk kenyamanan Dungeon Master dalam mencatat progres campaign.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">Data otomatis disimpan di penyimpanan lokal browser (localStorage) perangkat ini.</p>
+        </footer>
+    </div>
+
+    <script>
+        // State management
+        let state = {
+            revealedCards: [], // IDs of revealed cards (1 to 5)
+            revealedRooms: [], // IDs of revealed rooms in Step 6 (1 to 6)
+            notes: {} // Key-value store for notes
+        };
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            updateUI();
+        });
+
+        // Toggle state of normal cards
+        function toggleCard(cardId) {
+            const index = state.revealedCards.indexOf(cardId);
+            
+            if (cardId === 6) {
+                // If toggling the Tomb, toggle all or none of the sub-rooms
+                const allRoomsRevealed = state.revealedRooms.length === 6;
+                if (allRoomsRevealed) {
+                    state.revealedRooms = [];
+                } else {
+                    state.revealedRooms = [1, 2, 3, 4, 5, 6];
+                }
+            } else {
+                if (index > -1) {
+                    state.revealedCards.splice(index, 1);
+                } else {
+                    state.revealedCards.push(cardId);
+                }
+            }
+
+            saveState();
+            updateUI();
+        }
+
+        // Toggle sub-rooms in Step 6
+        function toggleRoom(roomId, event) {
+            event.stopPropagation(); // Stop from triggering card toggle
+            const index = state.revealedRooms.indexOf(roomId);
+            if (index > -1) {
+                state.revealedRooms.splice(index, 1);
+            } else {
+                state.revealedRooms.push(roomId);
+            }
+
+            saveState();
+            updateUI();
+        }
+
+        // Save note text and trigger visual indicator
+        function saveNote(cardId) {
+            const text = document.getElementById(`note-${cardId}`).value;
+            state.notes[cardId] = text;
+            saveState();
+
+            const indicator = document.getElementById(`save-note-${cardId}`);
+            indicator.style.opacity = '1';
+            
+            // Debounce/clear timeout for indicator fadeout
+            if (window[`saveTimeout-${cardId}`]) {
+                clearTimeout(window[`saveTimeout-${cardId}`]);
+            }
+            window[`saveTimeout-${cardId}`] = setTimeout(() => {
+                indicator.style.opacity = '0';
+            }, 1500);
+        }
+
+        // Calculate and update progress indicators
+        function updateUI() {
+            // Cards 1-5 count as 1 point each
+            // Rooms 1-6 count as 1 point each (Step 6 is fully revealed if all rooms are revealed)
+            const totalPoints = 11;
+            let revealedPoints = state.revealedCards.filter(id => id !== 6).length;
+            revealedPoints += state.revealedRooms.length;
+
+            const percentage = Math.round((revealedPoints / totalPoints) * 100);
+
+            // Update Progress Value Text
+            document.getElementById('progressPercent').innerText = `${percentage}%`;
+
+            // Update Circle Progress Bar
+            const circle = document.getElementById('progressCircle');
+            const radius = circle.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+
+            // Apply card styling classes
+            for (let i = 1; i <= 5; i++) {
+                const card = document.getElementById(`card-${i}`);
+                const label = document.getElementById(`label-card-${i}`);
+                if (state.revealedCards.includes(i)) {
+                    card.classList.add('revealed');
+                    label.innerText = "Terungkap";
+                } else {
+                    card.classList.remove('revealed');
+                    label.innerText = "Belum Terungkap";
+                }
+            }
+
+            // Room UI update
+            for (let i = 1; i <= 6; i++) {
+                const room = document.getElementById(`room-${i}`);
+                if (state.revealedRooms.includes(i)) {
+                    room.classList.add('revealed');
+                } else {
+                    room.classList.remove('revealed');
+                }
+            }
+
+            // Step 6 UI update
+            const card6 = document.getElementById('card-6');
+            const label6 = document.getElementById('label-card-6');
+            if (state.revealedRooms.length === 6) {
+                card6.classList.add('revealed');
+                label6.innerText = "Terungkap Mutlak";
+            } else if (state.revealedRooms.length > 0) {
+                card6.classList.add('revealed');
+                label6.innerText = `${state.revealedRooms.length}/6 Terungkap`;
+            } else {
+                card6.classList.remove('revealed');
+                label6.innerText = "Belum Terungkap";
+            }
+
+            // Load saved notes to textareas on fresh render (only once if textareas are empty)
+            for (let i = 1; i <= 6; i++) {
+                const textarea = document.getElementById(`note-${i}`);
+                if (textarea && state.notes[i] !== undefined && textarea.value !== state.notes[i]) {
+                    textarea.value = state.notes[i];
+                }
+            }
+        }
+
+        // Save current state to localStorage
+        function saveState() {
+            localStorage.setItem('aurelion_lore_tracker_state', JSON.stringify(state));
+        }
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('aurelion_lore_tracker_state');
+            if (saved) {
+                try {
+                    state = JSON.parse(saved);
+                    // Ensure backward compatibility of properties
+                    if (!state.revealedCards) state.revealedCards = [];
+                    if (!state.revealedRooms) state.revealedRooms = [];
+                    if (!state.notes) state.notes = {};
+                } catch (e) {
+                    console.error("Error loading saved state", e);
+                }
+            }
+        }
+
+        // Reset progress with confirmation
+        function resetProgress() {
+            if (confirm("Apakah Anda yakin ingin menghapus semua progres lore dan catatan DM? Tindakan ini tidak bisa dibatalkan.")) {
+                state = {
+                    revealedCards: [],
+                    revealedRooms: [],
+                    notes: {}
+                };
+                saveState();
+                
+                // Clear all textarea inputs in DOM
+                for (let i = 1; i <= 6; i++) {
+                    const textarea = document.getElementById(`note-${i}`);
+                    if (textarea) textarea.value = '';
+                }
+
+                updateUI();
+            }
+        }
+
+        // Search Filter function
+        function filterLore() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            for (let i = 1; i <= 6; i++) {
+                const card = document.getElementById(`card-${i}`);
+                const tags = card.getAttribute('data-tags').toLowerCase();
+                
+                if (query === '' || tags.includes(query)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            }
+        }
+
+        // Export data as JSON string (copies to clipboard)
+        function exportData() {
+            const dataStr = JSON.stringify(state, null, 2);
+            navigator.clipboard.writeText(dataStr).then(() => {
+                alert("Data progres berhasil disalin ke clipboard! Simpan teks ini di file catatan Anda jika ingin mem-backup.");
+            }).catch(err => {
+                console.error("Gagal menyalin data", err);
+                alert("Gagal menyalin data secara otomatis. Silakan salin manual dari console.");
+                console.log(dataStr);
+            });
+        }
+    </script>
+</body>
+</html>

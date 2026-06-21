@@ -22,6 +22,10 @@
             --loop1-color: #f59e0b;
             --loop2-color: #ef4444;
             --loop3-color: #3b82f6;
+            --brackenford-color: #2dd4bf;
+            --graymere-color: #c084fc;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
         }
 
         * {
@@ -64,7 +68,7 @@
             width: 280px;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border-gold);
-            padding: 2.5rem 1.5rem;
+            padding: 2.5rem 1.2rem;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -79,7 +83,8 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
+            padding-left: 0.5rem;
         }
 
         .sidebar-header svg {
@@ -103,7 +108,10 @@
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.5rem;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 0.25rem;
         }
 
         .nav-item {
@@ -113,8 +121,8 @@
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            padding: 0.85rem 1.25rem;
+            gap: 0.85rem;
+            padding: 0.8rem 1rem;
             color: var(--text-secondary);
             text-decoration: none;
             border-radius: 8px;
@@ -122,6 +130,7 @@
             font-weight: 500;
             border: 1px solid transparent;
             font-size: 0.95rem;
+            cursor: pointer;
         }
 
         .nav-link.active {
@@ -137,15 +146,15 @@
             filter: drop-shadow(0 0 5px var(--gold-glow));
         }
 
-        .nav-link:not(.active):hover {
+        .nav-link:not(.active):not(.disabled):hover {
             color: var(--text-primary);
             background: rgba(255, 255, 255, 0.03);
-            transform: translateX(5px);
+            transform: translateX(4px);
         }
 
         .nav-link svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             fill: var(--text-secondary);
             transition: fill 0.3s ease;
         }
@@ -153,18 +162,95 @@
         .nav-link.disabled {
             opacity: 0.4;
             cursor: not-allowed;
-            pointer-events: none;
         }
 
-        .nav-link.disabled:hover {
-            transform: none;
-            background: transparent;
+        /* Dropdown/Submenu Styling */
+        .nav-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 1rem;
+            color: var(--gold-primary);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-top: 0.75rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-section-title:hover {
+            color: var(--gold-secondary);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .nav-section-title .chevron-icon {
+            fill: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-section-title:hover .chevron-icon {
+            fill: var(--gold-secondary);
+        }
+
+        .nav-submenu {
+            list-style: none;
+            padding-left: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            border-left: 1px dashed rgba(212, 175, 55, 0.15);
+            margin-left: 1.5rem;
+            
+            /* Collapsed State Initial */
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            margin-bottom: 0;
+            margin-top: 0;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-bottom 0.3s ease;
+        }
+
+        /* Expanded State class */
+        .nav-item.expanded .nav-submenu {
+            max-height: 250px;
+            opacity: 1;
+            margin-top: 0.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-item.expanded .chevron-icon {
+            transform: rotate(180deg);
+            fill: var(--gold-primary);
+        }
+
+        .sub-link {
+            padding: 0.5rem 0.85rem !important;
+            font-size: 0.88rem !important;
+            border-radius: 6px;
+        }
+
+        .sub-indicator {
+            margin-right: 0.35rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .nav-link.active .sub-indicator {
+            color: var(--gold-secondary);
+            opacity: 1;
         }
 
         .sidebar-footer {
             margin-top: auto;
             font-size: 0.75rem;
-            color: rgba(148, 163, 184, 0.4);
+            color: rgba(148, 163, 184, 0.3);
             text-align: center;
             border-top: 1px solid var(--border-subtle);
             padding-top: 1.5rem;
@@ -178,15 +264,30 @@
             max-width: 1200px;
         }
 
+        /* Tab Content Styling */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         header {
-            margin-bottom: 4rem;
+            margin-bottom: 3.5rem;
             position: relative;
         }
 
         header::after {
             content: '';
             position: absolute;
-            bottom: -1.5rem;
+            bottom: -1.2rem;
             left: 0;
             width: 80px;
             height: 3px;
@@ -197,7 +298,7 @@
         .subtitle {
             font-family: 'Cinzel', serif;
             color: var(--gold-primary);
-            font-size: 1rem;
+            font-size: 0.95rem;
             letter-spacing: 3px;
             text-transform: uppercase;
             margin-bottom: 0.5rem;
@@ -206,7 +307,7 @@
 
         h1 {
             font-family: 'Cinzel', serif;
-            font-size: 2.8rem;
+            font-size: 2.6rem;
             font-weight: 900;
             letter-spacing: 1px;
             margin-bottom: 0.5rem;
@@ -215,14 +316,14 @@
 
         .section-desc {
             color: var(--text-secondary);
-            font-size: 1.1rem;
-            max-width: 800px;
+            font-size: 1.05rem;
+            max-width: 850px;
         }
 
         /* Timeline / Loops Container */
         .timeline {
             position: relative;
-            margin: 4rem 0;
+            margin: 3.5rem 0;
             padding-left: 2.5rem;
         }
 
@@ -243,16 +344,16 @@
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
-            padding: 2.5rem;
-            margin-bottom: 3.5rem;
+            padding: 2.2rem;
+            margin-bottom: 3rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
             backdrop-filter: blur(12px);
             transition: all 0.4s ease;
         }
 
         .loop-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+            border-color: rgba(212, 175, 55, 0.15);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
         }
 
@@ -260,7 +361,7 @@
             content: '';
             position: absolute;
             left: -2.5rem;
-            top: 2.2rem;
+            top: 2rem;
             width: 16px;
             height: 16px;
             border-radius: 50%;
@@ -278,18 +379,40 @@
         #loop-3 { border-left: 4px solid var(--loop3-color); }
         #loop-3::before { border: 4px solid var(--loop3-color); box-shadow: 0 0 10px var(--loop3-color); }
 
+        /* Timeline specific styles */
+        #timeline-1 { border-left: 4px solid var(--loop1-color); }
+        #timeline-1::before { border: 4px solid var(--loop1-color); box-shadow: 0 0 10px var(--loop1-color); }
+
+        #timeline-2 { border-left: 4px solid var(--accent-purple); }
+        #timeline-2::before { border: 4px solid var(--accent-purple); box-shadow: 0 0 10px var(--accent-purple); }
+
+        #timeline-3 { border-left: 4px solid var(--loop2-color); }
+        #timeline-3::before { border: 4px solid var(--loop2-color); box-shadow: 0 0 10px var(--loop2-color); }
+
+        #timeline-4 { border-left: 4px solid var(--gold-primary); }
+        #timeline-4::before { border: 4px solid var(--gold-primary); box-shadow: 0 0 10px var(--gold-primary); }
+
+        #timeline-5 { border-left: 4px solid var(--loop3-color); }
+        #timeline-5::before { border: 4px solid var(--loop3-color); box-shadow: 0 0 10px var(--loop3-color); }
+
+        .timeline-1-text { color: var(--loop1-color); }
+        .timeline-2-text { color: var(--accent-purple); }
+        .timeline-3-text { color: var(--loop2-color); }
+        .timeline-4-text { color: var(--gold-primary); }
+        .timeline-5-text { color: var(--loop3-color); }
+
         .loop-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.5rem;
         }
 
         .loop-number {
             font-family: 'Cinzel', serif;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -301,7 +424,7 @@
 
         .loop-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
+            font-size: 1.65rem;
             font-weight: 700;
             color: var(--text-primary);
             flex-basis: 100%;
@@ -310,8 +433,8 @@
 
         .loop-card p {
             color: var(--text-secondary);
-            margin-bottom: 1.2rem;
-            font-size: 1.05rem;
+            margin-bottom: 1rem;
+            font-size: 1.02rem;
             text-align: justify;
         }
 
@@ -321,10 +444,10 @@
 
         /* Alert / Highlight Callouts */
         .callout {
-            background: rgba(212, 175, 55, 0.03);
+            background: rgba(212, 175, 55, 0.02);
             border: 1px solid var(--border-gold);
             border-radius: 8px;
-            padding: 1.25rem 1.5rem;
+            padding: 1.2rem 1.4rem;
             margin: 1.5rem 0;
             position: relative;
             overflow: hidden;
@@ -347,30 +470,30 @@
             font-weight: 600;
             color: var(--gold-secondary);
             margin-bottom: 0.5rem;
-            font-size: 1rem;
+            font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .callout-title svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             fill: var(--gold-secondary);
         }
 
         .callout-content {
-            font-size: 0.98rem !important;
+            font-size: 0.96rem !important;
             margin-bottom: 0 !important;
             color: var(--text-secondary);
         }
 
         /* Cosmic Collision Alert */
         .cosmic-alert {
-            background: rgba(59, 130, 246, 0.03);
+            background: rgba(59, 130, 246, 0.02);
             border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 10px;
-            padding: 1.5rem 2rem;
-            margin: 2rem 0;
+            padding: 1.4rem 1.8rem;
+            margin: 1.8rem 0;
             position: relative;
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.05);
         }
@@ -387,20 +510,20 @@
 
         .cosmic-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: var(--loop3-color);
-            margin-bottom: 1rem;
+            margin-bottom: 0.85rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.6rem;
             letter-spacing: 1px;
         }
 
         .cosmic-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 1.25rem;
             margin-top: 1rem;
         }
 
@@ -411,23 +534,23 @@
         }
 
         .cosmic-item {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             border-radius: 8px;
-            padding: 1.25rem;
+            padding: 1.1rem;
         }
 
         .cosmic-item-title {
             font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.05rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 0.4rem;
         }
 
         .cosmic-item-desc {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             color: var(--text-secondary);
         }
 
@@ -435,8 +558,8 @@
         .effects-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin: 2rem 0;
+            gap: 1.25rem;
+            margin: 1.8rem 0;
         }
 
         @media (min-width: 768px) {
@@ -449,7 +572,7 @@
             background: rgba(255, 255, 255, 0.01);
             border: 1px solid rgba(255, 255, 255, 0.03);
             border-radius: 10px;
-            padding: 1.75rem;
+            padding: 1.5rem;
             transition: all 0.3s ease;
         }
 
@@ -459,33 +582,33 @@
         }
 
         .effect-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
             display: inline-block;
         }
 
         .effect-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: var(--gold-secondary);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .effect-desc {
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
         }
 
         /* Party Composition Cards */
         .party-section {
-            margin-top: 4rem;
+            margin-top: 3.5rem;
         }
 
         .party-title-main {
             font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
             text-align: center;
             color: var(--text-primary);
             position: relative;
@@ -497,7 +620,7 @@
             bottom: -0.5rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 80px;
             height: 2px;
             background: var(--gold-primary);
         }
@@ -505,8 +628,8 @@
         .party-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 2rem;
-            margin-top: 3rem;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
         }
 
         @media (min-width: 992px) {
@@ -519,7 +642,7 @@
             background: linear-gradient(180deg, rgba(25, 30, 45, 0.8) 0%, rgba(15, 18, 28, 0.9) 100%);
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
-            padding: 2.25rem 1.75rem;
+            padding: 2rem 1.5rem;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -528,7 +651,7 @@
         }
 
         .character-card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-6px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
@@ -555,16 +678,16 @@
         .char-oblivious:hover { border-color: rgba(148, 163, 184, 0.4); }
 
         .char-icon {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.03);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.5rem auto;
+            margin: 0 auto 1.25rem auto;
             border: 1px dashed rgba(255, 255, 255, 0.1);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .char-anchor .char-icon { border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); }
@@ -578,7 +701,7 @@
             text-transform: uppercase;
             margin-bottom: 0.5rem;
             display: inline-block;
-            padding: 0.2rem 0.6rem;
+            padding: 0.15rem 0.5rem;
             border-radius: 4px;
             font-weight: 700;
         }
@@ -588,24 +711,445 @@
         .char-oblivious .char-type { color: var(--text-secondary); background: rgba(148, 163, 184, 0.1); }
 
         .char-qty {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             font-family: 'Cinzel', serif;
         }
 
         .char-qty span {
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
             font-family: 'Outfit', sans-serif;
             font-weight: 400;
         }
 
         .char-desc {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             color: var(--text-secondary);
             text-align: center;
+        }
+
+        /* Highspire Specific Layouts */
+        .info-banner {
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.08) 0%, rgba(10, 13, 20, 0.4) 100%);
+            border: 1px solid var(--border-gold);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .info-banner-badge {
+            position: absolute;
+            top: -0.75rem;
+            left: 1.5rem;
+            background: var(--gold-primary);
+            color: #000;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .info-banner h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .info-banner p {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.6;
+        }
+
+        /* Highspire Scenes */
+        .scene-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            margin: 3rem 0;
+        }
+
+        .scene-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2.2rem;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .scene-box:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .scene-num {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: var(--gold-primary);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .scene-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.5rem;
+        }
+
+        .scene-meta {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-badge {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--gold-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .meta-badge svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--gold-primary);
+        }
+
+        .scene-body p {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .scene-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .scene-body strong {
+            color: var(--text-primary);
+        }
+
+        /* Exploration Cards Grid */
+        .explore-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .explore-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .explore-card {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .explore-card:hover {
+            background: rgba(212, 175, 55, 0.02);
+            border-color: rgba(212, 175, 55, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .explore-card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold-primary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .explore-card-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Pointer Styles */
+        .section-block {
+            margin-bottom: 4rem;
+        }
+
+        .section-block-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            border-bottom: 1px solid var(--border-gold);
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-block-title svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--gold-primary);
+        }
+
+        /* Locations List styling */
+        .locations-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .locations-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .location-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 1.8rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .location-card:hover {
+            border-color: rgba(212, 175, 55, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .location-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .location-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.25rem;
+            color: var(--gold-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .location-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* NPC Profile card styling */
+        .npc-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .npc-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .npc-card {
+            background: linear-gradient(135deg, rgba(20, 24, 37, 0.9) 0%, rgba(10, 12, 20, 0.95) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .npc-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--border-gold);
+        }
+
+        .npc-header {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .npc-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px dashed var(--border-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .npc-identity h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .npc-identity span {
+            font-size: 0.85rem;
+            color: var(--gold-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .npc-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            font-size: 0.98rem;
+            color: var(--text-secondary);
+        }
+
+        .npc-meta-item strong {
+            color: var(--text-primary);
+        }
+
+        .npc-quote {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 3px solid var(--gold-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-style: italic;
+            color: var(--gold-secondary);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Item Display Box styling */
+        .item-card {
+            background: linear-gradient(90deg, rgba(168, 85, 247, 0.04) 0%, rgba(10, 12, 20, 0.5) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 2.2rem;
+            box-shadow: 0 8px 30px rgba(168, 85, 247, 0.05);
+            position: relative;
+        }
+
+        .item-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-purple);
+        }
+
+        .item-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .item-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+        }
+
+        .item-identity h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.45rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .item-badge {
+            background: rgba(168, 85, 247, 0.15);
+            color: #d8b4fe;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            display: inline-block;
+        }
+
+        .item-specs-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (min-width: 768px) {
+            .item-specs-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .item-spec-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+
+        .item-spec-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: #d8b4fe;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .item-spec-value {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -622,27 +1166,123 @@
 
         <ul class="nav-menu">
             <li class="nav-item">
-                <a href="#intro" class="nav-link active">
+                <a class="nav-link active" data-target="tab-intro">
                     <svg viewBox="0 0 24 24">
                         <path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
                     </svg>
                     Intro & Ringkasan
                 </a>
             </li>
+
             <li class="nav-item">
-                <a href="#" class="nav-link disabled">
+                <a class="nav-link" data-target="tab-timeline">
                     <svg viewBox="0 0 24 24">
-                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                     </svg>
-                    Sesi 1 (Locked)
+                    Timeline Resmi
                 </a>
             </li>
+
+            <!-- Highspire Dropdown Sub-section -->
             <li class="nav-item">
-                <a href="#" class="nav-link disabled">
+                <div class="nav-section-title" id="highspire-toggle">
+                    <div style="display: flex; align-items: center; gap: 0.85rem;">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99zM13 16h-2v2h2v-2zm0-6h-2v4h2v-4z"/>
+                        </svg>
+                        <span>Highspire</span>
+                    </div>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </div>
+                <ul class="nav-submenu">
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-highspire-naratif">
+                            <span class="sub-indicator">•</span> Naratif
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-highspire-scene">
+                            <span class="sub-indicator">•</span> Scene
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-highspire-pointer">
+                            <span class="sub-indicator">•</span> Pointer
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Brackenford Dropdown Sub-section -->
+            <li class="nav-item">
+                <div class="nav-section-title" id="brackenford-toggle">
+                    <div style="display: flex; align-items: center; gap: 0.85rem;">
+                        <svg viewBox="0 0 24 24" style="fill: var(--brackenford-color); filter: drop-shadow(0 0 5px rgba(45, 212, 191, 0.25));">
+                            <path d="M12 2c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l2.79-2.79C10.09 18.78 11.02 19 12 19c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
+                        </svg>
+                        <span style="color: var(--brackenford-color);">Brackenford</span>
+                    </div>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </div>
+                <ul class="nav-submenu">
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-brackenford-naratif">
+                            <span class="sub-indicator" style="color: var(--brackenford-color);">•</span> Naratif
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-brackenford-scene">
+                            <span class="sub-indicator" style="color: var(--brackenford-color);">•</span> Scene
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-brackenford-pointer">
+                            <span class="sub-indicator" style="color: var(--brackenford-color);">•</span> Pointer
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Old Battlefield Dropdown Sub-section -->
+            <li class="nav-item">
+                <div class="nav-section-title" id="oldbattlefield-toggle">
+                    <div style="display: flex; align-items: center; gap: 0.85rem;">
+                        <span style="width: 18px; height: 18px; display: inline-block;"></span>
+                        <span style="color: var(--graymere-color);">Old Battlefield</span>
+                    </div>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </div>
+                <ul class="nav-submenu">
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-oldbattlefield-naratif">
+                            <span class="sub-indicator" style="color: var(--graymere-color);">•</span> Naratif
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-oldbattlefield-scene">
+                            <span class="sub-indicator" style="color: var(--graymere-color);">•</span> Scene
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-oldbattlefield-pointer">
+                            <span class="sub-indicator" style="color: var(--graymere-color);">•</span> Pointer
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            
+            <li class="nav-item" style="margin-top: 1rem;">
+                <a class="nav-link disabled">
                     <svg viewBox="0 0 24 24">
                         <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
                     </svg>
-                    Sesi 2 (Locked)
+                    Sesi 4 (Locked)
                 </a>
             </li>
         </ul>
@@ -653,128 +1293,1276 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main id="intro">
-        <header>
-            <div class="subtitle">Skenario Aurelion — Benua Solmarch</div>
-            <h1>Siklus Waktu & Kausalitas</h1>
-            <p class="section-desc">Peta kronologis rekonstruksi takdir Kerajaan Aurelion, dari tragedi pemberontakan kosmik hingga era kedamaian semu dalam sangkar emas Dewi Keabadian.</p>
-        </header>
+    <main>
+        
+        <!-- ==================== TAB: INTRO ==================== -->
+        <div id="tab-intro" class="tab-content active">
+            <header>
+                <div class="subtitle">Skenario Aurelion — Benua Solmarch</div>
+                <h1>Siklus Waktu & Kausalitas</h1>
+                <p class="section-desc">Peta kronologis rekonstruksi takdir Kerajaan Aurelion, dari tragedi pemberontakan kosmik hingga era kedamaian semu dalam sangkar emas Dewi Keabadian.</p>
+            </header>
 
-        <!-- Timeline for the Loops -->
-        <section class="timeline">
-            
-            <!-- LOOP 1 CARD -->
-            <div class="loop-card" id="loop-1">
-                <div class="loop-header">
-                    <span class="loop-number loop-1-text">Siklus Ke-1</span>
-                    <h2 class="loop-title">Tragedi Party A, Pemberontakan, dan Motif Rahasia Dewi</h2>
-                </div>
-                <p>Semuanya bermula di tahun <strong>1385 AGKW</strong> ketika makam pahlawan kuno Prosperina di Eldenfall meledak oleh kutukan <em>undead</em>. <strong>Party A</strong> maju menghadapi ancaman tersebut, mengalahkan Prosperina, dan berhasil membebaskan jiwanya dari kontrak iblis Belzareth.</p>
-                <p>Namun, begitu mereka melangkah keluar dari makam dan masuk ke Kerajaan Keabadian (Tokoshie), mereka dijebak oleh <strong>Dewi Keabadian (Kurumagatsu)</strong> untuk dijadikan subjek eksperimen kosmik dan baterai <strong>"Jangkar"</strong> waktu. <strong>Jangkar</strong> ini bertindak sebagai pembatas (<em>restriction</em>) bagi Dewi Keabadian; tanpa adanya Jangkar aktif sebagai tumpuan kausalitas, sang Dewi tidak akan memiliki kekuatan untuk memutar atau me-<em>looping</em> waktu. Di sana, mereka terkena <em>wipeout</em> (mati) dan di-<em>reset</em> terus-menerus dalam siklus pengejaran kesempurnaan absolut milik sang Dewi.</p>
-                <p>Sadar bahwa mereka hanya dijadikan komponen abadi, Party A melakukan pemberontakan. Namun, <strong>pemberontakan tersebut gagal total</strong> karena kekuatan Dewi terlalu perkasa di domainnya. Di ambang kehancuran total, Party A mengambil langkah nekat: mereka mengorbankan diri demi mengutus <strong>1 orang untuk kabur menembus ruang-waktu</strong> ke dunia luar membawa memori asli mereka.</p>
+            <!-- Timeline for the Loops -->
+            <section class="timeline">
                 
-                <div class="callout">
-                    <div class="callout-title">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                        Eksistensi Jangkar &amp; Mega-Loop
+                <!-- LOOP 1 CARD -->
+                <div class="loop-card" id="loop-1">
+                    <div class="loop-header">
+                        <span class="loop-number loop-1-text">Siklus Ke-1</span>
+                        <h2 class="loop-title">Tragedi Party A, Pemberontakan, dan Motif Rahasia Dewi</h2>
                     </div>
-                    <p class="callout-content">
-                        Melihat pelarian itu, Dewi Keabadian menyadari kalkulasi kesempurnaannya cacat. Mengetahui si pelarian adalah <strong>Jangkar terakhir</strong> yang tersisa, sang Dewi sengaja <strong>menggunakan esensi si Jangkar yang kabur sebagai pemantik paksa untuk melakukan <em>mega-loop</em></strong>—menarik mundur seluruh garis waktu dunia luar jauh ke belakang ke titik sebelum pertarungan melawan Prosperina dimulai. Dewi ingin mencari kandidat Jangkar baru yang jauh lebih kuat dan sempurna di loop selanjutnya.
-                    </p>
-                </div>
-            </div>
-
-            <!-- LOOP 2 CARD -->
-            <div class="loop-card" id="loop-2">
-                <div class="loop-header">
-                    <span class="loop-number loop-2-text">Siklus Ke-2</span>
-                    <h2 class="loop-title">Kegagalan Party B &amp; Pembajakan Makam</h2>
-                </div>
-                <p>Di dalam realitas baru pasca <em>mega-loop</em>, dunia luar berjalan dengan takdir yang bergeser. Kali ini, giliran <strong>Party B</strong> yang tiba di makam Prosperina. Mereka berhasil menang, namun dengan cara yang brutal—langsung menghancurkan Prosperina menjadi abu tanpa pernah mencoba berdialog atau memastikan kematiannya secara tuntas.</p>
-                <p>Bagi Dewi Keabadian yang perfeksionis, cara ini dinilai cacat dan gagal memenuhi standar kesempurnaan.</p>
-                <p>Namun, di momen rentan saat tubuh Prosperina hancur menjadi abu, Dewi Keabadian langsung mengintervensi dunia luar. Sang Dewi membajak makam tersebut, lalu <strong>mengekang dan mengunci jiwa Prosperina tepat di dalam makamnya sendiri di Eldenfall</strong>.</p>
-                <p>Dewi mengubah fungsi jiwa Prosperina menjadi boneka penguji mandiri yang dikendalikan penuh oleh kesadaran sang Dewi sendiri, demi menyaring petualang baru (kandidat Jangkar) yang jauh lebih tangguh di <em>loop</em> berikutnya. Begitu proses penguncian jiwa selesai, Dewi Keabadian kembali menekan tombol <em>looping</em>.</p>
-            </div>
-
-            <!-- LOOP 3 CARD -->
-            <div class="loop-card" id="loop-3">
-                <div class="loop-header">
-                    <span class="loop-number loop-3-text">Siklus Ke-3</span>
-                    <h2 class="loop-title">Penarikan Jiwa Kosmik &amp; Terciptanya Kedamaian Semu</h2>
-                </div>
-                <p>Di sinilah momen krusial itu terjadi. Si Jangkar dari Party A yang berada di luar ruang-waktu <strong>sudah merasakan bahwa riak anomali <em>looping</em> akan terjadi sekali lagi</strong>. Sebelum kilatan <em>reset</em> realitas itu menghantam, dalam sepersekian detik kosmik, si Jangkar dengan cepat <strong>meraih dan menarik fisik dua orang dari Party B</strong> yang saat itu berada di dekatnya.</p>
-                
-                <div class="cosmic-alert">
-                    <div class="cosmic-title">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        Tabrakan Kausalitas Gelombang Reset
-                    </div>
-                    <div class="cosmic-grid">
-                        <div class="cosmic-item">
-                            <div class="cosmic-item-title">Si Jangkar (Party A)</div>
-                            <div class="cosmic-item-desc">Karena dia adalah Jangkar sah yang memicu <em>mega-loop</em> pertama, ruang dan waktu melindunginya. Dia terbangun dengan <strong>tubuh yang sama dan ingatan yang utuh</strong>.</div>
+                    <p>Semuanya bermula di tahun <strong>1340 AGKW</strong> ketika makam pahlawan kuno Prosperina di Eldenfall meledak oleh kutukan <em>undead</em>. <strong>Party A</strong> maju menghadapi ancaman tersebut, mengalahkan Prosperina, and berhasil membebaskan jiwanya dari kontrak iblis Belzareth.</p>
+                    <p>Namun, begitu mereka melangkah keluar dari makam dan masuk ke Kerajaan Keabadian (Tokoshie), mereka dijebak oleh <strong>Dewi Keabadian (Kurumagatsu)</strong> untuk dijadikan subjek eksperimen kosmik dan baterai <strong>"Jangkar"</strong> waktu. <strong>Jangkar</strong> ini bertindak sebagai pembatas (<em>restriction</em>) bagi Dewi Keabadian; tanpa adanya Jangkar aktif sebagai tumpuan kausalitas, sang Dewi tidak akan memiliki kekuatan untuk memutar atau me-<em>looping</em> waktu. Di sana, mereka terkena <em>wipeout</em> (mati) dan di-<em>reset</em> terus-menerus dalam siklus pengejaran kesempurnaan absolut milik sang Dewi.</p>
+                    <p>Sadar bahwa mereka hanya dijadikan komponen abadi, Party A melakukan pemberontakan. Namun, <strong>pemberontakan tersebut gagal total</strong> karena kekuatan Dewi terlalu perkasa di domainnya. Di ambang kehancuran total, Party A mengambil langkah nekat: mereka mengorbankan diri demi mengutus <strong>1 orang untuk kabur menembus ruang-waktu</strong> ke dunia luar membawa memori asli mereka.</p>
+                    
+                    <div class="callout">
+                        <div class="callout-title">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            Eksistensi Jangkar &amp; Mega-Loop
                         </div>
-                        <div class="cosmic-item">
-                            <div class="cosmic-item-title">Dua Penumpang (Party B)</div>
-                            <div class="cosmic-item-desc">Hukum waktu menolak mereplikasi fisik lama mereka karena bukan Jangkar sah. Tubuh asli mereka terhapus, namun jiwa &amp; ingatan lama mereka berhasil lolos dari penghapusan dan <strong>bereinkarnasi ke dalam tubuh baru yang sepenuhnya berbeda</strong>.</div>
+                        <p class="callout-content">
+                            Melihat pelarian itu, Dewi Keabadian menyadari kalkulasi kesempurnaannya cacat. Mengetahui si pelarian adalah <strong>Jangkar terakhir</strong> yang tersisa, sang Dewi sengaja <strong>menggunakan esensi si Jangkar yang kabur sebagai pemantik paksa untuk melakukan <em>mega-loop</em></strong>—menarik mundur seluruh garis waktu dunia luar jauh ke belakang ke titik sebelum pertarungan melawan Prosperina dimulai. Dewi ingin mencari kandidat Jangkar baru yang jauh lebih kuat dan sempurna di loop selanjutnya.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- LOOP 2 CARD -->
+                <div class="loop-card" id="loop-2">
+                    <div class="loop-header">
+                        <span class="loop-number loop-2-text">Siklus Ke-2</span>
+                        <h2 class="loop-title">Kegagalan Party B &amp; Pembajakan Makam</h2>
+                    </div>
+                    <p>Di dalam realitas baru pasca <em>mega-loop</em>, dunia luar berjalan dengan takdir yang bergeser. Kali ini, giliran <strong>Party B</strong> yang tiba di makam Prosperina. Mereka berhasil menang, namun dengan cara yang brutal—langsung menghancurkan Prosperina menjadi abu tanpa pernah mencoba berdialog atau memastikan kematiannya secara tuntas.</p>
+                    <p>Bagi Dewi Keabadian yang perfeksionis, cara ini dinilai cacat dan gagal memenuhi standar kesempurnaan.</p>
+                    <p>Namun, di momen rentan saat tubuh Prosperina hancur menjadi abu, Dewi Keabadian langsung mengintervensi dunia luar. Sang Dewi membajak makam tersebut, lalu <strong>mengekang dan mengunci jiwa Prosperina tepat di dalam makamnya sendiri di Eldenfall</strong>.</p>
+                    <p>Dewi mengubah fungsi jiwa Prosperina menjadi boneka penguji mandiri yang dikendalikan penuh oleh kesadaran sang Dewi sendiri, demi menyaring petualang baru (kandidat Jangkar) yang jauh lebih tangguh di <em>loop</em> berikutnya. Begitu proses penguncian jiwa selesai, Dewi Keabadian kembali menekan tombol <em>looping</em>.</p>
+                </div>
+
+                <!-- LOOP 3 CARD -->
+                <div class="loop-card" id="loop-3">
+                    <div class="loop-header">
+                        <span class="loop-number loop-3-text">Siklus Ke-3</span>
+                        <h2 class="loop-title">Penarikan Jiwa Kosmik &amp; Terciptanya Kedamaian Semu</h2>
+                    </div>
+                    <p>Di sinilah momen krusial itu terjadi. Si Jangkar dari Party A yang berada di luar ruang-waktu <strong>sudah merasakan bahwa riak anomali <em>looping</em> akan terjadi sekali lagi</strong>. Sebelum kilatan <em>reset</em> realitas itu menghantam, dalam sepersekian detik kosmik, si Jangkar dengan cepat <strong>meraih dan menarik fisik dua orang dari Party B</strong> yang saat itu berada di dekatnya.</p>
+                    
+                    <div class="cosmic-alert">
+                        <div class="cosmic-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            Tabrakan Kausalitas Gelombang Reset
+                        </div>
+                        <div class="cosmic-grid">
+                            <div class="cosmic-item">
+                                <div class="cosmic-item-title">Si Jangkar (Party A)</div>
+                                <div class="cosmic-item-desc">Karena dia adalah Jangkar sah yang memicu <em>mega-loop</em> pertama, ruang dan waktu melindunginya. Dia terbangun dengan <strong>tubuh yang sama dan ingatan yang utuh</strong>.</div>
+                            </div>
+                            <div class="cosmic-item">
+                                <div class="cosmic-item-title">Dua Penumpang (Party B)</div>
+                                <div class="cosmic-item-desc">Hukum waktu menolak mereplikasi fisik lama mereka karena bukan Jangkar sah. Tubuh asli mereka terhapus, namun jiwa &amp; ingatan lama mereka berhasil lolos dari penghapusan dan <strong>bereinkarnasi ke dalam tubuh baru yang sepenuhnya berbeda</strong>.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p>Ketika <em>Loop</em> ke-3 ini tercipta, intervensi Dewi yang mengekang jiwa Prosperina di dalam makam pada <em>loop</em> sebelumnya membawa dampak <em>butterfly effect</em> yang masif ke dunia luar:</p>
+                    
+                    <div class="effects-grid">
+                        <div class="effect-card">
+                            <span class="effect-icon">🛡️</span>
+                            <div class="effect-title">Lumpuhnya Kontrak Iblis</div>
+                            <div class="effect-desc">Karena jiwa Prosperina telah disita dan dikunci oleh kekuatan Dewi Keabadian, kontrak iblis Belzareth kehilangan wadah utamanya di makam. Ledakan wabah <em>undead</em> yang seharusnya menghancurkan kota Eldenfall dan Graymere di tahun 1340 AGKW tidak pernah terjadi.</div>
+                        </div>
+                        <div class="effect-card">
+                            <span class="effect-icon">🤝</span>
+                            <div class="effect-title">Terciptanya Gencatan Senjata</div>
+                            <div class="effect-desc">Tanpa adanya ancaman kosmik <em>undead</em> yang menguras logistik and moral bangsa, konflik konvensional antara Kerajaan Aurelion dan Dominion Varkath mereda. Kedua kerajaan setuju untuk mengambil jalan <strong>gencatan senjata (damai bersyarat)</strong>.</div>
+                        </div>
+                    </div>
+
+                    <p>Dunia luar tiba-tiba menjadi damai, dan Aurelion pun menggelar perayaan megah <strong>Aurelion Harvest Festival</strong>.</p>
+                </div>
+
+            </section>
+
+            <!-- Party Composition Section -->
+            <section class="party-section">
+                <h2 class="party-title-main">Komposisi Anggota Party C</h2>
+                <p style="text-align: center; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem auto;">Di sinilah kelima orang ini akhirnya dipertemukan oleh takdir baru di garis waktu Siklus Ke-3 yang penuh kedamaian semu.</p>
+                
+                <div class="party-grid">
+                    
+                    <!-- Party Member 1 -->
+                    <div class="character-card char-anchor">
+                        <div class="char-icon">⏳</div>
+                        <span class="char-type">Jangkar Asli</span>
+                        <div class="char-qty">1 <span>Karakter</span></div>
+                        <p class="char-desc">Berasal dari <strong>Party A</strong>. Terbangun dengan tubuh yang sama dan ingatan utuh tentang kegagalan pemberontakan di Tokoshie. Membawa beban berat sebagai pelarian waktu.</p>
+                    </div>
+
+                    <!-- Party Member 2 -->
+                    <div class="character-card char-passenger">
+                        <div class="char-icon">🌀</div>
+                        <span class="char-type">Penumpang Memori</span>
+                        <div class="char-qty">2 <span>Karakter</span></div>
+                        <p class="char-desc">Berasal dari <strong>Party B</strong>. Memiliki jiwa dan ingatan lama tentang pertarungan brutal di makam Prosperina, namun dipaksa bereinkarnasi ke dalam wadah/tubuh baru yang asing.</p>
+                    </div>
+
+                    <!-- Party Member 3 -->
+                    <div class="character-card char-oblivious">
+                        <div class="char-icon">👁️‍🗨️</div>
+                        <span class="char-type">Warga Asli</span>
+                        <div class="char-qty">2 <span>Karakter</span></div>
+                        <p class="char-desc">Warga asli dunia baru yang lahir dan hanya mengetahui kedamaian era gencatan senjata. Tidak sadar bahwa dunia mereka sebenarnya adalah sangkar emas yang menanti di-<em>reset</em>.</p>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== TAB: TIMELINE RESMI ==================== -->
+        <div id="tab-timeline" class="tab-content">
+            <header>
+                <div class="subtitle">Skenario Aurelion — Garis Waktu Resmi</div>
+                <h1>Timeline Resmi (Kanon Baru)</h1>
+                <p class="section-desc">Garis waktu resmi sejarah Kerajaan Aurelion yang telah disinkronkan untuk mencegah disonansi kronologis di masa depan.</p>
+            </header>
+
+            <section class="timeline">
+                
+                <!-- EVENT 1 CARD -->
+                <div class="loop-card" id="timeline-1">
+                    <div class="loop-header">
+                        <span class="loop-number timeline-1-text">1300 AGKW</span>
+                        <h2 class="loop-title">Puncak Kejayaan &amp; Akhir Perang Pertama</h2>
+                    </div>
+                    <p>Perang besar pertama antara <strong>Kerajaan Aurelion</strong> dan <strong>Dominion Varkath</strong> mencapai puncaknya. Aurelion berhasil memenangkan peperangan ini berkat kekuatan luar biasa dari <strong>Prosperina</strong> beserta party pahlawannya, yang membawa kejayaan mutlak bagi kerajaan.</p>
+                </div>
+
+                <!-- EVENT 2 CARD -->
+                <div class="loop-card" id="timeline-2">
+                    <div class="loop-header">
+                        <span class="loop-number timeline-2-text">1310 AGKW</span>
+                        <h2 class="loop-title">Pengkhianatan &amp; Penulisan Ulang Sejarah</h2>
+                    </div>
+                    <p>Dominion Varkath yang kalah secara militer berhasil menanamkan fitnah dan benih Paranoia ke dalam lingkaran dalam Kerajaan Aurelion. Akibat rasa takut dan paranoia raja, <strong>Prosperina dan seluruh partynya dieksekusi secara bersamaan</strong>.</p>
+                    <p>Kerajaan Aurelion kemudian melakukan rekayasa sejarah massal, mencatat di dokumen publik bahwa mereka gugur dengan terhormat melawan musuh di medan perang, dan menutup rapat-rapat fakta eksekusi yang memalukan ini dalam arsip militer rahasia (<em>The Old Ledger</em>).</p>
+                </div>
+
+                <!-- EVENT 3 CARD -->
+                <div class="loop-card" id="timeline-3">
+                    <div class="loop-header">
+                        <span class="loop-number timeline-3-text">1312 AGKW</span>
+                        <h2 class="loop-title">Invasi II &amp; Kejatuhan Aurelion</h2>
+                    </div>
+                    <p>Kehilangan pahlawan terkuat dan figur militer utama mereka, pertahanan Kerajaan Aurelion melemah drastis. Dominion Varkath melihat celah pertahanan yang menganga ini dan langsung melancarkan <strong>invasi kedua</strong>.</p>
+                </div>
+
+                <!-- EVENT 4 CARD -->
+                <div class="loop-card" id="timeline-4">
+                    <div class="loop-header">
+                        <span class="loop-number timeline-4-text">1320 AGKW</span>
+                        <h2 class="loop-title">Kemenangan Varkath &amp; Era Damai Bersyarat</h2>
+                    </div>
+                    <p>Setelah delapan tahun peperangan yang melelahkan dan menguras habis sumber daya, Varkath memenangkan perang berkepanjangan ini. Dunia akhirnya memasuki era gencatan senjata dan kedamaian bersyarat yang menekan kedaulatan Aurelion.</p>
+                </div>
+
+                <!-- EVENT 5 CARD -->
+                <div class="loop-card" id="timeline-5">
+                    <div class="loop-header">
+                        <span class="loop-number timeline-5-text">7 Kythorn 1340 AGKW</span>
+                        <h2 class="loop-title">Masa Kini (Dimulainya Campaign / Loop 3)</h2>
+                    </div>
+                    <p>Tepat tiga puluh tahun sejak eksekusi rahasia Prosperina. <strong>Aurelion Harvest Festival</strong> sedang digelar secara megah untuk merayakan "Tahun Kedamaian" di seluruh penjuru negeri.</p>
+                    <p>Di sinilah <strong>Party C terbentuk</strong>, menemukan buku arsip tua berumur 30 tahun (<em>The Old Ledger</em>) yang usang di Brackenford, dan menyadari bahwa sejarah agung yang dirayakan hari ini adalah kebohongan besar.</p>
+                </div>
+
+            </section>
+        </div>
+
+
+        <!-- ==================== TAB: HIGHSPIRE NARATIF ==================== -->
+        <div id="tab-highspire-naratif" class="tab-content">
+            <header>
+                <div class="subtitle">Skenario Aurelion — Highspire</div>
+                <h1>Sangkar Emas</h1>
+                <p class="section-desc">Alur narasi utama perjumpaan Party C di tengah gemerlap festival palsu yang menutupi kebenaran sejarah.</p>
+            </header>
+
+            <!-- Condition Card -->
+            <div class="info-banner">
+                <span class="info-banner-badge">Kondisi Awal</span>
+                <h3>Highspire &amp; Aurelion Harvest Festival</h3>
+                <p>Highspire, kota besar pusat administratif Kerajaan Aurelion, sedang merayakan <strong>Aurelion Harvest Festival</strong>. Pesta ini adalah perayaan "Tahun Kedamaian" antara Aurelion dan Dominion Varkath. Suasana sangat meriah: bendera kedua faksi berkibar bersama, musik megah mengalun di penjuru kota, namun bagi mereka yang peka, kedamaian ini terasa terlalu dipaksakan dan tidak wajar.</p>
+            </div>
+
+            <!-- Narrative Timeline -->
+            <div class="scene-container">
+                
+                <!-- Scene 1 -->
+                <div class="scene-box">
+                    <span class="scene-num">Scene 1</span>
+                    <h3 class="scene-title">Cermin Pantulan Jiwa (Pertemuan Party A &amp; B)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: The Pavilion of Reflections</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">🎭 Karakter: Party A (Jangkar) &amp; Party B (Penumpang)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Dua karakter Penumpang (Party B) masuk ke wahana ilusi cermin di pojok festival. Alih-alih memantulkan wujud fisik dari tubuh baru mereka, cermin ajaib tersebut malah memantulkan <strong>wujud tubuh asli mereka yang mati di Loop 2</strong>. Kejadian ini membuat mereka panik luar biasa.</p>
+                        <p>Si Jangkar (Party A) yang sedang melacak anomali kausalitas di sekitar area festival melihat reaksi panik mereka. Sadar bahwa mereka adalah jiwa-jiwa yang sempat ia rengkuh dan selamatkan saat transisi reset loop terjadi, Si Jangkar segera menarik keduanya ke gang sempit yang sepi.</p>
+                        <p>Di bawah bayang-bayang kota, mereka saling bertukar informasi dan akhirnya menyadari kebenaran yang mengerikan: <strong>realitas dunia luar telah ditulis ulang seluruhnya oleh Dewi Keabadian</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 2 -->
+                <div class="scene-box">
+                    <span class="scene-num">Scene 2</span>
+                    <h3 class="scene-title">Tabrakan Kausalitas (Battle &amp; Penyatuan Party C)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Alun-Alun Utama, Puncak Parade Festival</span>
+                        <span class="meta-badge" style="color: var(--loop3-color);">🎭 Karakter: Seluruh Party C (5 Anggota)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Dua karakter Oblivious (warga asli) sedang menikmati kemeriahan parade kereta hias (<em>float</em>) raksasa yang menyimbolkan perdamaian. Tiba-tiba, terjadi <strong>glitch temporal (Tabrakan Kausalitas)</strong> di tengah alun-alun. Kereta hias tersebut terdistorsi secara mengerikan dan memuntahkan monster-monster <strong>Phantom/Specter</strong> masa lalu—wujud sisa perang lama yang seharusnya sudah dihapus dari sejarah baru ini.</p>
+                        <p><strong>Pertempuran:</strong> Ledakan energi akibat glitch tersebut mementalkan warga biasa di sekitar, namun Si Jangkar (Party A) dan kedua Penumpang (Party B) yang memiliki resonansi waktu kebal terhadap efek penolakan temporal tersebut. Mereka bergerak cepat masuk ke area konflik demi menolong dua karakter Oblivious yang terjebak di tengah bahaya.</p>
+                        <p>Di bawah kepungan bayangan masa lalu, kelima karakter ini bertarung bahu-bahu untuk pertama kalinya, menghalau ancaman Phantom, dan menyatukan takdir mereka sebagai <strong>Party C</strong>.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 3 -->
+                <div class="scene-box">
+                    <span class="scene-num">Scene 3</span>
+                    <h3 class="scene-title">Lockdown Keamanan &amp; Kompas Kosmik (The Hook)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">👤 Otoritas: Guild Master Corvin Hale</span>
+                        <span class="meta-badge" style="color: var(--loop2-color);">🛡️ Item Kunci: Artefak Jarum Kompas Kosmik</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Intervensi Otoritas:</strong> Begitu monster Phantom berhasil dilumpuhkan, Pasukan Penjaga Kota beserta Guild Master <strong>Corvin Hale</strong> segera tiba dan memblokade lokasi kejadian. Corvin yang sangat cemas akan stabilitas politik segera menutupi insiden tersebut dari publik dengan menyebarkan klaim bahwa kejadian tersebut hanyalah <em>"sabotase kembang api oleh kelompok pemberontak"</em>.</p>
+                        <p><strong>Perintah Lockdown:</strong> Menggunakan dalih keamanan kota, Corvin Hale memerintahkan agar seluruh gerbang utama Highspire ditutup dan segala moda transportasi/kereta kuda dihentikan total hingga keesokan pagi. Party C kini terjebak di dalam tembok Highspire.</p>
+                        <p><strong>The Hook (Motivasi):</strong> Dari sisa debu Phantom yang kalah, mereka menemukan sebuah <strong>Artefak Jarum Kompas Kosmik</strong>. Ketika kelima anggota Party C menyentuhnya bersamaan, jarum kompas berputar liar sebelum akhirnya menunjuk tegak lurus ke arah utara (lokasi Makam Prosperina di Eldenfall). Sentuhan itu memicu <strong>vision mengerikan</strong> pada 2 karakter Oblivious: mereka melihat langit berubah ungu, kiamat kosmik menerjang, dan kota Eldenfall hancur lebur. Vision ini meremukkan keyakinan mereka dan menyadarkan bahwa kedamaian kota ini hanyalah ilusi semu.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 4 -->
+                <div class="scene-box">
+                    <span class="scene-num">Scene 4</span>
+                    <h3 class="scene-title">Free Roam Festival (Investigasi Tersembunyi)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">🔍 Fase: Eksplorasi Kota &amp; Penyelidikan NPC</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Menunggu gerbang kota dan transportasi beroperasi kembali keesokan pagi, Party C memanfaatkan waktu malam untuk menyusup dan menyelidiki festival yang kini dijaga ketat oleh penjaga kota. Pemain dapat menelusuri lokasi-lokasi rahasia untuk mengungkap kepalsuan sejarah buatan Dewi:</p>
+                        
+                        <div class="explore-grid">
+                            <!-- Spot 1 -->
+                            <div class="explore-card">
+                                <div class="explore-card-title">📚 Arsip Sejarah (Grand Pavilion)</div>
+                                <div class="explore-card-desc">Jika pemain memeriksa buku sejarah resmi kerajaan yang dipamerkan, mereka akan mendapati keanehan fisik: tinta emas dan cat pada lembaran yang menceritakan "Tahun Kedamaian" <strong>masih basah dan berbau segar</strong>, seolah sejarah berabad-abad baru saja dicetak ulang beberapa hari lalu saat reset terjadi.</div>
+                            </div>
+                            <!-- Spot 2 -->
+                            <div class="explore-card">
+                                <div class="explore-card-title">🎨 Mural di Gang Tua</div>
+                                <div class="explore-card-desc">Sebuah mural pahlawan besar di gang belakang memiliki cat baru yang mulai retak dan mengelupas. Jika pemain mengoreknya, lapisan cat lama di bawahnya menampilkan lukisan asli yang kontradiktif: <strong>Prosperina dirantai dan digiring oleh pasukan Aurelion</strong>, bukannya dihormati.</div>
+                            </div>
+                            <!-- Spot 3 -->
+                            <div class="explore-card">
+                                <div class="explore-card-title">🔮 Tenda Peramal (Madam Vespera)</div>
+                                <div class="explore-card-desc">Pemain dapat meramalkan nasib mereka. Madam Vespera menarik kartu ramalan yang ternyata <strong>kosong tanpa gambar</strong>, lalu menatap seluruh party dengan mata terbelalak ngeri: <em>"Benang nasib kalian... tidak berhulu. Seseorang telah memotong kain waktu dengan sangat kasar."</em></div>
+                            </div>
+                            <!-- Spot 4 -->
+                            <div class="explore-card">
+                                <div class="explore-card-title">🏮 Pasar Gelap Lampion</div>
+                                <div class="explore-card-desc">Menemui pedagang gelap lampion di sudut gelap festival. Dengan berbisik ketakutan, mereka memberi informasi bahwa penjaga kota sedang panik menyembunyikan berbagai laporan anomali fisik dan "hilangnya ingatan orang-orang secara misterius" di berbagai wilayah luar kota.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <p>Ketika <em>Loop</em> ke-3 ini tercipta, intervensi Dewi yang mengekang jiwa Prosperina di dalam makam pada <em>loop</em> sebelumnya membawa dampak <em>butterfly effect</em> yang masif ke dunia luar:</p>
-                
-                <div class="effects-grid">
-                    <div class="effect-card">
-                        <span class="effect-icon">🛡️</span>
-                        <div class="effect-title">Lumpuhnya Kontrak Iblis</div>
-                        <div class="effect-desc">Karena jiwa Prosperina telah disita dan dikunci oleh kekuatan Dewi Keabadian, kontrak iblis Belzareth kehilangan wadah utamanya di makam. Ledakan wabah <em>undead</em> yang seharusnya menghancurkan kota Eldenfall dan Graymere di tahun 1385 AGKW tidak pernah terjadi.</div>
-                    </div>
-                    <div class="effect-card">
-                        <span class="effect-icon">🤝</span>
-                        <div class="effect-title">Terciptanya Gencatan Senjata</div>
-                        <div class="effect-desc">Tanpa adanya ancaman kosmik <em>undead</em> yang menguras logistik dan moral bangsa, konflik konvensional antara Kerajaan Aurelion dan Dominion Varkath mereda. Kedua kerajaan setuju untuk mengambil jalan <strong>gencatan senjata (damai bersyarat)</strong>.</div>
-                    </div>
-                </div>
+            </div>
+        </div>
 
-                <p>Dunia luar tiba-tiba menjadi damai, dan Aurelion pun menggelar perayaan megah <strong>Aurelion Harvest Festival</strong>.</p>
+
+        <!-- ==================== TAB: HIGHSPIRE SCENE ==================== -->
+        <div id="tab-highspire-scene" class="tab-content">
+            <header>
+                <div class="subtitle">Skenario Aurelion — Highspire</div>
+                <h1>Scene Sesi 1 — Highspire: Sangkar Emas</h1>
+                <p class="section-desc">Panduan penanganan scene, parameter tensi naratif, dan alur pertempuran bagi Dungeon Master (DM).</p>
+            </header>
+
+            <!-- Scene Overview Callout -->
+            <div class="cosmic-alert" style="background: rgba(212,175,55,0.015); border-color: var(--border-gold);">
+                <div class="cosmic-title" style="color: var(--gold-primary);">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    Fokus Utama Sesi 1
+                </div>
+                <p style="font-size: 0.98rem; color: var(--text-secondary); line-height: 1.6;">
+                    Menyampaikan worldbuilding berupa kedamaian semu (sangkar emas), pembentukan resmi **Party C**, penyampaian misteri kausalitas ruang-waktu, serta penanganan keadaan lockdown kota.
+                </p>
             </div>
 
-        </section>
+            <div class="scene-container">
+                <!-- Scene I -->
+                <div class="scene-box">
+                    <span class="scene-num">Scene I</span>
+                    <h3 class="scene-title">Cermin Pantulan Jiwa</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Wahana Ilusi The Pavilion of Reflections</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">🎭 Fokus: Pertemuan Party A &amp; B, Lore Drop, RP</span>
+                        <span class="meta-badge" style="color: #f87171;">⚡ Tensi: Rendah &rarr; Panik</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> 2 karakter Penumpang (Party B) memasuki area wahana cermin. Cermin ajaib tersebut menolak memantulkan tubuh baru mereka dan justru memproyeksikan wujud asli mereka saat mati secara mengenaskan di makam Prosperina pada <em>Loop 2</em>. Hal ini memicu kepanikan hebat dan disonansi kognitif.</p>
+                        <p>Si Jangkar (Party A) yang sedang melacak retakan anomali mendeteksi gejolak jiwa mereka, menyadari bahwa mereka adalah jiwa yang ia selamatkan saat mega-reset, lalu dengan cepat menarik mereka ke gang sepi.</p>
+                        <p>Terjadi dialog krusial: mereka saling membagikan ingatan tentang masa lalu, pembagian waktu, serta manipulasi yang dilakukan oleh Dewi Keabadian.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Party A dan B menyadari secara utuh bahwa garis realitas telah ditimpa ulang.</p>
+                    </div>
+                </div>
 
-        <!-- Party Composition Section -->
-        <section class="party-section">
-            <h2 class="party-title-main">Komposisi Anggota Party C</h2>
-            <p style="text-align: center; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem auto;">Di sinilah kelima orang ini akhirnya dipertemukan oleh takdir baru di garis waktu Siklus Ke-3 yang penuh kedamaian semu.</p>
-            
-            <div class="party-grid">
+                <!-- Scene II -->
+                <div class="scene-box">
+                    <span class="scene-num">Scene II</span>
+                    <h3 class="scene-title">Tabrakan Kausalitas (Battle I)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Alun-Alun Puncak Parade Festival</span>
+                        <span class="meta-badge" style="color: var(--loop3-color);">⚔️ Fokus: Penyatuan Party C, Validasi Bahaya</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚡ Tensi: Tinggi (Pertempuran)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Daftar Musuh:</strong> 2–3 <em>Phantom/Specter Echoes</em> (Gunakan *Specter* statblock dengan penyesuaian visual prajurit hantu Aurelion/Varkath masa lalu).</p>
+                        <p><strong>Kejadian:</strong> 2 karakter warga asli (Oblivious) sedang menikmati parade kereta hias "Perdamaian". Tiba-tiba terjadi <em>glitch</em> kosmik yang hebat (Tabrakan Kausalitas). Kereta parade terdistorsi dan mengeluarkan manifestasi bayangan hantu prajurit dari era perang lama.</p>
+                        <p>Ledakan gelombang waktu mementalkan seluruh warga biasa. Party A dan B (yang kebal dari distorsi ini karena resonansi waktu) langsung melompat menyelamatkan kedua karakter Oblivious yang terjebak di zona bahaya.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Kelima karakter bertarung bersama dan resmi disatukan dalam takdir yang sama akibat insiden anomali.</p>
+                    </div>
+                </div>
+
+                <!-- Scene III -->
+                <div class="scene-box">
+                    <span class="scene-num">Scene III</span>
+                    <h3 class="scene-title">Lockdown &amp; The Hook</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Alun-Alun (Pasca Battle)</span>
+                        <span class="meta-badge" style="color: var(--accent-purple);">⚓ Fokus: Dampak Politik, Hook Perjalanan</span>
+                        <span class="meta-badge" style="color: #fbbf24;">⚡ Tensi: Sedang (Interogasi)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Setelah ancaman Specter sirna, Penjaga Kota dan Guild Master <strong>Corvin Hale</strong> segera mengamankan area. Demi menjaga stabilitas politik, Corvin menutupi kejadian asli dan menyatasinya di depan publik sebagai <em>"sabotase kembang api kelompok pemberontak"</em>.</p>
+                        <p>Sebagai dalih keamanan, Corvin memerintahkan lockdown total kota Highspire: gerbang ditutup dan seluruh transportasi kereta kuda dihentikan total sampai esok pagi. Party C kini terjebak di Highspire.</p>
+                        <p><strong>The Hook:</strong> Dari abu hantu yang kalah, tertinggal **Artefak Jarum Kompas Kosmik**. Saat dipegang bersama oleh kelima petualang, kompas bergetar hebat menunjuk ke utara (Makam Prosperina di Eldenfall). Dua karakter Oblivious yang menyentuhnya mendapat vision kilat mengerikan tentang langit ungu, kiamat, dan hancurnya Eldenfall.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Party C terjebak di kota, namun memiliki dorongan personal yang kuat untuk pergi menyelediki Eldenfall.</p>
+                    </div>
+                </div>
+
+                <!-- Scene IV -->
+                <div class="scene-box">
+                    <span class="scene-num">Scene IV</span>
+                    <h3 class="scene-title">Free Roam (Investigasi Tersembunyi)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Berbagai Titik Karantina Highspire</span>
+                        <span class="meta-badge" style="color: var(--accent-green);">🔍 Fokus: Eksplorasi, Sejarah Palsu, Lore drop</span>
+                        <span class="meta-badge" style="color: #60a5fa;">⚡ Tensi: Investigatif &amp; Misteri</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Karena tidak bisa keluar kota hingga esok pagi, Party C melakukan investigasi tersembunyi di sekitar Highspire untuk mengumpulkan petunjuk palsunya realitas ini. Lokasi penelusuran meliputi:</p>
+                        <ul style="list-style: none; padding-left: 0.5rem; margin: 1rem 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                            <li>• <strong>Arsip Sejarah (Grand Pavilion):</strong> Pemain yang berhasil lolos <em>Investigation Check</em> menemukan bahwa tinta emas pada dokumen sejarah "Tahun Kedamaian" yang dipamerkan masih basah—menunjukkan sejarah tersebut baru dicetak paksa beberapa hari lalu.</li>
+                            <li>• <strong>Mural Gang Tua:</strong> Dengan mengorek cat mural pahlawan yang mengelupas, pemain menemukan lukisan asli di lapisan bawah: Prosperina dirantai oleh Aurelion.</li>
+                            <li>• <strong>Tenda Madam Vespera:</strong> Peramal menarik kartu tarot kosong dan memperingatkan ngeri bahwa benang nasib mereka telah dipotong dan diikat ulang secara kasar.</li>
+                            <li>• <strong>Pasar Gelap Lampion:</strong> Pedagang membisikkan bahwa penjaga kota sedang menyembunyikan laporan anomali temporal lainnya.</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Party C menyadari pemerintah menyembunyikan distorsi waktu. Mereka sepakat menyewa kereta menuju utara (Brackenford) esok pagi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: HIGHSPIRE POINTER ==================== -->
+        <div id="tab-highspire-pointer" class="tab-content">
+            <header>
+                <div class="subtitle">Skenario Aurelion — Highspire</div>
+                <h1>Pointer Sesi 1 (Highspire)</h1>
+                <p class="section-desc">Master data, profil tokoh, lokasi penting, dan sifat mekanik item kunci untuk panduan DM.</p>
+            </header>
+
+            <!-- Lokasi Penting -->
+            <div class="section-block">
+                <h2 class="section-block-title">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    🏙️ Kota &amp; Lokasi Penting
+                </h2>
+                <div class="locations-grid">
+                    <div class="location-card">
+                        <div class="location-icon">🏙️</div>
+                        <h3 class="location-name">Highspire</h3>
+                        <p class="location-desc">Pusat administratif Kerajaan Aurelion. Kota yang penuh dengan simbol kejayaan politik, namun seluruh sejarahnya ditulis ulang secara sepihak untuk menyembunyikan distorsi kausalitas (Loop 3).</p>
+                    </div>
+                    <div class="location-card">
+                        <div class="location-icon">🔮</div>
+                        <h3 class="location-name">The Pavilion of Reflections</h3>
+                        <p class="location-desc">Wahana cermin ilusi di sudut arena festival. Menjadi trigger penting di mana jiwa reinkarnasi Party B melihat wujud fisik asli mereka dari Loop 2.</p>
+                    </div>
+                    <div class="location-card">
+                        <div class="location-icon">📚</div>
+                        <h3 class="location-name">The Grand Pavilion of Peace</h3>
+                        <p class="location-desc">Tenda arsip tempat dipamerkannya dokumen resmi kerajaan. Di sini tersimpan barang bukti utama berupa buku sejarah kedamaian yang tintanya masih basah.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NPC Penting -->
+            <div class="section-block">
+                <h2 class="section-block-title">
+                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    👥 NPC Penting di Highspire
+                </h2>
+                <div class="npc-grid">
+                    <div class="npc-card">
+                        <div class="npc-header">
+                            <div class="npc-avatar">🛡️</div>
+                            <div class="npc-identity">
+                                <h3>Corvin Hale</h3>
+                                <span>Guild Master Highspire</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Lokasi:</strong> Guild Highspire / Alun-alun kota.</div>
+                            <div class="npc-meta-item"><strong>Kepribadian:</strong> Sangat profesional, dingin, pragmatis, lebih mengutamakan stabilitas kerajaan di atas kebenaran faktual.</div>
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> Menutupi insiden glitch, mengumumkan lockdown total kota, dan menekan PC agar tidak memicu keributan publik. Representasi birokrasi Aurelion yang buta.</div>
+                            <div class="npc-quote">
+                                "Kerajaan tidak butuh pahlawan baru untuk festival ini. Nikmati saja pestanya, atau pergi dari kotaku."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="npc-card">
+                        <div class="npc-header">
+                            <div class="npc-avatar">🔮</div>
+                            <div class="npc-identity">
+                                <h3>Madam Vespera</h3>
+                                <span>Peramal Kosmik (NPC Opsional)</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Lokasi:</strong> Tenda ramalan area festival.</div>
+                            <div class="npc-meta-item"><strong>Kepribadian:</strong> Eksentrik, dramatis, namun sangat peka terhadap tarikan benang energi kosmik dan takdir.</div>
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> Memberikan validasi metafisik kepada PC bahwa keberadaan mereka merupakan anomali ruang-waktu yang melanggar hukum alam.</div>
+                            <div class="npc-quote">
+                                "Benang nasib kalian... terpotong dan diikat ulang dengan kasar. Ada tangan gaib yang merusak tenunan waktu."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Kunci -->
+            <div class="section-block">
+                <h2 class="section-block-title">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+                    🪝 Item Kunci (The Hook)
+                </h2>
+                <div class="item-card">
+                    <div class="item-card-header">
+                        <div class="item-avatar">🧭</div>
+                        <div class="item-identity">
+                            <h3>Jarum Kompas Kosmik</h3>
+                            <span class="item-badge">Artefak Ruang-Waktu</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title">Wujud Fisik</div>
+                            <div class="item-spec-value">Terbentuk dari sisa abu anomali temporal (Specter) yang kalah bertarung, memadat menjadi sebuah jarum kompas bercahaya emas keunguan.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title">Sifat Deteksi</div>
+                            <div class="item-spec-value">Mengabaikan medan magnet kutub bumi. Jarumnya selalu beresonansi dengan sisa energi Kurumagatsu dan menunjuk lurus ke arah Makam Eldenfall di utara.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title">Efek Psikologis</div>
+                            <div class="item-spec-value">Saat disentuh bersama, memicu vision kehancuran kosmik (langit ungu, kehancuran Eldenfall) pada ingatan warga asli (Oblivious), mematahkan ilusi kedamaian palsu mereka.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: BRACKENFORD NARATIF ==================== -->
+        <div id="tab-brackenford-naratif" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--brackenford-color);">Skenario Aurelion — Brackenford</div>
+                <h1 style="border-bottom-color: var(--brackenford-color);">Desa Militer &amp; Api yang Membeku</h1>
+                <p class="section-desc">Penyelidikan di desa agraris berbenteng militer untuk menguak kenyataan pahit di balik kematian Pahlawan Prosperina.</p>
+            </header>
+
+            <!-- Condition Card -->
+            <div class="info-banner" style="border-color: var(--brackenford-color); background: linear-gradient(90deg, rgba(45, 212, 191, 0.08) 0%, rgba(10, 13, 20, 0.4) 100%);">
+                <span class="info-banner-badge" style="background: var(--brackenford-color);">Kondisi Awal</span>
+                <h3>Brackenford: Perbatasan Dingin</h3>
+                <p>Kereta kuda menjauhi Highspire menuju bekas garis depan perang melawan Dominion Varkath. Kalian tiba di <strong>Brackenford</strong>, desa agraris yang dijaga ketat oleh patroli militer dan veteran perang. Di sini, festival kedamaian terasa sangat kaku: lampion digantung asal di atas sisa barikade kayu lama, dan tawa warga terdengar dipaksakan di bawah bayang-bayang kecemasan.</p>
+            </div>
+
+            <!-- Narrative Timeline -->
+            <div class="scene-container">
+                <!-- Scene 1 -->
+                <div class="scene-box" style="border-left-color: var(--brackenford-color);">
+                    <span class="scene-num" style="color: var(--brackenford-color);">Fase I</span>
+                    <h3 class="scene-title">Monumen Perang &amp; Resonansi Dingin</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: The Prosperina War Memorial</span>
+                        <span class="meta-badge" style="color: var(--brackenford-color);">👤 NPC: Kurator Elayne</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Di tengah alun-alun berdiri monumen batu sunyi untuk Prosperina. Sebagai tradisi festival, "Api Abadi" seharusnya menyala hangat. Anehnya, setiap kali api dinyalakan, nyalanya langsung padam tersedot oleh hawa dingin tidak wajar.</p>
+                        <p>Kurator Elayne, sang penjaga monumen, tampak frustrasi dan merinding. Ia mengabarkan bahwa monumen kehilangan kehangatannya: <em>"Batu perapian ini memiliki resonansi dengan esensi pahlawan kita... tapi sekarang sedingin es, seolah sumber magisnya di Eldenfall dikunci paksa, tertahan di dalam ruang hampa."</em></p>
+                    </div>
+                </div>
+
+                <!-- Scene 2 -->
+                <div class="scene-box" style="border-left-color: var(--brackenford-color);">
+                    <span class="scene-num" style="color: var(--brackenford-color);">Fase II</span>
+                    <h3 class="scene-title">Karantina Gerbang Utara &amp; Paranoia Kepala Wilayah</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Kediaman Jorren Feld</span>
+                        <span class="meta-badge" style="color: var(--loop2-color);">👤 Otoritas: Magistrate Jorren Feld</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Gerbang utara yang mengarah ke Old Battlefield dan Graymere ditutup rapat dengan barikade tebal. Karantina militer ini diperintahkan oleh Magistrate **Jorren Feld**, mantan Perwira Intelijen Aurelion yang sangat paranoid.</p>
+                        <p>Jorren Feld mengurung diri di kediaman mewahnya dengan penjagaan berlapis, menolak merayakan festival dengan alasan "latihan militer rahasia" yang mencurigakan.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 3 -->
+                <div class="scene-box" style="border-left-color: var(--brackenford-color);">
+                    <span class="scene-num" style="color: var(--brackenford-color);">Fase III</span>
+                    <h3 class="scene-title">Penyusupan Malam &amp; Ruang Arsip</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Kediaman Magistrate (Dalam)</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">🎭 Aksi: Infiltrasi Stealth</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Mengambil keuntungan dari kelalaian penjaga akibat arak-arakan festival malam hari, Party C menyusup ke kediaman Jorren Feld. Kalian berhasil menembus pengamanan dan masuk ke Ruang Arsip Pribadi milik sang Magistrate.</p>
+                        <p>Di antara tumpukan peta militer dan laporan taktis, kalian menemukan sebuah buku besar berdebu di atas meja: **The Old Ledger** dari tahun 1310 AGKW (masa akhir perang).</p>
+                    </div>
+                </div>
+
+                <!-- Scene 4 -->
+                <div class="scene-box" style="border-left-color: var(--brackenford-color);">
+                    <span class="scene-num" style="color: var(--brackenford-color);">Fase IV</span>
+                    <h3 class="scene-title">Rahasia Hitam "The Old Ledger"</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📖 Item: Buku Besar Militer Usang</span>
+                        <span class="meta-badge" style="color: var(--brackenford-color);">🚨 Pengungkapan: Pengkhianatan Prosperina</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Warga merayakan Prosperina sebagai martir agung yang gugur melawan Varkath. Namun catatan berdebu berusia 30 tahun di buku ini menulis takdir yang berbeda. Di bawah nama Prosperina tercatat tulisan dingin:</p>
+                        <p style="color: var(--loop2-color); text-align: center; font-family: 'Cinzel', serif; font-size: 1.15rem; margin: 1rem 0; font-weight: 700; background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 6px; border: 1px dashed rgba(239,68,68,0.3);">
+                            "Dieksekusi oleh Titah Raja — Dituduh Berkhianat"
+                        </p>
+                        <p>Pahlawan mereka tidak tewas oleh pedang musuh, melainkan dikhianati dan dieksekusi oleh negaranya sendiri. Dengan bukti kebohongan sejarah ini dan surat izin gerbang di tangan, Party C melangkah menembus gerbang utara, memasuki Old Battlefield yang tertutup kabut tebal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: BRACKENFORD SCENE ==================== -->
+        <div id="tab-brackenford-scene" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--brackenford-color);">Skenario Aurelion — Brackenford</div>
+                <h1 style="border-bottom-color: var(--brackenford-color);">Scene Sesi 1 — Brackenford: Gema di Balik Pesta</h1>
+                <p class="section-desc">Panduan scene, tensi permainan, dan penanganan taktis bagi DM di desa perbatasan Brackenford.</p>
+            </header>
+
+            <div class="cosmic-alert" style="background: rgba(45, 212, 191, 0.015); border-color: rgba(45, 212, 191, 0.2);">
+                <div class="cosmic-title" style="color: var(--brackenford-color);">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    Fokus Utama Sesi
+                </div>
+                <p style="font-size: 0.98rem; color: var(--text-secondary); line-height: 1.6;">
+                    Memperlihatkan bahwa "Kedamaian Festival" ini hanyalah topeng, mengungkap kebohongan sejarah Kerajaan Aurelion secara logis lewat arsip tua, dan transisi ke area bahaya.
+                </p>
+            </div>
+
+            <div class="scene-container">
+                <!-- Scene I -->
+                <div class="scene-box" style="border-left-color: var(--brackenford-color);">
+                    <span class="scene-num" style="color: var(--brackenford-color);">Scene I</span>
+                    <h3 class="scene-title">Monumen yang Membeku (Event &amp; Foreshadowing)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: The Prosperina War Memorial (Tengah desa)</span>
+                        <span class="meta-badge" style="color: var(--brackenford-color);">🔮 Fokus: Anomali magis, Foreshadowing nasib Prosperina</span>
+                        <span class="meta-badge" style="color: #60a5fa;">⚡ Tensi: Misteri</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Warga mencoba menyalakan "Api Abadi" di bawah patung Prosperina sebagai bagian dari perayaan festival, tapi apinya selalu mati tersedot udara dingin.</p>
+                        <p>Kurator Elayne yang menjaga monumen terlihat kebingungan dan memberi tahu Party C: <em>"Batu perapian ini memiliki resonansi dengan esensi sang pahlawan. Harusnya hangat... Tapi sekarang sedingin es, seolah sumber magisnya di Eldenfall sedang dikunci paksa di ruang hampa."</em></p>
+                        <p style="margin-top: 0.5rem; color: var(--brackenford-color);"><strong>Output Scene:</strong> Petunjuk awal (secara magis) bahwa jiwa Prosperina tidak beristirahat dengan tenang, melainkan sedang dikurung oleh kekuatan kosmik (sang Dewi).</p>
+                    </div>
+                </div>
+
+                <!-- Scene II -->
+                <div class="scene-box" style="border-left-color: var(--brackenford-color);">
+                    <span class="scene-num" style="color: var(--brackenford-color);">Scene II</span>
+                    <h3 class="scene-title">Karantina Informasi &amp; Free Roam</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Berbagai area festival di Brackenford</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">🎭 Fokus: Eksplorasi, interaksi veteran trauma, akses utara</span>
+                        <span class="meta-badge" style="color: #60a5fa;">⚡ Tensi: Investigasi</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian (Pilihan Free Roam):</strong></p>
+                        <ul style="list-style: none; padding-left: 0.5rem; margin: 1rem 0; display: flex; flex-direction: column; gap: 0.75rem;">
+                            <li>• <strong>Pos Gerbang Utara:</strong> Party melihat jalan ke utara (Old Battlefield/Graymere) diblokir total oleh militer. Kapten Darion menolak siapa pun lewat dengan alasan *"Latihan Militer Rahasia"*.</li>
+                            <li>• <strong>Kedai "The Broken Shield":</strong> Party C bisa berinteraksi dengan Old Silas (Veteran Buta). Silas mengalami resonansi loop dan menunjuk ke karakter Penumpang (Party B): <em>"Suaramu baru... tapi langkah kakimu adalah langkah orang mati. Aku melihatmu hancur di makam itu."</em></li>
+                            <li>• <strong>Pasar Festival Darurat:</strong> Party bertemu Lia (Pedagang Varkath) yang membocorkan bahwa komando utara sebenarnya sedang panik, dan gencatan senjata ini murni karena kedua pihak ketakutan setengah mati pada apa yang ada di Eldenfall saat ini.</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem; color: var(--brackenford-color);"><strong>Output Scene:</strong> Party C menyadari mereka harus menembus gerbang utara, dan kunci izinnya ada di kediaman sang Kepala Wilayah.</p>
+                    </div>
+                </div>
+
+                <!-- Scene III -->
+                <div class="scene-box" style="border-left-color: var(--brackenford-color);">
+                    <span class="scene-num" style="color: var(--brackenford-color);">Scene III</span>
+                    <h3 class="scene-title">Lore Drop: Disonansi Sejarah (Investigasi)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Ruang Arsip Pribadi di kediaman Magistrate Jorren Feld</span>
+                        <span class="meta-badge" style="color: var(--accent-purple);">📖 Fokus: Mengungkap fakta tanpa plot hole (tanpa tinta basah)</span>
+                        <span class="meta-badge" style="color: #fbbf24;">⚡ Tensi: Stealth / Menegangkan</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Party C menyelinap masuk ke ruang arsip saat Jorren sibuk di perayaan festival.</p>
+                        <p><strong>The Lore Drop:</strong> Mereka menemukan sebuah buku besar militer tua (The Old Ledger) dari tahun 1310 AGKW. Sepanjang festival, orang-orang merayakan dongeng bahwa Prosperina adalah martir yang *"gugur dengan gagah berani melawan Varkath"*. Namun di dalam buku usang itu, status kematian Prosperina dan partynya dicatat dengan tinta lama yang sudah memudar: <strong>"Dieksekusi oleh Titah Raja — Dituduh Berkhianat."</strong></p>
+                        <p style="margin-top: 0.5rem; color: var(--brackenford-color);"><strong>Output Scene:</strong> Party C mendapatkan bukti absolut bahwa Kerajaan Aurelion mengkhianati pahlawannya sendiri, dan sejarah agung di luar sana murni propaganda.</p>
+                    </div>
+                </div>
+
+                <!-- Scene IV -->
+                <div class="scene-box" style="border-left-color: var(--brackenford-color);">
+                    <span class="scene-num" style="color: var(--brackenford-color);">Scene IV</span>
+                    <h3 class="scene-title">Menembus Kabut (Transisi)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Gerbang Utara Brackenford</span>
+                        <span class="meta-badge" style="color: var(--accent-green);">🧭 Fokus: Meninggalkan zona aman</span>
+                        <span class="meta-badge" style="color: #f87171;">⚡ Tensi: Meningkat</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Dengan kunci/surat izin yang dicuri dari arsip Jorren (atau hasil memeras informasi), Party C berhasil membuka palang barikade gerbang utara.</p>
+                        <p>Mereka meninggalkan gemerlap lampion festival di belakang, dan melangkah masuk ke dalam kabut tebal Old Battlefield.</p>
+                        <p style="margin-top: 0.5rem; color: var(--brackenford-color);"><strong>Output Scene:</strong> Party C resmi memulai perjalanan menuju titik bahaya anomali kosmik.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: BRACKENFORD POINTER ==================== -->
+        <div id="tab-brackenford-pointer" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--brackenford-color);">Skenario Aurelion — Brackenford</div>
+                <h1>Pointer Sesi 1 (Brackenford)</h1>
+                <p class="section-desc">Master data, struktur penting, profil tokoh penting, dan lore drop kunci untuk DM.</p>
+            </header>
+
+            <!-- Struktur Penting -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-bottom-color: rgba(45, 212, 191, 0.25);">
+                    <svg viewBox="0 0 24 24" style="fill: var(--brackenford-color);"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    <span style="color: var(--brackenford-color);">🏚️ Struktur &amp; Bangunan Penting</span>
+                </h2>
+                <div class="locations-grid">
+                    <div class="location-card" style="border-color: rgba(45, 212, 191, 0.15);">
+                        <div class="location-icon">🪦</div>
+                        <h3 class="location-name" style="color: var(--brackenford-color);">War Memorial</h3>
+                        <p class="location-desc">Bukan kuil, melainkan monumen sejarah. Tempat api abadi menolak menyala akibat jiwa Prosperina yang dikunci oleh sang Dewi di makam.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(45, 212, 191, 0.15);">
+                        <div class="location-icon">🏛️</div>
+                        <h3 class="location-name" style="color: var(--brackenford-color);">Magistrate's Estate</h3>
+                        <p class="location-desc">Kediaman mewah dengan penjagaan ketat. Menyimpan arsip perang asli yang tidak pernah dipublikasikan.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(45, 212, 191, 0.15);">
+                        <div class="location-icon">🍺</div>
+                        <h3 class="location-name" style="color: var(--brackenford-color);">Kedai "The Broken Shield"</h3>
+                        <p class="location-desc">Tempat para veteran berkumpul. Fasadnya dihias lampion festival, tapi isinya penuh orang trauma yang mengalami <strong>"mimpi kolektif"</strong> dari sisa ingatan Loop 2.</p>
+                    </div>
+                </div>
+                <div class="locations-grid" style="margin-top: 1.5rem; grid-template-columns: 1fr;">
+                    <div class="location-card" style="border-color: rgba(45, 212, 191, 0.15); display: flex; gap: 1.5rem; align-items: center;">
+                        <div class="location-icon" style="margin-bottom: 0;">🛡️</div>
+                        <div>
+                            <h3 class="location-name" style="color: var(--brackenford-color); margin-bottom: 0.25rem;">Pos Gerbang Utara</h3>
+                            <p class="location-desc">Titik karantina militer yang menghalangi jalan menuju Old Battlefield.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NPC Penting -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-bottom-color: rgba(45, 212, 191, 0.25);">
+                    <svg viewBox="0 0 24 24" style="fill: var(--brackenford-color);"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    <span style="color: var(--brackenford-color);">👥 NPC Penting di Brackenford</span>
+                </h2>
+                <div class="npc-grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <!-- NPC 1 -->
+                    <div class="npc-card" style="border-color: rgba(45, 212, 191, 0.25);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: var(--brackenford-color); background: rgba(45, 212, 191, 0.05);">👵</div>
+                            <div class="npc-identity">
+                                <h3>Kurator Elayne</h3>
+                                <span style="color: var(--brackenford-color);">Fungsi: Penjaga Warisan Sejarah</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <p>Penjaga warisan sejarah lokal. Memberi validasi bahwa secara magis, ada anomali yang terjadi pada sisa esensi Prosperina.</p>
+                        </div>
+                    </div>
+
+                    <!-- NPC 2 -->
+                    <div class="npc-card" style="border-color: rgba(45, 212, 191, 0.25);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: var(--brackenford-color); background: rgba(45, 212, 191, 0.05);">🎖️</div>
+                            <div class="npc-identity">
+                                <h3>Jorren Feld</h3>
+                                <span style="color: var(--brackenford-color);">Fungsi: Mantan Perwira Intelijen</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <p>Kepala wilayah yang paranoid. Menyimpan *The Old Ledger*. Dia memblokir gerbang utara demi menutupi kepanikan militer di Graymere.</p>
+                        </div>
+                    </div>
+
+                    <!-- NPC 3 -->
+                    <div class="npc-card" style="border-color: rgba(45, 212, 191, 0.25);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: var(--brackenford-color); background: rgba(45, 212, 191, 0.05);">👁️</div>
+                            <div class="npc-identity">
+                                <h3>Old Silas</h3>
+                                <span style="color: var(--brackenford-color);">Fungsi: Veteran Buta (Opsional)</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <p>Pemicu ketegangan psikologis. Peka terhadap anomali waktu dan bisa memicu glitch kognitif bagi Party B (sadar bahwa mereka memakai wadah/tubuh yang "salah").</p>
+                        </div>
+                    </div>
+
+                    <!-- NPC 4 -->
+                    <div class="npc-card" style="border-color: rgba(45, 212, 191, 0.25);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: var(--brackenford-color); background: rgba(45, 212, 191, 0.05);">🏺</div>
+                            <div class="npc-identity">
+                                <h3>Lia</h3>
+                                <span style="color: var(--brackenford-color);">Fungsi: Pedagang Varkath (Opsional)</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <p>Menyampaikan lore politik bahwa baik Varkath maupun Aurelion saat ini sama-sama buta dan ketakutan terhadap apa yang sebenarnya terjadi di makam.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Kunci -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-bottom-color: rgba(45, 212, 191, 0.25);">
+                    <svg viewBox="0 0 24 24" style="fill: var(--brackenford-color);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+                    <span style="color: var(--brackenford-color);">📜 Lore Drop Kunci</span>
+                </h2>
                 
-                <!-- Party Member 1 -->
-                <div class="character-card char-anchor">
-                    <div class="char-icon">⏳</div>
-                    <span class="char-type">Jangkar Asli</span>
-                    <div class="char-qty">1 <span>Karakter</span></div>
-                    <p class="char-desc">Berasal dari <strong>Party A</strong>. Terbangun dengan tubuh yang sama dan ingatan utuh tentang kegagalan pemberontakan di Tokoshie. Membawa beban berat sebagai pelarian waktu.</p>
+                <div class="item-card" style="border-color: rgba(45, 212, 191, 0.3); background: linear-gradient(90deg, rgba(45, 212, 191, 0.04) 0%, rgba(10, 12, 20, 0.5) 100%);">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(45, 212, 191, 0.3); background: rgba(45, 212, 191, 0.1); box-shadow: 0 0 15px rgba(45, 212, 191, 0.15);">📖</div>
+                        <div class="item-identity">
+                            <h3>Buku Besar Militer (The Old Ledger)</h3>
+                            <span class="item-badge" style="background: rgba(45, 212, 191, 0.15); color: #99f6e4; border-color: rgba(45, 212, 191, 0.2);">Tahun 1310 AGKW</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #99f6e4;">Sifat Dokumen</div>
+                            <div class="item-spec-value">Buku sejarah militer usang dari akhir masa perang. Menyimpan data administratif asli dari militer Aurelion.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #99f6e4;">Isi Kunci</div>
+                            <div class="item-spec-value">Menunjukkan kontradiksi ekstrim. Di luar propaganda menyebut Prosperina gugur gagah berani, berkas asli mencatat: <em>"Dieksekusi oleh Titah Raja."</em></div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #99f6e4;">Makna Naratif</div>
+                            <div class="item-spec-value">Membuktikan secara mutlak bahwa Kerajaan Aurelion berbohong kepada rakyatnya, meruntuhkan rasa percaya Party C pada otoritas.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: OLD BATTLEFIELD NARATIF ==================== -->
+        <div id="tab-oldbattlefield-naratif" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--graymere-color);">Skenario Aurelion — Old Battlefield</div>
+                <h1 style="border-bottom-color: var(--graymere-color);">Gema Waktu &amp; Festival Graymere</h1>
+                <p class="section-desc">Meninggalkan zona aman Brackenford, Party C melangkah menembus batas medan perang tua berselimut kabut anomali, hingga menemukan kota militer Graymere yang tenggelam dalam kepalsuan festival.</p>
+            </header>
+
+            <!-- Condition Card -->
+            <div class="info-banner" style="border-color: var(--graymere-color); background: linear-gradient(90deg, rgba(168, 85, 247, 0.08) 0%, rgba(10, 13, 20, 0.4) 100%);">
+                <span class="info-banner-badge" style="background: var(--graymere-color);">Batas Wilayah</span>
+                <h3>Memasuki Old Battlefield (9 Kythorn)</h3>
+                <p>Meninggalkan gemerlap lampion dan wajah-wajah kaku penduduk Brackenford, kalian melangkah masuk ke batas <strong>Old Battlefield</strong>. Tanggal 9 Kythorn terasa jauh lebih dingin di wilayah tanpa tuan ini. Tidak ada alunan musik festival, tidak ada pita warna-warni—hanya hamparan tanah tandus abu-abu yang diselimuti kabut tebal yang tidak mengikuti arah angin.</p>
+            </div>
+
+            <!-- Narrative Timeline -->
+            <div class="scene-container">
+                
+                <!-- Fase I -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Fase I</span>
+                    <h3 class="scene-title">Pos Jaga Kosong &amp; Logbook Paranoid</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Menara Pengawas Gencatan Senjata</span>
+                        <span class="meta-badge" style="color: var(--graymere-color);">🔍 Temuan: Buku Catatan Pos Jaga</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Di awal perjalanan, kalian melewati Menara Pengawas Gencatan Senjata milik militer Aurelion yang kosong melompong. Api obornya masih menyala, namun pos itu ditinggalkan terburu-buru. Di atas meja jaga, kalian menemukan sebuah buku log dengan tulisan tangan yang panik:</p>
+                        
+                        <div style="background: rgba(0, 0, 0, 0.4); border-left: 3px solid var(--graymere-color); padding: 1rem; border-radius: 4px; margin: 1rem 0; font-style: italic; color: #e2e8f0; font-size: 0.95rem; line-height: 1.5;">
+                            "Kabut ini tidak wajar. Kami terus melihat teman-teman kami yang tewas bertahun-tahun lalu berjalan di dalamnya, mengulangi hari kematian mereka secara berulang. Komando pusat menyuruh kami diam demi festival."
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Party Member 2 -->
-                <div class="character-card char-passenger">
-                    <div class="char-icon">🌀</div>
-                    <span class="char-type">Penumpang Memori</span>
-                    <div class="char-qty">2 <span>Karakter</span></div>
-                    <p class="char-desc">Berasal dari <strong>Party B</strong>. Memiliki jiwa dan ingatan lama tentang pertarungan brutal di makam Prosperina, namun dipaksa bereinkarnasi ke dalam wadah/tubuh baru yang asing.</p>
+                <!-- Fase II -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Fase II</span>
+                    <h3 class="scene-title">Kael si Pemulung &amp; Peringatan Distorsi</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Puing Kereta Logistik Tua</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">👤 NPC: Kael (Pemulung Zirah)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Tak jauh dari menara, kalian memergoki <strong>Kael</strong>—seorang pemulung nekat yang sedang memungut zirah berkarat di dekat puing-puing kereta logistik. Wajahnya pucat pasi saat melihat kalian melintas.</p>
+                        <p style="color: #f1f5f9; border-left: 3px dashed rgba(255, 255, 255, 0.2); padding-left: 1rem; margin: 0.75rem 0; font-style: italic;">
+                            "Jangan masuk ke parit utama... Orang-orang mati di sana tidak bangkit seperti zombie biasa. Mereka seperti bayangan yang tersangkut. Waktu di tempat ini sudah rusak!"
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Party Member 3 -->
-                <div class="character-card char-oblivious">
-                    <div class="char-icon">👁️‍🗨️</div>
-                    <span class="char-type">Warga Asli</span>
-                    <div class="char-qty">2 <span>Karakter</span></div>
-                    <p class="char-desc">Warga asli dunia baru yang lahir dan hanya mengetahui kedamaian era gencatan senjata. Tidak sadar bahwa dunia mereka sebenarnya adalah sangkar emas yang menanti di-<em>reset</em>.</p>
+                <!-- Fase III -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Fase III</span>
+                    <h3 class="scene-title">Pohon Raksasa Kosmik &amp; Tiga Teka-teki</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Tengah Medan Perang Tua</span>
+                        <span class="meta-badge" style="color: var(--accent-purple);">🔮 Entitas: Wajah Kayu Tanpa Mata</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Kalian terus menembus kabut mengabaikan peringatan Kael. Tiba-tiba, tanah bergetar hebat. Dari bawah lapisan abu, akar-akar kayu hitam menjebol permukaan tanah secara instan, merajut diri ke atas hingga membentuk sebuah <strong>Pohon Raksasa</strong> yang sepenuhnya tidak wajar. Daunnya berwarna emas, sementara getahnya memancarkan pendar ungu kosmik. Akar pohon itu memblokir seluruh jalur, dan dari lekukan kulit kayunya, terbentuk sebuah wajah tua tak bermata. Suaranya menggema langsung di dalam kepala kalian:</p>
+                        
+                        <p style="color: var(--graymere-color); font-family: 'Cinzel', serif; text-align: center; margin: 1rem 0; font-size: 1.05rem; font-weight: bold; background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 4px;">
+                            "Sebuah anomali berjalan di atas tanah yang dipaksa damai... Aku tidak akan membiarkan benang waktu yang kusut ini lewat, kecuali kalian menjawab tiga tanyaku."
+                        </p>
+
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1.5rem 0;">
+                            <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; padding: 0.8rem 1rem;">
+                                <strong style="color: var(--graymere-color);">Pertanyaan 1 (Fana &amp; Memalukan)</strong>
+                                <p style="font-size: 0.92rem; color: var(--text-secondary); margin-top: 0.25rem;">"Pertama... ceritakan padaku, apa pengalaman paling memalukan yang pernah kalian alami di sisa hidup fana kalian?"</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; padding: 0.8rem 1rem;">
+                                <strong style="color: var(--graymere-color);">Pertanyaan 2 (Absurd &amp; Estetika)</strong>
+                                <p style="font-size: 0.92rem; color: var(--text-secondary); margin-top: 0.25rem;">"Kedua... menurut mata fana kalian, ciptaan manakah yang lebih rupawan: manusia kucing Tabaxi, atau manusia rubah Kitsune?"</p>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; padding: 0.8rem 1rem;">
+                                <strong style="color: var(--graymere-color);">Pertanyaan 3 (Grave &amp; Rahasia Waktu)</strong>
+                                <p style="font-size: 0.92rem; color: var(--text-secondary); margin-top: 0.25rem;">"Dan yang ketiga... Apakah ini kali pertama kalian berada di tempat ini? ...Sudah berapa kali kalian mengalami tanggal 9 Kythorn?"</p>
+                            </div>
+                        </div>
+
+                        <div class="callout" style="border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.01); padding: 1.2rem;">
+                            <div class="callout-title" style="color: var(--graymere-color);">
+                                🌟 Pengungkapan Kosmik (Jika Menjawab Jujur Tentang Loop)
+                            </div>
+                            <p class="callout-content" style="color: var(--text-secondary); line-height: 1.6;">
+                                Wajah di pohon itu tersenyum lebar hingga kayunya retak: <br>
+                                <em>"Ah... jiwa-jiwa yang menolak dihapus. Hadiah untuk kejujuran kalian adalah sebuah kepastian: Pahlawan api yang kalian tuju di Eldenfall tidak mati oleh iblis. Sang Cahaya telah membajak makamnya. Makam itu kini bukan lagi tempat istirahat, melainkan sebuah 'mesin saringan'. Sang Dewi terus mereset waktu, mencari jiwa-jiwa yang pantas. Jika kalian mengingat hari ini... itu berarti kalian sedang diuji untuk menjadi penggantinya."</em>
+                            </p>
+                        </div>
+                        <p style="margin-top: 1rem;">Akar pohon itu perlahan melonggar, lalu hancur menjadi debu emas kosmik yang terbawa angin, membiarkan kalian lewat.</p>
+                    </div>
+                </div>
+
+                <!-- Fase IV -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Fase IV</span>
+                    <h3 class="scene-title">Parit Perang Tua &amp; Gema Kerangka</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: The Old Trenches</span>
+                        <span class="meta-badge" style="color: var(--loop2-color);">⚔️ Konflik: Prajurit Gema (Aurelion &amp; Varkath)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Kalian melangkah masuk ke area <strong>Parit Perang Tua (The Old Trenches)</strong>. Keheningan dipecahkan oleh suara tulang yang bergesekan dengan zirah besi. Dari dalam lumpur kering, prajurit-prajurit lama bangkit. Namun yang membuat darah kalian berdesir adalah mereka mengenakan zirah Aurelion dan Varkath yang tercampur. Musuh bebuyutan di masa lalu, kini bangkit berdampingan secara tidak wajar, digerakkan oleh satu entitas kosmik yang sama.</p>
+                        
+                        <div style="background: rgba(239, 68, 68, 0.02); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 6px; padding: 1rem; margin: 1rem 0;">
+                            <strong style="color: var(--loop2-color); display: flex; align-items: center; gap: 0.5rem;">
+                                📜 Temuan Pasca Pertempuran (Validasi Loop)
+                            </strong>
+                            <p style="font-size: 0.94rem; color: var(--text-secondary); margin-top: 0.4rem; line-height: 1.5;">
+                                Setelah memeriksa sisa kerangka yang hancur, kalian menemukan sebuah liontin perwira militer Kerajaan Aurelion. Secara mengejutkan, karakter Penumpang (Party B) menemukan <strong>pedang/senjata spesifik dari tubuh asli mereka</strong> di Loop 2 tertancap kokoh di tanah ini. Validasi mutlak bahwa tubuh lama mereka pernah hancur di sini pada putaran waktu sebelumnya.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fase V -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Fase V</span>
+                    <h3 class="scene-title">Kontras Fasad: Festival Graymere</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Horizon Menuju Kota Graymere</span>
+                        <span class="meta-badge" style="color: var(--accent-green);">🎭 Fasad: Kemegahan yang Dipaksakan</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Kabut akhirnya menipis di ujung parit. Jalan setapak kini terbuka lurus, mengarah to kota Graymere yang berada tidak jauh dari Eldenfall. Setelah rentetan kengerian kosmik dan bayangan kematian di Old Battlefield, kalian bersiap menghadapi kota militer yang tegang. Namun, pemandangan di horizon sama sekali memutarbalikkan ekspektasi kalian.</p>
+                        <p>Graymere tidak membisu, apalagi dipenuhi ketegangan. Dari kejauhan, langit malam kota itu berpendar hangat oleh ribuan cahaya lampion. Sayup-sayup, alunan musik yang ceria, suara denting gelas, dan tawa bersahutan menyambut kedatangan kalian. Warga dan para pendatang tumpah ruah di jalanan, merayakan <strong>Aurelion Harvest Festival</strong> dengan penuh kedamaian.</p>
+                        <p>Bau daging panggang dan arak manis menggantikan bau anyir darah. Di Graymere, dunia seolah menolak mengakui bahwa ada kiamat yang sedang menunggu di makam tepat di sebelah kota mereka. Fasad sangkar emas ini berdiri kokoh, menutupi kebenaran dengan pesta pora.</p>
+                    </div>
                 </div>
 
             </div>
-        </section>
+        </div>
+
+        <!-- ==================== TAB: OLD BATTLEFIELD SCENE ==================== -->
+        <div id="tab-oldbattlefield-scene" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--graymere-color);">Skenario Aurelion — Old Battlefield</div>
+                <h1 style="border-bottom-color: var(--graymere-color);">Scene Sesi 3 — Old Battlefield: Gema yang Tersangkut</h1>
+                <p class="section-desc">Fokus Utama Sesi: Atmosphere building (horor/misteri), mengungkap intervensi Dewi Kurumagatsu secara langsung lewat roleplay, dan battle melawan anomali waktu.</p>
+            </header>
+
+            <div class="scene-container">
+                
+                <!-- Scene I -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Scene I</span>
+                    <h3 class="scene-title">Zona Demiliterisasi &amp; Sang Pemulung</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Perbatasan masuk Old Battlefield</span>
+                        <span class="meta-badge" style="color: var(--graymere-color);">🧭 Fokus: Eksplorasi Awal &amp; Foreshadowing Mekanik</span>
+                        <span class="meta-badge" style="color: #fbbf24;">⚡ Tensi: Sepi → Mencekam</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong></p>
+                        <ul>
+                            <li>Party C menemukan <strong>Menara Pengawas Gencatan Senjata</strong> milik Aurelion yang kosong melompong. Obor masih menyala, tapi penjaga kabur.</li>
+                            <li>Di bawah menara, dekat gerobak hancur, mereka bertemu <strong>Kael the Scavenger</strong> yang sedang ketakutan memulung senjata.</li>
+                            <li>Kael memperingatkan Party agar tidak masuk to parit utama karena <em>"mayat di sana bukan zombie biasa, tapi bayangan yang tersangkut dan rusak waktunya."</em></li>
+                        </ul>
+                        <p style="margin-top: 0.5rem; color: var(--graymere-color);"><strong>Output Scene:</strong> Party tahu ancaman di depan adalah <em>glitch</em> ruang-waktu, dan militer secara sadar menutupi fakta ini.</p>
+                    </div>
+                </div>
+
+                <!-- Scene II -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Scene II</span>
+                    <h3 class="scene-title">Akar Kosmik &amp; Tiga Pertanyaan</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Jalan setapak di tengah kabut</span>
+                        <span class="meta-badge" style="color: var(--accent-purple);">🗣️ Fokus: Roleplay &amp; Lore Drop Masif</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚡ Tensi: Absurd → Tegang/Spiritual</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong></p>
+                        <ul>
+                            <li>Tanah bergetar, <strong>Pohon Raksasa Kosmik</strong> dengan getah ungu (Aura Kurumagatsu) menembus tanah dan memblokir jalan.</li>
+                            <li>Pohon menanyakan 3 pertanyaan. Pertanyaan 1 (Memalukan) untuk tes ego pemain. Pertanyaan 2 (Tabaxi/Kitsune) untuk memecah ketegangan/absurditas.</li>
+                            <li>Pertanyaan 3 (Inti): <em>"Apakah ini kali pertama kalian berada di sini? Sudah berapa kali kalian mengalami 9 Kythorn?"</em></li>
+                            <li><strong>Jika dijawab jujur (sadar Loop):</strong> Pohon tersenyum dan memberikan <em>Lore Drop</em> besar (jiwa Prosperina dikunci sebagai saringan Jangkar oleh Dewi).</li>
+                            <li><strong>Jika bohong/tidak tahu:</strong> Pohon meratapi mereka sebagai bidak yang berjalan ke rumah jagal.</li>
+                            <li>Pohon hancur menjadi debu emas kosmik, membuka jalan.</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem; color: var(--graymere-color);"><strong>Output Scene:</strong> Konfirmasi verbal pertama bahwa musuh sejati mereka adalah entitas kosmik/surgawi (Dewi), bukan sekadar konspirasi kerajaan.</p>
+                    </div>
+                </div>
+
+                <!-- Scene III -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Scene III</span>
+                    <h3 class="scene-title">Battle: Gema yang Terkendali</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Parit Perang Tua (The Old Trenches)</span>
+                        <span class="meta-badge" style="color: var(--loop2-color);">⚔️ Fokus: Combat &amp; Validasi Fisik Loop</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚡ Tensi: COMBAT</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong></p>
+                        <ul>
+                            <li>Tulang-belulang dan bayangan prajurit bangkit. Yang mengerikan, prajurit Aurelion dan Varkath (musuh bebuyutan) bangkit secara bersamaan dan bertarung di kubu yang sama.</li>
+                            <li>Gerakan mereka terarah, seolah dikendalikan oleh satu "Sutradara" (efek intervensi Dewi).</li>
+                            <li>Setelah menang, Party C bisa mengeksplorasi sisa-sisa medan tempur untuk mendapatkan item kunci.</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem; color: var(--graymere-color);"><strong>Output Scene:</strong> Pertempuran sukses, kabut menipis, dan Party C menemukan validasi dari senjata lama mereka.</p>
+                    </div>
+                </div>
+
+                <!-- Scene IV -->
+                <div class="scene-box" style="border-left-color: var(--graymere-color);">
+                    <span class="scene-num" style="color: var(--graymere-color);">Scene IV</span>
+                    <h3 class="scene-title">Transisi: Fasad Kedamaian</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Ujung Old Battlefield, Horizon Graymere</span>
+                        <span class="meta-badge" style="color: var(--accent-green);">🎭 Fokus: Transisi Mood Kontras</span>
+                        <span class="meta-badge" style="color: #3b82f6;">⚡ Tensi: Mereda → Ironis</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong></p>
+                        <ul>
+                            <li>Kabut habis. Di depan mereka berdiri kota karantina <strong>Graymere</strong>.</li>
+                            <li>Alih-alih kota yang tegang, Graymere terang benderang oleh lampion. Musik festival dan bau daging panggang tercium. Kota ini sedang merayakan <em>Aurelion Harvest Festival</em>, menolak realitas kiamat yang ada di ujung hidung mereka.</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem; color: var(--graymere-color);"><strong>Output Scene:</strong> Sesi perjalanan selesai, Party C bersiap melakukan infiltrasi ke dalam festival karantina Graymere di sesi berikutnya.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== TAB: OLD BATTLEFIELD POINTER ==================== -->
+        <div id="tab-oldbattlefield-pointer" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--graymere-color);">Skenario Aurelion — Old Battlefield</div>
+                <h1 style="border-bottom-color: var(--graymere-color);">Pointer Sesi 3 — Old Battlefield</h1>
+                <p class="section-desc">Poin-poin informasi kunci, rahasia tersembunyi, detail NPC, dan penjelasan lore item di Old Battlefield.</p>
+            </header>
+
+            <!-- Grid: Lokasi & NPC -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-bottom-color: rgba(168, 85, 247, 0.25);">
+                    <svg viewBox="0 0 24 24" style="fill: var(--graymere-color);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+                    <span style="color: var(--graymere-color);">🗺️ Lokasi &amp; Bangunan Penting</span>
+                </h2>
+                <div class="explore-grid">
+                    <div class="explore-card" style="border-color: rgba(168, 85, 247, 0.25);">
+                        <div class="explore-card-header">
+                            <span class="explore-card-icon" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.3);">🏰</span>
+                            <h4>Menara Pengawas Gencatan Senjata</h4>
+                        </div>
+                        <div class="explore-card-desc">Pos militer Aurelion yang baru ditinggalkan. Tempat pemain melakukan <em>Investigation/Perception Check</em> untuk menemukan Logbook Patroli.</div>
+                    </div>
+                    <div class="explore-card" style="border-color: rgba(168, 85, 247, 0.25);">
+                        <div class="explore-card-header">
+                            <span class="explore-card-icon" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.3);">💀</span>
+                            <h4>Parit Perang Tua (The Old Trenches)</h4>
+                        </div>
+                        <div class="explore-card-desc">Jalur berlumpur kering penuh tulang dan zirah berkarat. Menjadi arena utama pertempuran dan pencarian senjata reinkarnasi.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NPC Grid -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-bottom-color: rgba(168, 85, 247, 0.25);">
+                    <svg viewBox="0 0 24 24" style="fill: var(--graymere-color);"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    <span style="color: var(--graymere-color);">👥 NPC Penting di Old Battlefield</span>
+                </h2>
+                <div class="npc-grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div class="npc-card" style="border-color: rgba(168, 85, 247, 0.25);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: var(--graymere-color); background: rgba(168, 85, 247, 0.05);">👤</div>
+                            <div class="npc-identity">
+                                <h3>Kael the Scavenger</h3>
+                                <span style="color: var(--graymere-color);">Peran: Merchant &amp; Informan Mekanis</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <p>Pemulung zirah yang ketakutan. Bertindak sebagai pedagang darurat dan memberi peringatan mekanis bahwa monster di parit bukanlah undead biasa.</p>
+                        </div>
+                    </div>
+                    <div class="npc-card" style="border-color: rgba(168, 85, 247, 0.25);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: var(--graymere-color); background: rgba(168, 85, 247, 0.05);">🌳</div>
+                            <div class="npc-identity">
+                                <h3>Pohon Raksasa Kosmik</h3>
+                                <span style="color: var(--graymere-color);">Peran: Manifestasi Sistem / Puzzle NPC</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <p>Wajah kayu tanpa mata yang merupakan kepanjangan tangan dari sistem loop Dewi Kurumagatsu. Menguji kesadaran Party terhadap anomali waktu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lore Cards -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-bottom-color: rgba(168, 85, 247, 0.25);">
+                    <svg viewBox="0 0 24 24" style="fill: var(--graymere-color);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+                    <span style="color: var(--graymere-color);">📜 Penjelasan Lore &amp; Temuan Item</span>
+                </h2>
+                
+                <!-- Item 1 -->
+                <div class="item-card" style="border-color: rgba(168, 85, 247, 0.3); background: linear-gradient(90deg, rgba(168, 85, 247, 0.04) 0%, rgba(10, 12, 20, 0.5) 100%); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.1);">📖</div>
+                        <div class="item-identity">
+                            <h3>Logbook Patroli Penjaga</h3>
+                            <span class="item-badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.2);">Temuan di Menara</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #c084fc;">Isi Catatan</div>
+                            <div class="item-spec-value">Mencatat kesaksian prajurit yang ketakutan melihat gema prajurit mati 20 tahun lalu mengulang kematian mereka.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #c084fc;">Penjelasan Lore</div>
+                            <div class="item-spec-value">Membuktikan bahwa Komando Pusat Aurelion sebenarnya sadar akan distorsi waktu ini, namun menyembunyikannya demi propaganda festival.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="item-card" style="border-color: rgba(168, 85, 247, 0.3); background: linear-gradient(90deg, rgba(168, 85, 247, 0.04) 0%, rgba(10, 12, 20, 0.5) 100%); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.1);">🌳</div>
+                        <div class="item-identity">
+                            <h3>Lore Drop dari Pohon Kosmik</h3>
+                            <span class="item-badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.2);">Puzzle Reward</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #c084fc;">Isi Lore</div>
+                            <div class="item-spec-value">Jiwa Prosperina tidak mati oleh iblis, melainkan dikunci oleh sang Dewi di makamnya sebagai saringan stress-test calon Jangkar.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #c084fc;">Penjelasan Lore</div>
+                            <div class="item-spec-value">Pengungkapan plot terbesar di awal game. Kiamat undead tercegah karena sang Dewi membajak makam untuk merekrut Jangkar baru.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="item-card" style="border-color: rgba(168, 85, 247, 0.3); background: linear-gradient(90deg, rgba(168, 85, 247, 0.04) 0%, rgba(10, 12, 20, 0.5) 100%); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.1);">🛡️</div>
+                        <div class="item-identity">
+                            <h3>Liontin Perwira &amp; Zirah Campuran</h3>
+                            <span class="item-badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.2);">Loot di Parit</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #c084fc;">Wujud Temuan</div>
+                            <div class="item-spec-value">Liontin perwira tinta baru di mayat berzirah Aurelion dan Varkath yang bangkit bertarung bersama.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #c084fc;">Penjelasan Lore</div>
+                            <div class="item-spec-value">Prajurit dari kubu musuh bebuyutan tidak mungkin bekerja sama saat bangkit, kecuali mereka dikendalikan oleh entitas kosmik luar (Dewi).</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="item-card" style="border-color: rgba(168, 85, 247, 0.3); background: linear-gradient(90deg, rgba(168, 85, 247, 0.04) 0%, rgba(10, 12, 20, 0.5) 100%);">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.1);">⚔️</div>
+                        <div class="item-identity">
+                            <h3>Senjata Reinkarnasi (Party B)</h3>
+                            <span class="item-badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border-color: rgba(168, 85, 247, 0.2);">Loot Spesifik</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #c084fc;">Wujud Temuan</div>
+                            <div class="item-spec-value">Senjata lama (pedang, tongkat, aksesoris) milik tubuh asli karakter Penumpang (Party B) di Loop 2.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #c084fc;">Penjelasan Lore</div>
+                            <div class="item-spec-value">Validasi fisik mutlak. Menyentuh item ini memicu ingatan traumatis bahwa kematian mereka di Loop 2 benar-benar nyata terjadi.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </main>
 
+    <!-- Tab switching and interactive scripts -->
+    <script>
+        // Dropdown toggle for Highspire
+        const highspireToggle = document.getElementById('highspire-toggle');
+        const highspireParent = highspireToggle.closest('.nav-item');
+
+        highspireToggle.addEventListener('click', function(e) {
+            highspireParent.classList.toggle('expanded');
+        });
+
+        // Dropdown toggle for Brackenford
+        const brackenfordToggle = document.getElementById('brackenford-toggle');
+        const brackenfordParent = brackenfordToggle.closest('.nav-item');
+
+        brackenfordToggle.addEventListener('click', function(e) {
+            brackenfordParent.classList.toggle('expanded');
+        });
+
+        // Dropdown toggle for Old Battlefield
+        const oldbattlefieldToggle = document.getElementById('oldbattlefield-toggle');
+        const oldbattlefieldParent = oldbattlefieldToggle.closest('.nav-item');
+
+        oldbattlefieldToggle.addEventListener('click', function(e) {
+            oldbattlefieldParent.classList.toggle('expanded');
+        });
+
+        // Tab Switching Logic
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // If it's disabled, do nothing
+                if (this.classList.contains('disabled')) {
+                    e.preventDefault();
+                    return;
+                }
+
+                const targetId = this.getAttribute('data-target');
+                if (targetId) {
+                    e.preventDefault();
+
+                    // Remove active status from all links
+                    document.querySelectorAll('.nav-link').forEach(l => {
+                        l.classList.remove('active');
+                    });
+
+                    // Hide all tab contents
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+
+                    // Set current clicked link as active
+                    this.classList.add('active');
+
+                    // Show targets
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+
+                    // Handle menu expansion based on target
+                    if (targetId.includes('highspire')) {
+                        highspireParent.classList.add('expanded');
+                    } else if (targetId.includes('brackenford')) {
+                        brackenfordParent.classList.add('expanded');
+                    } else if (targetId.includes('oldbattlefield')) {
+                        oldbattlefieldParent.classList.add('expanded');
+                    }
+
+                    // Smooth scroll to top of page
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Codex - Solythis D&D</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-dark: #07090e;
+            --bg-card: rgba(17, 22, 34, 0.75);
+            --bg-sidebar: rgba(10, 13, 20, 0.95);
+            --gold-primary: #d4af37;
+            --gold-secondary: #f3e5ab;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-gold: rgba(212, 175, 55, 0.2);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            
+            /* D&D Stat Block Styling variables */
+            --dnd-parchment: #fdfaf3;
+            --dnd-red: #58180d;
+            --dnd-text: #2c1e13;
+            --dnd-accent: #8c1e18;
+            --dnd-divider: #dcd1b4;
+            --dnd-stat-bg: #f3ebd3;
+            --dnd-stat-border: #dcd1b4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
+                radial-gradient(at 50% 0%, rgba(59, 130, 246, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(239, 68, 68, 0.02) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.4);
+        }
+
+        /* App Container */
+        .app-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: 320px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-gold);
+            padding: 2rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.8rem;
+            padding-left: 0.5rem;
+        }
+
+        .sidebar-header svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--gold-primary);
+            filter: drop-shadow(0 0 8px var(--gold-glow));
+        }
+
+        .sidebar-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--gold-secondary) 0%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Search Box */
+        .search-container {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-gold);
+            border-radius: 8px;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            fill: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* Alphabet Filter Strip */
+        .alphabet-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 0.8rem;
+        }
+
+        .letter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .letter-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+        }
+
+        .letter-btn.active {
+            background: var(--gold-primary);
+            color: var(--bg-dark) !important;
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+
+        /* Monster List */
+        .monster-list-container {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            padding-right: 0.2rem;
+        }
+
+        .monster-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .monster-list-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(212, 175, 55, 0.1);
+            transform: translateX(4px);
+        }
+
+        .monster-list-item.active {
+            background: rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.35);
+            box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.05);
+        }
+
+        .monster-item-name {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+
+        .monster-list-item.active .monster-item-name {
+            color: var(--gold-secondary);
+        }
+
+        .monster-item-cr {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .monster-list-item.active .monster-item-cr {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-secondary);
+            border-color: rgba(212, 175, 55, 0.2);
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 2rem;
+            font-style: italic;
+        }
+
+        /* Main Viewport Styling */
+        main {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            padding: 2.5rem 3.5rem;
+            position: relative;
+        }
+
+        /* Page level header and divider */
+        .codex-page-header {
+            margin-bottom: 2rem;
+            width: 100%;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.6rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .red-bar-divider {
+            height: 4px;
+            background-color: var(--dnd-accent);
+            width: 100%;
+            border-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Placeholder View */
+        .placeholder-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80%;
+            text-align: center;
+            color: var(--text-secondary);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .placeholder-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.2));
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        .placeholder-view h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-secondary);
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .placeholder-view p {
+            max-width: 450px;
+            font-size: 0.95rem;
+        }
+
+        /* Detail View Layout */
+        .detail-view {
+            display: none;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 2.5rem;
+            align-items: start;
+            animation: fadeIn 0.4s ease-out;
+            margin-bottom: 2rem;
+        }
+
+        .detail-view.active {
+            display: grid;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.35)); }
+        }
+
+        /* --- D&D STAT BLOCK CARD (LEFT PANEL) --- */
+        .stat-block-card {
+            background-color: var(--dnd-parchment);
+            color: var(--dnd-text);
+            padding: 1.8rem;
+            border-radius: 6px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--dnd-stat-border);
+            border-top: 4px solid var(--dnd-accent);
+            border-bottom: 4px solid var(--dnd-accent);
+            position: relative;
+            
+            /* Two Column grid for the card contents */
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .card-left-col, .card-right-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.25rem;
+        }
+
+        .monster-name-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dnd-red);
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .monster-subtitle {
+            font-family: 'Outfit', sans-serif;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #554433;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        /* Core Info Lines */
+        .info-line {
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .info-line strong {
+            color: var(--dnd-red);
+            font-weight: 700;
+        }
+
+        /* D&D Tapered Line Divider */
+        .dnd-divider {
+            height: 4px;
+            background: var(--dnd-accent);
+            clip-path: polygon(0 40%, 50% 0, 100% 40%, 100% 60%, 50% 100%, 0 60%);
+            margin: 0.8rem 0;
+            border: none;
+            width: 100%;
+        }
+
+        /* Stats Table Container */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 2px;
+        }
+
+        .stats-table th {
+            color: #7a6e5d;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.72rem;
+            letter-spacing: 0.5px;
+            padding: 0.1rem 0.2rem;
+            text-align: center;
+        }
+
+        .stats-table td {
+            padding: 0.35rem 0.4rem;
+            text-align: center;
+            font-size: 0.9rem;
+            background-color: #f1ebd9;
+            color: var(--dnd-text);
+            border-radius: 2px;
+        }
+
+        .stats-table td.stat-name {
+            font-weight: 700;
+            color: var(--dnd-red);
+            font-family: 'Cinzel', serif;
+            background-color: transparent;
+            border: none;
+            text-align: left;
+            padding-left: 0.15rem;
+            font-size: 0.85rem;
+            width: 38px;
+        }
+
+        .stats-table tr.headers-row th {
+            border: none;
+            background: transparent;
+        }
+
+        /* Stat Block Lists (Vulnerabilities, Immunities, etc.) */
+        .block-list {
+            margin: 0.4rem 0;
+            font-size: 0.95rem;
+            line-height: 1.45;
+        }
+
+        .block-list-item {
+            margin-bottom: 0.35rem;
+        }
+
+        .block-list-item strong {
+            color: var(--dnd-red);
+            font-weight: 700;
+        }
+
+        /* Custom style for D&D hyperlinks */
+        .dnd-link {
+            color: var(--dnd-red);
+            text-decoration: underline;
+            text-decoration-color: rgba(140, 30, 24, 0.4);
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s ease, text-decoration-color 0.2s ease;
+        }
+
+        .dnd-link:hover {
+            color: #c92a21;
+            text-decoration-color: #c92a21;
+        }
+
+        /* Block Section Headers */
+        .block-section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dnd-red);
+            border-top: 1px solid var(--dnd-accent);
+            padding-top: 0.4rem;
+            margin-top: 1rem;
+            margin-bottom: 0.6rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Description blocks (Traits & Actions) */
+        .desc-block {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .desc-block-title {
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        /* --- MONSTER ART PANEL (RIGHT PANEL) --- */
+        .monster-art-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 2.5rem;
+        }
+
+        .art-frame {
+            width: 100%;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .art-frame:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .art-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            transition: transform 0.5s ease;
+        }
+
+        .art-frame:hover .art-image {
+            transform: scale(1.02);
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 1100px) {
+            .detail-view.active {
+                grid-template-columns: 1fr;
+            }
+
+            .monster-art-panel {
+                position: static;
+                margin-top: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+                height: auto;
+                overflow: visible;
+            }
+
+            aside {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-gold);
+                padding: 1.5rem 1rem;
+            }
+
+            main {
+                padding: 1.5rem 1rem;
+            }
+
+            .stat-block-card {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- Sidebar Directory navigation -->
+        <aside>
+            <div class="sidebar-header">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 2c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/>
+                </svg>
+                <span class="sidebar-title">MONSTER CODEX</span>
+            </div>
+
+            <!-- Search box -->
+            <div class="search-container">
+                <svg class="search-icon" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" id="search-bar" class="search-input" placeholder="Cari monster...">
+            </div>
+
+            <!-- Alphabet Strip -->
+            <div class="alphabet-strip" id="alphabet-filter">
+                <!-- JavaScript will populate active/disabled letters -->
+            </div>
+
+            <!-- Monsters list scrollable container -->
+            <div class="monster-list-container" id="monster-list">
+                <!-- JavaScript will populate items -->
+            </div>
+        </aside>
+
+        <!-- Main Viewport for displaying monster details -->
+        <main>
+            
+            <!-- Dynamic Page Header -->
+            <div class="codex-page-header" id="page-header" style="display: none;">
+                <h1 class="page-title" id="main-page-title">Monster</h1>
+                <div class="red-bar-divider"></div>
+            </div>
+
+            <!-- Default Placeholder view when no monster is selected -->
+            <div class="placeholder-view" id="empty-state">
+                <div class="placeholder-icon">📖</div>
+                <h2>Monster Codex Solythis</h2>
+                <p>Pilih salah satu monster dari direktori di sebelah kiri untuk menampilkan lembar statistik (*stat block*) dan ilustrasi resminya.</p>
+            </div>
+
+            <!-- Active Monster View -->
+            <div class="detail-view" id="creature-detail">
+                
+                <!-- Left panel: Stat Block -->
+                <div class="stat-block-card" id="stat-card-content">
+                    <!-- JavaScript will dynamically output the stat block layout here -->
+                </div>
+
+                <!-- Right panel: Monster Art -->
+                <div class="monster-art-panel">
+                    <div class="art-frame">
+                        <img src="" alt="" class="art-image" id="monster-art-img">
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Data & Controller Script -->
+    <script>
+        // Canonical Monster Database
+        // Canonical Monster Database
+        const monstersDb = {
+            "skeleton": {
+                id: "skeleton",
+                name: "Skeleton",
+                sizeType: "Medium Undead, Lawful Evil",
+                ac: "14",
+                initiative: "+3 (13)",
+                hp: "13 (2d8 + 4)",
+                speed: "30 ft.",
+                attributes: {
+                    str: { val: "10", mod: "+0", save: "+0" },
+                    dex: { val: "16", mod: "+3", save: "+3" },
+                    con: { val: "15", mod: "+2", save: "+2" },
+                    int: { val: "6", mod: "-2", save: "-2" },
+                    wis: { val: "8", mod: "-1", save: "-1" },
+                    cha: { val: "5", mod: "-3", save: "-3" }
+                },
+                vulnerabilities: "Bludgeoning",
+                resistances: "",
+                immunities: "Poison; <span class=\"dnd-link\">Exhaustion</span>, <span class=\"dnd-link\">Poisoned</span>",
+                senses: "<span class=\"dnd-link\">Darkvision</span> 60 ft.; Passive Perception 9",
+                languages: "Understands Common plus one other language but can't speak",
+                cr: "1/4 (XP 50; PB +2)",
+                gear: "<span class=\"dnd-link\">Shortbow</span>, <span class=\"dnd-link\">Shortsword</span>",
+                traits: [],
+                actions: [
+                    {
+                        name: "Shortsword",
+                        desc: "<em>Melee Attack Roll:</em> +5, reach 5 ft. <em>Hit:</em> 6 (1d6 + 3) Piercing damage."
+                    },
+                    {
+                        name: "Shortbow",
+                        desc: "<em>Ranged Attack Roll:</em> +5, range 80/320 ft. <em>Hit:</em> 6 (1d6 + 3) Piercing damage."
+                    }
+                ],
+                image: "Images/Skeleton.jpeg"
+            },
+            "specter": {
+                id: "specter",
+                name: "Specter",
+                sizeType: "Medium Undead, Chaotic Evil",
+                ac: "12",
+                initiative: "+2 (12)",
+                hp: "22 (5d8)",
+                speed: "30 ft., Fly 50 ft. (hover)",
+                attributes: {
+                    str: { val: "1", mod: "-5", save: "-5" },
+                    dex: { val: "14", mod: "+2", save: "+2" },
+                    con: { val: "11", mod: "+0", save: "+0" },
+                    int: { val: "10", mod: "+0", save: "+0" },
+                    wis: { val: "10", mod: "+0", save: "+0" },
+                    cha: { val: "11", mod: "+0", save: "+0" }
+                },
+                vulnerabilities: "",
+                resistances: "Acid, Bludgeoning, Cold, Fire, Lightning, Piercing, Slashing, Thunder",
+                immunities: "Necrotic, Poison; <span class=\"dnd-link\">Charmed</span>, <span class=\"dnd-link\">Exhaustion</span>, <span class=\"dnd-link\">Grappled</span>, <span class=\"dnd-link\">Paralyzed</span>, <span class=\"dnd-link\">Petrified</span>, <span class=\"dnd-link\">Poisoned</span>, <span class=\"dnd-link\">Prone</span>, <span class=\"dnd-link\">Restrained</span>, <span class=\"dnd-link\">Unconscious</span>",
+                senses: "<span class=\"dnd-link\">Darkvision</span> 60 ft.; Passive Perception 10",
+                languages: "Understands Common plus one other language but can't speak",
+                cr: "1 (XP 200; PB +2)",
+                gear: "",
+                traits: [
+                    {
+                        name: "Incorporeal Movement",
+                        desc: "The specter can move through other creatures and objects as if they were <span class=\"dnd-link\">Difficult Terrain</span>. It takes 5 (1d10) Force damage if it ends its turn inside an object."
+                    },
+                    {
+                        name: "Sunlight Sensitivity",
+                        desc: "While in sunlight, the specter has <span class=\"dnd-link\">Disadvantage</span> on ability checks and attack rolls."
+                    }
+                ],
+                actions: [
+                    {
+                        name: "Life Drain",
+                        desc: "<em>Melee Attack Roll:</em> +4, reach 5 ft. <em>Hit:</em> 7 (2d6) Necrotic damage. If the target is a creature, its Hit Point maximum decreases by an amount equal to the damage taken."
+                    }
+                ],
+                image: "Images/Spectre.jpeg"
+            }
+        };
+
+        // State variables
+        let selectedMonsterId = null;
+        let activeLetter = null; // null means no alphabet filter active
+
+        // DOM elements
+        const searchBar = document.getElementById('search-bar');
+        const alphabetContainer = document.getElementById('alphabet-filter');
+        const monsterList = document.getElementById('monster-list');
+        const emptyState = document.getElementById('empty-state');
+        const detailView = document.getElementById('creature-detail');
+        const statCardContent = document.getElementById('stat-card-content');
+        const artImage = document.getElementById('monster-art-img');
+
+        // Initial loading logic
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAlphabetFilter();
+            filterMonsters();
+
+            // Load monster from hash if present
+            handleHashRoute();
+        });
+
+        // Watch for hash changes in URL
+        window.addEventListener('hashchange', () => {
+            handleHashRoute();
+        });
+
+        // Hash routing helper
+        function handleHashRoute() {
+            const hash = window.location.hash.substring(1).toLowerCase();
+            if (hash && monstersDb[hash]) {
+                selectMonster(hash);
+            }
+        }
+
+        // Generate alphabet filter buttons (A-Z)
+        function renderAlphabetFilter() {
+            alphabetContainer.innerHTML = '';
+
+            for (let i = 65; i <= 90; i++) {
+                const letter = String.fromCharCode(i);
+                const button = document.createElement('button');
+                button.className = 'letter-btn';
+                button.textContent = letter;
+                
+                // All letters are clickable
+                button.addEventListener('click', () => toggleLetterFilter(letter));
+
+                alphabetContainer.appendChild(button);
+            }
+        }
+
+        // Toggle letter filtering
+        function toggleLetterFilter(letter) {
+            const buttons = document.querySelectorAll('.letter-btn');
+            
+            if (activeLetter === letter) {
+                activeLetter = null; // Clear filter if clicked again
+                buttons.forEach(btn => btn.classList.remove('active'));
+            } else {
+                activeLetter = letter;
+                buttons.forEach(btn => {
+                    if (btn.textContent === letter) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            filterMonsters();
+        }
+
+        // Search bar change logic
+        searchBar.addEventListener('input', () => {
+            filterMonsters();
+        });
+
+        // Filter and render the list of monsters in the sidebar
+        function filterMonsters() {
+            monsterList.innerHTML = '';
+            const query = searchBar.value.toLowerCase().trim();
+
+            const filteredMonsters = Object.values(monstersDb).filter(monster => {
+                const matchesQuery = monster.name.toLowerCase().includes(query);
+                const matchesLetter = activeLetter ? monster.name.toUpperCase().startsWith(activeLetter) : true;
+                return matchesQuery && matchesLetter;
+            });
+
+            if (filteredMonsters.length === 0) {
+                monsterList.innerHTML = '<div class="no-results">Tidak ada monster ditemukan</div>';
+                return;
+            }
+
+            // Sort alphabetically
+            filteredMonsters.sort((a, b) => a.name.localeCompare(b.name));
+
+            filteredMonsters.forEach(monster => {
+                const item = document.createElement('div');
+                item.className = 'monster-list-item';
+                if (monster.id === selectedMonsterId) {
+                    item.classList.add('active');
+                }
+
+                item.innerHTML = `
+                    <span class="monster-item-name">${monster.name}</span>
+                    <span class="monster-item-cr">CR ${monster.cr.split(' ')[0]}</span>
+                `;
+
+                item.addEventListener('click', () => {
+                    // Update hash in URL, which triggers selectMonster through hashchange listener
+                    window.location.hash = monster.id;
+                });
+
+                monsterList.appendChild(item);
+            });
+        }
+
+        // Select and load detail page for a specific monster
+        function selectMonster(id) {
+            selectedMonsterId = id;
+            
+            // Reload list to apply active class
+            filterMonsters();
+
+            const monster = monstersDb[id];
+            if (!monster) return;
+
+            // Update page header and title
+            const pageHeader = document.getElementById('page-header');
+            const mainPageTitle = document.getElementById('main-page-title');
+            pageHeader.style.display = 'block';
+            mainPageTitle.textContent = monster.name;
+
+            // Hide empty state view
+            emptyState.style.display = 'none';
+            detailView.classList.add('active');
+
+            // Determine if the monster has traits to structure columns
+            const hasTraits = monster.traits && monster.traits.length > 0;
+
+            // Build left column contents
+            const leftColHtml = `
+                <div class="block-header">
+                    <div>
+                        <h2 class="monster-name-title">${monster.name}</h2>
+                        <span class="monster-subtitle">${monster.sizeType}</span>
+                    </div>
+                </div>
+
+                <div class="dnd-divider"></div>
+
+                <div class="info-line"><strong>AC</strong> ${monster.ac}</div>
+                <div class="info-line"><strong>Initiative</strong> ${monster.initiative}</div>
+                <div class="info-line"><strong>HP</strong> ${monster.hp}</div>
+                <div class="info-line"><strong>Speed</strong> ${monster.speed}</div>
+
+                <div class="dnd-divider"></div>
+
+                <!-- Attributes Table -->
+                <div class="stats-container">
+                    <table class="stats-table">
+                        <thead>
+                            <tr class="headers-row">
+                                <th></th>
+                                <th></th>
+                                <th>MOD</th>
+                                <th>SAVE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="stat-name">STR</td>
+                                <td>${monster.attributes.str.val}</td>
+                                <td>${monster.attributes.str.mod}</td>
+                                <td>${monster.attributes.str.save}</td>
+                            </tr>
+                            <tr>
+                                <td class="stat-name">DEX</td>
+                                <td>${monster.attributes.dex.val}</td>
+                                <td>${monster.attributes.dex.mod}</td>
+                                <td>${monster.attributes.dex.save}</td>
+                            </tr>
+                            <tr>
+                                <td class="stat-name">CON</td>
+                                <td>${monster.attributes.con.val}</td>
+                                <td>${monster.attributes.con.mod}</td>
+                                <td>${monster.attributes.con.save}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="stats-table">
+                        <thead>
+                            <tr class="headers-row">
+                                <th></th>
+                                <th></th>
+                                <th>MOD</th>
+                                <th>SAVE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="stat-name">INT</td>
+                                <td>${monster.attributes.int.val}</td>
+                                <td>${monster.attributes.int.mod}</td>
+                                <td>${monster.attributes.int.save}</td>
+                            </tr>
+                            <tr>
+                                <td class="stat-name">WIS</td>
+                                <td>${monster.attributes.wis.val}</td>
+                                <td>${monster.attributes.wis.mod}</td>
+                                <td>${monster.attributes.wis.save}</td>
+                            </tr>
+                            <tr>
+                                <td class="stat-name">CHA</td>
+                                <td>${monster.attributes.cha.val}</td>
+                                <td>${monster.attributes.cha.mod}</td>
+                                <td>${monster.attributes.cha.save}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="dnd-divider"></div>
+
+                <!-- Lists & Resistances -->
+                <div class="block-list">
+                    ${monster.vulnerabilities ? `<div class="block-list-item"><strong>Vulnerabilities</strong> ${monster.vulnerabilities}</div>` : ''}
+                    ${monster.resistances ? `<div class="block-list-item"><strong>Resistances</strong> ${monster.resistances}</div>` : ''}
+                    ${monster.immunities ? `<div class="block-list-item"><strong>Immunities</strong> ${monster.immunities}</div>` : ''}
+                    
+                    ${hasTraits ? `
+                        ${monster.gear ? `<div class="block-list-item"><strong>Gear</strong> ${monster.gear}</div>` : ''}
+                        <div class="block-list-item"><strong>Senses</strong> ${monster.senses}</div>
+                        <div class="block-list-item"><strong>Languages</strong> ${monster.languages}</div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Build right column contents
+            const rightColHtml = `
+                <!-- Right details -->
+                <div class="block-list" style="margin-top: 0;">
+                    ${!hasTraits ? `
+                        ${monster.gear ? `<div class="block-list-item"><strong>Gear</strong> ${monster.gear}</div>` : ''}
+                        <div class="block-list-item"><strong>Senses</strong> ${monster.senses}</div>
+                        <div class="block-list-item"><strong>Languages</strong> ${monster.languages}</div>
+                    ` : ''}
+                    <div class="block-list-item"><strong>CR</strong> ${monster.cr}</div>
+                </div>
+
+                <!-- Traits -->
+                ${hasTraits ? `
+                    <h3 class="block-section-title">Traits</h3>
+                    ${monster.traits.map(t => `
+                        <div class="desc-block">
+                            <span class="desc-block-title">${t.name}.</span> ${t.desc}
+                        </div>
+                    `).join('')}
+                ` : ''}
+
+                <!-- Actions -->
+                ${monster.actions.length > 0 ? `
+                    <h3 class="block-section-title">Actions</h3>
+                    ${monster.actions.map(a => `
+                        <div class="desc-block">
+                            <span class="desc-block-title">${a.name}.</span> ${a.desc}
+                        </div>
+                    `).join('')}
+                ` : ''}
+            `;
+
+            // Render side-by-side columns inside the card
+            statCardContent.innerHTML = `
+                <div class="card-left-col">${leftColHtml}</div>
+                <div class="card-right-col">${rightColHtml}</div>
+            `;
+
+            // Load illustration image & alt
+            artImage.src = monster.image;
+            artImage.alt = `Ilustrasi ${monster.name}`;
+        }
+    </script>
+</body>
+</html>

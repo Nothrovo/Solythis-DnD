@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurelion — Scene Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cinzel+Decorative:wght@700&family=Lora:ital,wght@0,500;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-dim: rgba(212,175,55,0.55);
+            --gold-glow: rgba(212,175,55,0.25);
+            --bg: #07080f;
+            --panel-bg: rgba(8, 10, 20, 0.96);
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --thumb-h: 90px;
+            --strip-collapsed-h: 44px;      /* height when closed — shows just the tab bar */
+            --strip-open-h: 160px;           /* height when open — tab + thumbs */
+            --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background: var(--bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── SLIDESHOW ─────────────────────────── */
+        #slideshow { position: fixed; inset: 0; z-index: 0; }
+
+        .slide {
+            position: absolute; inset: 0;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.65s cubic-bezier(0.4,0,0.2,1);
+        }
+        .slide.active { opacity: 1; pointer-events: all; }
+        .slide.prev-out { opacity: 0; transition: opacity 0.4s ease-in; }
+
+        .slide-img {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            display: block;
+        }
+        .slide::after {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%),
+                linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 22%, transparent 68%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+        }
+
+        /* ─── TOP BAR ───────────────────────────── */
+        #topBar {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, transparent 100%);
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        #topBar.ui-hidden { opacity: 0; }
+
+        .top-brand {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.1rem; color: var(--gold);
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 20px rgba(212,175,55,0.5);
+        }
+        .top-scene-label {
+            font-family: 'Cinzel', serif; font-size: 0.82rem;
+            color: rgba(255,255,255,0.6); letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        .top-counter {
+            font-family: 'Cinzel', serif; font-size: 0.82rem;
+            color: rgba(255,255,255,0.5); letter-spacing: 0.08em;
+        }
+
+        /* ─── SCENE TITLE CARD (bottom-left) ──────── */
+        #sceneTitleCard {
+            position: fixed;
+            bottom: calc(var(--strip-collapsed-h) + 1.4rem);
+            left: 2rem;
+            z-index: 100; pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1), bottom 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        #sceneTitleCard.ui-hidden { opacity: 0; transform: translateY(10px); }
+        #sceneTitleCard.strip-open { bottom: calc(var(--strip-open-h) + 1rem); }
+        #sceneTitleCard.entering { animation: titleEnter 0.6s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+        @keyframes titleEnter {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .title-chapter {
+            font-family: 'Cinzel', serif; font-size: 0.72rem; font-weight: 700;
+            color: var(--gold); letter-spacing: 0.22em; text-transform: uppercase;
+            margin-bottom: 0.3rem; text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+        }
+        .title-scene {
+            font-family: 'Lora', serif; font-style: italic;
+            font-size: 1.75rem; color: #fff;
+            text-shadow: 0 2px 14px rgba(0,0,0,0.95); line-height: 1.2;
+        }
+        .title-divider {
+            width: 44px; height: 2px; background: var(--gold);
+            margin-top: 0.55rem; box-shadow: 0 0 8px var(--gold-glow);
+        }
+
+        /* ─── PREV / NEXT ARROWS ─────────────────── */
+        .nav-arrow {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            z-index: 150;
+            width: 52px; height: 88px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.38);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            cursor: pointer; color: rgba(255,255,255,0.75);
+            transition: var(--transition);
+        }
+        #prevArrow { left: 0; border-radius: 0 12px 12px 0; border-left: none; }
+        #nextArrow { right: 0; border-radius: 12px 0 0 12px; border-right: none; }
+        .nav-arrow:hover {
+            background: rgba(212,175,55,0.16);
+            border-color: var(--gold-dim); color: var(--gold); width: 62px;
+        }
+        .nav-arrow svg { width: 24px; height: 24px; fill: currentColor; }
+        .nav-arrow.ui-hidden { opacity: 0; pointer-events: none; }
+        .nav-arrow.disabled { opacity: 0.18; pointer-events: none; }
+
+        /* ─── BOTTOM DRAWER ──────────────────────── */
+        /*  Structure:
+              #bottomDrawer          ← fixed, grows upward
+                .drawer-tab-bar      ← always visible strip (handle)
+                  .tab-btn           ← chapter jump tabs
+                  .drawer-toggle-btn ← open/close chevron
+                .drawer-content      ← thumbnail area (shown when open)
+        */
+        #bottomDrawer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            z-index: 200;
+            transition: height 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
+            height: var(--strip-collapsed-h);
+            overflow: hidden;
+        }
+        #bottomDrawer.open { height: var(--strip-open-h); }
+        #bottomDrawer.ui-hidden { opacity: 0; pointer-events: none; }
+
+        /* Glass background covering the whole drawer height */
+        #bottomDrawer::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(4,5,12,0.97) 0%, rgba(4,5,12,0.92) 60%, rgba(4,5,12,0.5) 100%);
+            backdrop-filter: blur(12px);
+        }
+
+        /* Tab bar — the always-visible handle strip */
+        .drawer-tab-bar {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: var(--strip-collapsed-h);
+            display: flex; align-items: center;
+            padding: 0 0.75rem;
+            gap: 0.4rem;
+            border-top: 1px solid rgba(212,175,55,0.12);
+        }
+
+        .tab-btn {
+            display: flex; align-items: center; gap: 0.45rem;
+            padding: 0.3rem 0.85rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            cursor: pointer;
+            color: var(--muted);
+            font-family: 'Cinzel', serif;
+            font-size: 0.72rem; font-weight: 700;
+            letter-spacing: 0.08em;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.07);
+            color: var(--text);
+            border-color: rgba(255,255,255,0.18);
+        }
+        .tab-btn.active-chapter {
+            border-color: var(--tab-color, var(--gold-dim));
+            color: var(--tab-color, var(--gold));
+            background: rgba(212,175,55,0.06);
+            box-shadow: 0 0 8px rgba(212,175,55,0.1);
+        }
+        .tab-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--tab-color, var(--gold-dim));
+            flex-shrink: 0;
+        }
+
+        /* Spacer pushes toggle button to the right */
+        .tab-spacer { flex: 1; }
+
+        /* Progress dots (scene position within chapter) */
+        .tab-progress {
+            display: flex; gap: 3px; align-items: center;
+        }
+        .tdot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: background 0.2s, transform 0.2s;
+            cursor: pointer;
+        }
+        .tdot.active {
+            background: var(--tab-color, var(--gold));
+            transform: scale(1.3);
+        }
+
+        /* Toggle (chevron) button */
+        .drawer-toggle-btn {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            cursor: pointer;
+            color: var(--muted);
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+        .drawer-toggle-btn:hover { color: var(--gold); border-color: var(--gold-dim); background: rgba(212,175,55,0.08); }
+        .drawer-toggle-btn svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.35s; }
+        #bottomDrawer.open .drawer-toggle-btn svg { transform: rotate(180deg); }
+
+        /* Content area — thumbnail scroll */
+        .drawer-content {
+            position: absolute; top: 0; left: 0; right: 0;
+            bottom: var(--strip-collapsed-h);
+            display: flex; align-items: center;
+            padding: 0.7rem 1rem;
+            gap: 0.55rem;
+            overflow-x: auto; overflow-y: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(212,175,55,0.2) transparent;
+        }
+        .drawer-content::-webkit-scrollbar { height: 3px; }
+        .drawer-content::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 2px; }
+
+        /* Thumbnail items */
+        .thumb-item {
+            flex-shrink: 0;
+            width: calc(var(--thumb-h) * 16/9);
+            height: var(--thumb-h);
+            position: relative;
+            cursor: pointer; border-radius: 7px; overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: var(--transition);
+            opacity: 0.5;
+        }
+        .thumb-item:hover { opacity: 0.82; transform: translateY(-3px); border-color: rgba(255,255,255,0.28); }
+        .thumb-item.active {
+            opacity: 1; border-color: var(--gold);
+            box-shadow: 0 0 16px var(--gold-glow), 0 -3px 0 var(--gold);
+            transform: translateY(-4px);
+        }
+        .thumb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .thumb-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.82));
+            padding: 0.35rem 0.4rem 0.28rem;
+            font-family: 'Cinzel', serif; font-size: 0.56rem; font-weight: 700;
+            color: #fff; letter-spacing: 0.06em; text-transform: uppercase;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .thumb-item.active .thumb-label { color: var(--gold); }
+
+        /* Chapter group header inside content */
+        .thumb-ch-header {
+            flex-shrink: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.3rem; height: var(--thumb-h); padding: 0 0.25rem;
+        }
+        .thumb-ch-line { width: 1px; flex: 1; background: rgba(212,175,55,0.18); }
+        .thumb-ch-label {
+            font-family: 'Cinzel', serif; font-size: 0.54rem; font-weight: 700;
+            white-space: nowrap; writing-mode: vertical-rl;
+            transform: rotate(180deg); letter-spacing: 0.12em;
+        }
+
+        /* ─── HUD TOGGLE ────────────────────────── */
+        #hudToggle {
+            position: fixed; top: 1rem; right: 1rem; z-index: 300;
+            width: 34px; height: 34px;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.45); backdrop-filter: blur(8px);
+            transition: var(--transition);
+        }
+        #hudToggle:hover { border-color: var(--gold-dim); color: var(--gold); background: rgba(212,175,55,0.1); }
+        #hudToggle svg { width: 15px; height: 15px; fill: currentColor; }
+
+        /* ─── PROGRESS BAR ──────────────────────── */
+        #progressBar {
+            position: fixed; top: 0; left: 0; height: 2px;
+            background: var(--gold); box-shadow: 0 0 8px var(--gold);
+            z-index: 999; transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* ─── AUTOPLAY INDICATOR ────────────────── */
+        #autoplayIndicator {
+            position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+            z-index: 300; background: rgba(0,0,0,0.72);
+            border: 1px solid var(--gold-dim); border-radius: 20px;
+            padding: 0.28rem 1rem;
+            font-family: 'Cinzel', serif; font-size: 0.72rem;
+            color: var(--gold); letter-spacing: 0.1em;
+            display: none; align-items: center; gap: 0.5rem;
+            backdrop-filter: blur(8px);
+        }
+        #autoplayIndicator.visible { display: flex; }
+        .auto-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--gold); animation: autoPulse 1s infinite;
+        }
+        @keyframes autoPulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+    </style>
+</head>
+<body>
+
+    <div id="progressBar"></div>
+
+    <div id="autoplayIndicator">
+        <div class="auto-dot"></div>
+        Autoplay
+    </div>
+
+    <button id="hudToggle" onclick="toggleHUD()" title="Sembunyikan / Tampilkan UI  (H)">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+    </button>
+
+    <div id="slideshow"></div>
+
+    <div id="topBar">
+        <div class="top-brand">Aurelion</div>
+        <div class="top-scene-label" id="topSceneLabel"></div>
+        <div class="top-counter"     id="topCounter"></div>
+    </div>
+
+    <div id="sceneTitleCard">
+        <div class="title-chapter" id="titleChapter"></div>
+        <div class="title-scene"   id="titleScene"></div>
+        <div class="title-divider"></div>
+    </div>
+
+    <!-- Prev / Next -->
+    <button class="nav-arrow" id="prevArrow" onclick="navigate(-1)" title="Sebelumnya  (←)">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    </button>
+    <button class="nav-arrow" id="nextArrow" onclick="navigate(+1)" title="Berikutnya  (→)">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+    </button>
+
+    <!-- Bottom Drawer -->
+    <div id="bottomDrawer">
+        <!-- Thumbnail scroll area (visible only when open) -->
+        <div class="drawer-content" id="drawerContent"></div>
+
+        <!-- Tab bar (always visible) -->
+        <div class="drawer-tab-bar" id="tabBar">
+            <!-- chapter tab buttons injected by JS -->
+            <div class="tab-spacer"></div>
+            <button class="drawer-toggle-btn" id="drawerToggleBtn" onclick="toggleDrawer()" title="Buka/tutup scene panel">
+                <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+    'use strict';
+
+    // ══════════════════════════════════════════
+    //   SCENE DATA
+    // ══════════════════════════════════════════
+    const SCENES = [
+        { id:'highspire-1', file:'Scenes/Highspire1.png',       chapter:'Highspire',       label:'Scene 1', sceneTitle:'Kota Highspire'      },
+        { id:'highspire-2', file:'Scenes/Highspire2.png',       chapter:'Highspire',       label:'Scene 2', sceneTitle:'Jalan Highspire'      },
+        { id:'highspire-3', file:'Scenes/Highspire3.png',       chapter:'Highspire',       label:'Scene 3', sceneTitle:'Guild Kerajaan'        },
+        { id:'highspire-4', file:'Scenes/Highspire4.png',       chapter:'Highspire',       label:'Scene 4', sceneTitle:'Keberangkatan'         },
+        { id:'breck-1',     file:'Scenes/Breckenford1.png',     chapter:'Breckenford',     label:'Scene 1', sceneTitle:'Desa Breckenford'      },
+        { id:'breck-2',     file:'Scenes/Breckenford2.png',     chapter:'Breckenford',     label:'Scene 2', sceneTitle:'Penginapan Tua'        },
+        { id:'breck-3',     file:'Scenes/Breckenford3.png',     chapter:'Breckenford',     label:'Scene 3', sceneTitle:'Para Veteran'           },
+        { id:'breck-4',     file:'Scenes/Breckenford4.png',     chapter:'Breckenford',     label:'Scene 4', sceneTitle:'Catatan Berdarah'      },
+        { id:'breck-5',     file:'Scenes/Breckenford5.png',     chapter:'Breckenford',     label:'Scene 5', sceneTitle:'Peninggalan Perang'    },
+        { id:'oldbattle-1', file:'Scenes/OldBattlefield1.png',  chapter:'Old Battlefield', label:'Scene 1', sceneTitle:'Hutan Bekas Perang'   },
+    ];
+
+    const CHAPTER_COLORS = {
+        'Highspire':       '#d4af37',
+        'Breckenford':     '#8fba6e',
+        'Old Battlefield': '#9b7de8',
+    };
+
+    // ══════════════════════════════════════════
+    //   STATE
+    // ══════════════════════════════════════════
+    let currentIdx   = 0;
+    let hudVisible   = true;
+    let drawerOpen   = false;
+    let autoplayTimer = null;
+    const AUTOPLAY_DELAY = 6000;
+
+    // ══════════════════════════════════════════
+    //   INIT
+    // ══════════════════════════════════════════
+    window.addEventListener('DOMContentLoaded', () => {
+        buildSlides();
+        buildTabBar();
+        buildThumbs();
+        goTo(0, false);
+        setupKeyboard();
+    });
+
+    // ── Slides ──────────────────────────────────
+    function buildSlides() {
+        const ss = document.getElementById('slideshow');
+        SCENES.forEach((scene, i) => {
+            const div = document.createElement('div');
+            div.className = 'slide';
+            div.id = `slide-${i}`;
+            const img = document.createElement('img');
+            img.className = 'slide-img';
+            img.src = scene.file;
+            img.alt = `${scene.chapter} — ${scene.label}`;
+            img.draggable = false;
+            div.addEventListener('click', (e) => {
+                if (e.target === div || e.target === img) {
+                    if (drawerOpen) { closeDrawer(); return; }
+                    navigate(+1);
+                }
+            });
+            div.appendChild(img);
+            ss.appendChild(div);
+        });
+    }
+
+    // ── Tab bar ──────────────────────────────────
+    function buildTabBar() {
+        const bar = document.getElementById('tabBar');
+        const spacer = bar.querySelector('.tab-spacer');
+        const toggleBtn = bar.querySelector('.drawer-toggle-btn');
+
+        const chapters = [...new Set(SCENES.map(s => s.chapter))];
+        chapters.forEach(ch => {
+            const color = CHAPTER_COLORS[ch] || '#d4af37';
+            const scenesInCh = SCENES.filter(s => s.chapter === ch);
+
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn';
+            btn.dataset.chapter = ch;
+            btn.style.setProperty('--tab-color', color);
+
+            // Progress dots (one per scene in chapter)
+            const dotsHtml = scenesInCh.map((s, di) =>
+                `<span class="tdot" data-chapter="${ch}" data-di="${di}" title="${s.sceneTitle}"></span>`
+            ).join('');
+
+            btn.innerHTML = `<span class="tab-dot"></span>${ch}<span class="tab-progress">${dotsHtml}</span>`;
+
+            // Click chapter tab → jump to first scene of that chapter (or open drawer)
+            btn.addEventListener('click', () => {
+                const firstIdx = SCENES.findIndex(s => s.chapter === ch);
+                if (currentIdx < firstIdx || currentIdx >= firstIdx + scenesInCh.length) {
+                    goTo(firstIdx);
+                } else {
+                    toggleDrawer();
+                }
+            });
+
+            // Dot clicks
+            btn.querySelectorAll('.tdot').forEach((dot, di) => {
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const firstIdx = SCENES.findIndex(s => s.chapter === ch);
+                    goTo(firstIdx + di);
+                });
+            });
+
+            bar.insertBefore(btn, spacer);
+        });
+    }
+
+    // ── Thumbnails ───────────────────────────────
+    function buildThumbs() {
+        const content = document.getElementById('drawerContent');
+        let lastChapter = null;
+
+        SCENES.forEach((scene, i) => {
+            const color = CHAPTER_COLORS[scene.chapter] || '#d4af37';
+
+            if (scene.chapter !== lastChapter) {
+                if (lastChapter !== null) {
+                    const hdr = document.createElement('div');
+                    hdr.className = 'thumb-ch-header';
+                    hdr.innerHTML = `
+                        <div class="thumb-ch-line"></div>
+                        <div class="thumb-ch-label" style="color:${color}">${scene.chapter}</div>
+                        <div class="thumb-ch-line"></div>`;
+                    content.appendChild(hdr);
+                }
+                lastChapter = scene.chapter;
+            }
+
+            const item = document.createElement('div');
+            item.className = 'thumb-item';
+            item.id = `thumb-${i}`;
+            item.title = `${scene.chapter} — ${scene.label}: ${scene.sceneTitle}`;
+            item.innerHTML = `
+                <img class="thumb-img" src="${scene.file}" alt="" loading="lazy">
+                <div class="thumb-label">${scene.sceneTitle}</div>`;
+            item.onclick = () => { goTo(i); closeDrawer(); };
+            content.appendChild(item);
+        });
+    }
+
+    // ══════════════════════════════════════════
+    //   NAVIGATION
+    // ══════════════════════════════════════════
+    function goTo(idx, animate = true) {
+        if (idx < 0 || idx >= SCENES.length) return;
+        const prev = currentIdx;
+        currentIdx = idx;
+        const scene = SCENES[idx];
+        const color = CHAPTER_COLORS[scene.chapter] || 'var(--gold)';
+
+        // Slides
+        document.querySelectorAll('.slide').forEach((el, i) => {
+            if (i === idx) { el.classList.add('active'); }
+            else {
+                if (i === prev && animate) {
+                    el.classList.add('prev-out');
+                    setTimeout(() => el.classList.remove('prev-out'), 500);
+                }
+                el.classList.remove('active');
+            }
+        });
+
+        // Thumbnails
+        document.querySelectorAll('.thumb-item').forEach((el, i) => {
+            el.classList.toggle('active', i === idx);
+        });
+        document.getElementById(`thumb-${idx}`)?.scrollIntoView({ inline:'center', behavior:'smooth', block:'nearest' });
+
+        // Tab buttons + dots
+        const chapters = [...new Set(SCENES.map(s => s.chapter))];
+        chapters.forEach(ch => {
+            const tabBtn = document.querySelector(`.tab-btn[data-chapter="${ch}"]`);
+            if (!tabBtn) return;
+            const isActiveChapter = scene.chapter === ch;
+            tabBtn.classList.toggle('active-chapter', isActiveChapter);
+
+            const firstIdx = SCENES.findIndex(s => s.chapter === ch);
+            const dots = tabBtn.querySelectorAll('.tdot');
+            dots.forEach((dot, di) => {
+                dot.classList.toggle('active', isActiveChapter && (firstIdx + di === idx));
+            });
+        });
+
+        // Top bar
+        document.getElementById('topSceneLabel').textContent = `${scene.chapter}  ·  ${scene.label}`;
+        document.getElementById('topCounter').textContent = `${idx + 1} / ${SCENES.length}`;
+
+        // Title card
+        const tc = document.getElementById('sceneTitleCard');
+        document.getElementById('titleChapter').textContent = scene.chapter;
+        document.getElementById('titleChapter').style.color = color;
+        document.getElementById('titleScene').textContent = scene.sceneTitle;
+        if (animate) {
+            tc.classList.remove('entering');
+            void tc.offsetWidth;
+            tc.classList.add('entering');
+        }
+
+        // Arrows
+        document.getElementById('prevArrow').classList.toggle('disabled', idx === 0);
+        document.getElementById('nextArrow').classList.toggle('disabled', idx === SCENES.length - 1);
+
+        // Progress bar
+        document.getElementById('progressBar').style.width =
+            ((idx / (SCENES.length - 1)) * 100) + '%';
+    }
+
+    function navigate(delta) { goTo(currentIdx + delta); }
+
+    function jumpToChapter(chapter) {
+        const idx = SCENES.findIndex(s => s.chapter === chapter);
+        if (idx !== -1) goTo(idx);
+    }
+
+    // ══════════════════════════════════════════
+    //   DRAWER (bottom panel)
+    // ══════════════════════════════════════════
+    function toggleDrawer() {
+        drawerOpen ? closeDrawer() : openDrawer();
+    }
+    function openDrawer() {
+        drawerOpen = true;
+        document.getElementById('bottomDrawer').classList.add('open');
+        document.getElementById('sceneTitleCard').classList.add('strip-open');
+    }
+    function closeDrawer() {
+        drawerOpen = false;
+        document.getElementById('bottomDrawer').classList.remove('open');
+        document.getElementById('sceneTitleCard').classList.remove('strip-open');
+    }
+
+    // ══════════════════════════════════════════
+    //   HUD TOGGLE
+    // ══════════════════════════════════════════
+    function toggleHUD() {
+        hudVisible = !hudVisible;
+        ['topBar','sceneTitleCard','bottomDrawer','prevArrow','nextArrow'].forEach(id =>
+            document.getElementById(id)?.classList.toggle('ui-hidden', !hudVisible)
+        );
+        if (!hudVisible && drawerOpen) closeDrawer();
+    }
+
+    // ══════════════════════════════════════════
+    //   AUTOPLAY
+    // ══════════════════════════════════════════
+    function toggleAutoplay() {
+        const ind = document.getElementById('autoplayIndicator');
+        if (autoplayTimer) {
+            clearInterval(autoplayTimer); autoplayTimer = null;
+            ind.classList.remove('visible');
+        } else {
+            autoplayTimer = setInterval(() => {
+                currentIdx < SCENES.length - 1 ? navigate(+1) : goTo(0);
+            }, AUTOPLAY_DELAY);
+            ind.classList.add('visible');
+        }
+    }
+
+    // ══════════════════════════════════════════
+    //   FULLSCREEN
+    // ══════════════════════════════════════════
+    function toggleFullscreen() {
+        !document.fullscreenElement
+            ? document.documentElement.requestFullscreen()
+            : document.exitFullscreen();
+    }
+
+    // ══════════════════════════════════════════
+    //   KEYBOARD
+    // ══════════════════════════════════════════
+    function setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            switch (e.key) {
+                case 'ArrowLeft':  case 'ArrowUp':    e.preventDefault(); navigate(-1); break;
+                case 'ArrowRight': case 'ArrowDown': case ' ': e.preventDefault(); navigate(+1); break;
+                case 'h': case 'H': toggleHUD();       break;
+                case 'f': case 'F': toggleFullscreen(); break;
+                case 'p': case 'P': toggleAutoplay();   break;
+                case 'Tab':         e.preventDefault(); toggleDrawer(); break;
+                case 'Escape':      if (drawerOpen) closeDrawer(); break;
+                case 'Home':        e.preventDefault(); goTo(0); break;
+                case 'End':         e.preventDefault(); goTo(SCENES.length - 1); break;
+                case '1': jumpToChapter('Highspire'); break;
+                case '2': jumpToChapter('Breckenford'); break;
+                case '3': jumpToChapter('Old Battlefield'); break;
+            }
+        });
+    }
+    </script>
+</body>
+</html>
