@@ -1,0 +1,29 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Generated files / test builds
+template/session_player_view_test.html
+template/session_player_view.html
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
