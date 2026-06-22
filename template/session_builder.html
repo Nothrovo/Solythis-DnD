@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Session Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #07090e;
+            --bg-surface: rgba(15, 18, 30, 0.95);
+            --bg-card: rgba(20, 24, 40, 0.75);
+            --bg-input: rgba(0, 0, 0, 0.35);
+            
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+            --gold-dim: rgba(212, 175, 55, 0.15);
+            
+            --ally: #22d3ee;
+            --enemy: #f87171;
+            --success: #10b981;
+            --danger: #ef4444;
+            --purple: #8b5cf6;
+            
+            --text-1: #f8fafc;
+            --text-2: #94a3b8;
+            --text-3: #64748b;
+            
+            --border: rgba(212, 175, 55, 0.15);
+            --border-bright: rgba(212, 175, 55, 0.5);
+            
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            
+            --dnd-parchment: #fdfaf3;
+            --dnd-red: #58180d;
+            --dnd-accent: #8c1e18;
+            --dnd-text: #2c1e13;
+            
+            --sidebar-w: 260px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
+            color: var(--text-1);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-bright); }
+
+        h1, h2, h3, h4, .font-display { font-family: var(--font-display); }
+
+        /* --- LAYOUT --- */
+        #topNav {
+            height: 60px;
+            background: linear-gradient(135deg, rgba(15,18,32,0.98) 0%, rgba(22,26,46,0.98) 100%);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .brand span { color: var(--gold); }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            height: 100%;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-2);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0 1rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .tab-btn:hover { color: var(--text-1); }
+        .tab-btn.active { color: var(--gold); }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 3px 3px 0 0;
+            box-shadow: 0 -2px 10px var(--gold-glow);
+        }
+
+        #app {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        #sidebar {
+            width: var(--sidebar-w);
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            z-index: 50;
+        }
+        .sidebar-header {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-display);
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        /* --- MAIN VIEWPORT --- */
+        #viewport {
+            flex: 1;
+            position: relative;
+            background: var(--bg-base);
+            overflow: hidden;
+        }
+
+        .module {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .module.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* --- STATUS BAR --- */
+        #statusBar {
+            height: 30px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            font-size: 0.75rem;
+            color: var(--text-3);
+            flex-shrink: 0;
+        }
+
+        /* --- COMMON COMPONENTS --- */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            backdrop-filter: blur(8px);
+        }
+        .btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-1);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+        .btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+        .btn-primary { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); }
+        .btn-primary:hover { background: rgba(212,175,55,0.25); box-shadow: 0 0 10px var(--gold-glow); }
+        .btn-danger { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+        
+        .input-text {
+            background: var(--bg-input);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-1);
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .input-text:focus { border-color: var(--gold); }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        .search-box input { padding-left: 2.2rem; }
+        .search-box svg {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px; height: 16px;
+            fill: var(--text-2);
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-2);
+        }
+
+        /* --- MODULE: DASHBOARD --- */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .dash-stat { text-align: center; }
+        .dash-stat h3 { font-size: 2.5rem; color: var(--gold); margin-bottom: 0.5rem; }
+        .dash-stat p { color: var(--text-2); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- MODULE: PLANNER --- */
+        .planner-list { display: flex; flex-direction: column; gap: 1rem; }
+        .planner-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--gold);
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .planner-item.combat { border-left-color: var(--danger); }
+        .planner-item.rp { border-left-color: var(--ally); }
+        .planner-item.lore { border-left-color: var(--purple); }
+        
+        /* --- MODULE: CODEX --- */
+        .codex-list-item {
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .codex-list-item:hover { background: rgba(255,255,255,0.05); border-color: var(--gold-dim); }
+        .codex-list-item.active { background: var(--gold-dim); border-color: var(--border-bright); }
+        .codex-list-item .name { font-family: var(--font-display); font-weight: 700; color: var(--text-1); }
+        .codex-list-item .cr { font-size: 0.75rem; color: var(--text-2); }
+
+        .stat-block {
+            background: var(--dnd-parchment);
+            color: var(--dnd-text);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-top: 5px solid var(--dnd-accent);
+            border-bottom: 5px solid var(--dnd-accent);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .stat-header h1 { color: var(--dnd-red); font-size: 2.2rem; margin-bottom: 0.2rem; }
+        .stat-header p { font-style: italic; color: #554433; font-size: 0.95rem; }
+        .dnd-divider {
+            height: 4px;
+            background: var(--dnd-accent);
+            clip-path: polygon(0 40%, 50% 0, 100% 40%, 100% 60%, 50% 100%, 0 60%);
+            margin: 1rem 0;
+        }
+        .stat-attr {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            color: var(--dnd-red);
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+        .stat-attr div span { display: block; color: var(--dnd-text); font-weight: 400; font-family: var(--font-body); }
+        .stat-prop strong { color: var(--dnd-red); }
+        
+        /* --- MODULE: COMBAT --- */
+        .init-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .init-row {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+        .init-row.active-turn {
+            border-color: var(--gold);
+            background: var(--gold-dim);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+        .init-row.ally { border-left: 4px solid var(--ally); }
+        .init-row.enemy { border-left: 4px solid var(--enemy); }
+        .init-score {
+            width: 45px; height: 45px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-bright);
+            border-radius: 6px;
+            color: #fff;
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+        }
+        .init-hp {
+            width: 60px;
+            text-align: center;
+            font-weight: 700;
+            color: var(--success);
+            background: var(--bg-input);
+            border: 1px solid rgba(16,185,129,0.3);
+            padding: 0.4rem;
+            border-radius: 6px;
+        }
+        .init-name { flex: 1; font-weight: 700; font-size: 1.1rem; }
+        .init-controls { display: flex; gap: 0.5rem; }
+
+        /* --- MODULE: LORE --- */
+        .lore-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .lore-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+        .lore-card.revealed {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+        .lore-card textarea {
+            background: var(--bg-input);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-1);
+            padding: 0.8rem;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+        }
+
+        /* --- MODULE: SCENES --- */
+        .scene-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .scene-thumb {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            aspect-ratio: 16/9;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-3);
+        }
+        .scene-thumb:hover { border-color: var(--gold); transform: translateY(-3px); }
+        .scene-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .scene-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.8);
+            padding: 0.5rem;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            color: #fff;
+            text-align: center;
+        }
+
+        /* --- MODALS --- */
+        #modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #modal-overlay.active { display: flex; }
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-bright);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .modal-title { font-family: var(--font-display); color: var(--gold); font-size: 1.2rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--text-2); margin-bottom: 0.4rem; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 2rem; }
+
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <nav id="topNav">
+        <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99z"/></svg>
+            <span>D&D</span> Session Builder
+        </div>
+        <div class="tabs" id="tabContainer">
+            <button class="tab-btn active" data-target="dashboard">Dashboard</button>
+            <button class="tab-btn" data-target="planner">Planner</button>
+            <button class="tab-btn" data-target="codex">Monster Codex</button>
+            <button class="tab-btn" data-target="combat">Combat Tracker</button>
+            <button class="tab-btn" data-target="lore">Lore Tracker</button>
+            <button class="tab-btn" data-target="scenes">Scenes</button>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+            <button class="btn" onclick="app.saveData()">Save</button>
+            <button class="btn btn-danger" onclick="app.resetData()">Reset</button>
+        </div>
+    </nav>
+
+    <!-- APP CONTAINER -->
+    <div id="app">
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
+            <div class="sidebar-header" id="sidebarTitle">Navigation</div>
+            <div class="sidebar-content" id="sidebarContent">
+                <!-- Populated dynamically based on active tab -->
+            </div>
+        </aside>
+
+        <!-- MAIN VIEWPORT -->
+        <main id="viewport">
+            
+            <!-- MODULE: DASHBOARD -->
+            <section id="mod-dashboard" class="module active">
+                <h1 style="margin-bottom: 0.5rem;">Campaign Overview</h1>
+                <p style="color: var(--text-2); margin-bottom: 2rem;">Welcome to the D&D Session Builder workspace.</p>
+                
+                <div class="dash-grid">
+                    <div class="card dash-stat">
+                        <h3 id="stat-monsters">0</h3>
+                        <p>Monsters in Codex</p>
+                    </div>
+                    <div class="card dash-stat">
+                        <h3 id="stat-encounters">0</h3>
+                        <p>Planned Events</p>
+                    </div>
+                    <div class="card dash-stat">
+                        <h3 id="stat-lore">0</h3>
+                        <p>Lore Entries</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="font-display" style="color: var(--gold); margin-bottom: 1rem;">Quick Tips</h2>
+                    <ul style="color: var(--text-2); padding-left: 1.5rem; line-height: 1.8;">
+                        <li>Use the <strong>Planner</strong> to outline your session events.</li>
+                        <li>Add custom creatures in the <strong>Monster Codex</strong> and send them directly to Combat.</li>
+                        <li>Manage initiative, HP, and conditions in the <strong>Combat Tracker</strong>.</li>
+                        <li>Keep track of story reveals and DM notes in the <strong>Lore Tracker</strong>.</li>
+                        <li>Organize visual aids in the <strong>Scenes</strong> gallery.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- MODULE: PLANNER -->
+            <section id="mod-planner" class="module">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                    <h1>Session Planner</h1>
+                    <button class="btn btn-primary" onclick="planner.addEvent()">+ Add Event</button>
+                </div>
+                <div class="planner-list" id="plannerList">
+                    <!-- Events populated here -->
+                </div>
+            </section>
+
+            <!-- MODULE: CODEX -->
+            <section id="mod-codex" class="module">
+                <div id="codexEmpty" style="text-align: center; color: var(--text-3); margin-top: 4rem;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" style="margin-bottom:1rem;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <h2>No Monster Selected</h2>
+                    <p>Select a monster from the sidebar or add a new one.</p>
+                </div>
+
+                <div id="codexDetail" class="stat-block" style="display: none;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div class="stat-header">
+                            <h1 id="mc-name">Monster Name</h1>
+                            <p id="mc-type">Medium humanoid, neutral</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="codex.addToCombat()">⚔️ To Combat</button>
+                    </div>
+                    
+                    <div class="dnd-divider"></div>
+                    
+                    <div class="stat-prop"><strong>Armor Class</strong> <span id="mc-ac">10</span></div>
+                    <div class="stat-prop"><strong>Hit Points</strong> <span id="mc-hp">10</span></div>
+                    <div class="stat-prop"><strong>Speed</strong> <span id="mc-speed">30 ft.</span></div>
+                    
+                    <div class="dnd-divider"></div>
+                    
+                    <div class="stat-attr">
+                        <div>STR<br><span id="mc-str">10 (+0)</span></div>
+                        <div>DEX<br><span id="mc-dex">10 (+0)</span></div>
+                        <div>CON<br><span id="mc-con">10 (+0)</span></div>
+                        <div>INT<br><span id="mc-int">10 (+0)</span></div>
+                        <div>WIS<br><span id="mc-wis">10 (+0)</span></div>
+                        <div>CHA<br><span id="mc-cha">10 (+0)</span></div>
+                    </div>
+                    
+                    <div class="dnd-divider"></div>
+                    
+                    <div id="mc-traits" style="margin-bottom: 1rem;"></div>
+                    
+                    <h3 style="color:var(--dnd-red); border-bottom: 1px solid var(--dnd-accent); margin-bottom:0.5rem;">Actions</h3>
+                    <div id="mc-actions"></div>
+                </div>
+            </section>
+
+            <!-- MODULE: COMBAT -->
+            <section id="mod-combat" class="module">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                    <div>
+                        <h1 style="display:inline-block; margin-right: 1rem;">Combat Tracker</h1>
+                        <span class="badge" style="font-size: 0.9rem;">Round <span id="combat-round">1</span></span>
+                    </div>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn" onclick="combat.prevTurn()">Prev</button>
+                        <button class="btn btn-primary" onclick="combat.nextTurn()">Next Turn ➔</button>
+                        <button class="btn btn-danger" onclick="combat.clear()">Clear</button>
+                    </div>
+                </div>
+                
+                <div class="init-list" id="combatList">
+                    <!-- Combatants here -->
+                </div>
+            </section>
+
+            <!-- MODULE: LORE -->
+            <section id="mod-lore" class="module">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                    <h1>Lore & Secrets Tracker</h1>
+                    <button class="btn btn-primary" onclick="lore.addEntry()">+ Add Entry</button>
+                </div>
+                <div class="lore-grid" id="loreList">
+                    <!-- Lore cards here -->
+                </div>
+            </section>
+
+            <!-- MODULE: SCENES -->
+            <section id="mod-scenes" class="module">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                    <h1>Scene Gallery</h1>
+                    <button class="btn btn-primary" onclick="scenes.addScene()">+ Add Scene</button>
+                </div>
+                <div class="scene-grid" id="sceneList">
+                    <!-- Scenes here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- STATUS BAR -->
+    <footer id="statusBar">
+        <span id="statusMsg">Ready</span>
+        <span>Solythis D&D Session Builder v1.0</span>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="modal-overlay">
+        <!-- Dynamic modal content injected here -->
+        <div class="modal-content" id="modal-container"></div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // --- DATA STRUCTURES ---
+        const defaultData = {
+            planner: [
+                { id: '1', title: 'Arrival at Town', type: 'rp', desc: 'The party arrives and meets the mayor.', status: 'pending' }
+            ],
+            codex: [
+                { id: 'gob', name: 'Goblin', type: 'Small humanoid', ac: '15', hp: '7 (2d6)', speed: '30 ft.',
+                  str: '8 (-1)', dex: '14 (+2)', con: '10 (+0)', int: '10 (+0)', wis: '8 (-1)', cha: '8 (-1)',
+                  traits: '<strong>Nimble Escape.</strong> The goblin can take the Disengage or Hide action as a bonus action.',
+                  actions: '<strong>Scimitar.</strong> Melee: +4 to hit, 1d6+2 slashing.' }
+            ],
+            combat: [],
+            lore: [
+                { id: 'l1', title: 'The Mayor\'s Secret', revealed: false, notes: 'He is actually a cultist.' }
+            ],
+            scenes: [
+                { id: 's1', title: 'Town Square', url: 'Images/placeholder.png' }
+            ],
+            combatState: { round: 1, activeIndex: 0 }
+        };
+
+        let db = JSON.parse(localStorage.getItem('dnd_session_builder_data'));
+        if (!db) db = JSON.parse(JSON.stringify(defaultData));
+
+        // --- CORE APP SYSTEM ---
+        const app = {
+            currentTab: 'dashboard',
+            
+            init() {
+                this.bindTabs();
+                this.switchTab(this.currentTab);
+                this.updateDashboard();
+                planner.render();
+                codex.renderSidebar();
+                combat.render();
+                lore.render();
+                scenes.render();
+                this.setStatus('Data loaded successfully.');
+            },
+
+            bindTabs() {
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.switchTab(e.target.dataset.target);
+                    });
+                });
+            },
+
+            switchTab(tabId) {
+                this.currentTab = tabId;
+                
+                // Update buttons
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector(`.tab-btn[data-target="${tabId}"]`).classList.add('active');
+                
+                // Update modules
+                document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+                document.getElementById(`mod-${tabId}`).classList.add('active');
+
+                // Update Sidebar
+                this.renderSidebar(tabId);
+            },
+
+            renderSidebar(tabId) {
+                const sbTitle = document.getElementById('sidebarTitle');
+                const sbContent = document.getElementById('sidebarContent');
+                sbContent.innerHTML = '';
+
+                switch(tabId) {
+                    case 'dashboard':
+                        sbTitle.innerText = 'Quick Actions';
+                        sbContent.innerHTML = `
+                            <button class="btn" onclick="app.switchTab('planner')">Go to Planner</button>
+                            <button class="btn" onclick="app.switchTab('combat')">Start Combat</button>
+                        `;
+                        break;
+                    case 'planner':
+                        sbTitle.innerText = 'Planner Tools';
+                        sbContent.innerHTML = `
+                            <p style="color:var(--text-2); font-size:0.85rem;">Organize your session flow here. Click the Add Event button to create a new scene or encounter.</p>
+                        `;
+                        break;
+                    case 'codex':
+                        sbTitle.innerText = 'Monsters';
+                        sbContent.innerHTML = `
+                            <div class="search-box">
+                                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                                <input type="text" class="input-text" placeholder="Search..." oninput="codex.filter(this.value)">
+                            </div>
+                            <button class="btn btn-primary" style="width:100%; margin-bottom:1rem;" onclick="codex.add()">+ New Monster</button>
+                            <div id="codexSidebarList" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
+                        `;
+                        codex.renderSidebar();
+                        break;
+                    case 'combat':
+                        sbTitle.innerText = 'Combat Controls';
+                        sbContent.innerHTML = `
+                            <button class="btn btn-primary" style="width:100%; margin-bottom:0.5rem;" onclick="combat.addCombatant('ally')">+ Add Ally</button>
+                            <button class="btn btn-danger" style="width:100%; margin-bottom:1rem;" onclick="combat.addCombatant('enemy')">+ Add Enemy</button>
+                            <button class="btn" style="width:100%;" onclick="combat.sort()">Sort Initiative</button>
+                        `;
+                        break;
+                    case 'lore':
+                        sbTitle.innerText = 'Lore Stats';
+                        let revealed = db.lore.filter(l => l.revealed).length;
+                        sbContent.innerHTML = `
+                            <p style="color:var(--text-1);">Revealed: <span style="color:var(--gold);">${revealed}/${db.lore.length}</span></p>
+                        `;
+                        break;
+                    case 'scenes':
+                        sbTitle.innerText = 'Scenes';
+                        sbContent.innerHTML = `<p style="color:var(--text-2); font-size:0.85rem;">Manage location images and visual aids.</p>`;
+                        break;
+                }
+            },
+
+            saveData() {
+                localStorage.setItem('dnd_session_builder_data', JSON.stringify(db));
+                this.setStatus('Data saved to LocalStorage.');
+                this.updateDashboard();
+            },
+
+            resetData() {
+                if (confirm('Are you sure you want to reset all data to default placeholders?')) {
+                    db = JSON.parse(JSON.stringify(defaultData));
+                    this.saveData();
+                    location.reload();
+                }
+            },
+
+            setStatus(msg) {
+                const el = document.getElementById('statusMsg');
+                el.innerText = msg;
+                setTimeout(() => { if(el.innerText === msg) el.innerText = 'Ready'; }, 3000);
+            },
+
+            updateDashboard() {
+                document.getElementById('stat-monsters').innerText = db.codex.length;
+                document.getElementById('stat-encounters').innerText = db.planner.length;
+                document.getElementById('stat-lore').innerText = db.lore.length;
+            },
+
+            showModal(title, contentHtml, onConfirm) {
+                const overlay = document.getElementById('modal-overlay');
+                const container = document.getElementById('modal-container');
+                container.innerHTML = `
+                    <h2 class="modal-title">${title}</h2>
+                    <div id="modal-body">${contentHtml}</div>
+                    <div class="modal-actions">
+                        <button class="btn" onclick="app.closeModal()">Cancel</button>
+                        <button class="btn btn-primary" id="modal-confirm">Confirm</button>
+                    </div>
+                `;
+                document.getElementById('modal-confirm').onclick = () => {
+                    if (onConfirm()) this.closeModal();
+                };
+                overlay.classList.add('active');
+            },
+
+            closeModal() {
+                document.getElementById('modal-overlay').classList.remove('active');
+            }
+        };
+
+        // --- MODULE LOGIC ---
+
+        const planner = {
+            render() {
+                const list = document.getElementById('plannerList');
+                list.innerHTML = '';
+                db.planner.forEach((ev, i) => {
+                    list.innerHTML += `
+                        <div class="planner-item ${ev.type}">
+                            <div>
+                                <h3 style="color:var(--text-1); font-family:var(--font-display);">${ev.title}</h3>
+                                <p style="color:var(--text-2); font-size:0.9rem;">${ev.desc}</p>
+                            </div>
+                            <div>
+                                <span class="badge" style="background: ${ev.type==='combat'?'var(--danger)':(ev.type==='rp'?'var(--ally)':'var(--purple)')} ; color:#000;">${ev.type.toUpperCase()}</span>
+                                <button class="btn" style="padding:0.2rem 0.5rem; margin-left:0.5rem;" onclick="planner.remove(${i})">X</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+            addEvent() {
+                app.showModal('Add Planner Event', `
+                    <div class="form-group"><label>Title</label><input type="text" id="ev-title" class="input-text"></div>
+                    <div class="form-group"><label>Type</label>
+                        <select id="ev-type" class="input-text">
+                            <option value="rp">Roleplay</option><option value="combat">Combat</option><option value="lore">Lore/Exploration</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Description</label><input type="text" id="ev-desc" class="input-text"></div>
+                `, () => {
+                    db.planner.push({
+                        id: Date.now().toString(),
+                        title: document.getElementById('ev-title').value || 'New Event',
+                        type: document.getElementById('ev-type').value,
+                        desc: document.getElementById('ev-desc').value,
+                        status: 'pending'
+                    });
+                    this.render();
+                    app.saveData();
+                    return true;
+                });
+            },
+            remove(idx) {
+                if(confirm('Remove event?')) { db.planner.splice(idx, 1); this.render(); app.saveData(); }
+            }
+        };
+
+        const codex = {
+            activeId: null,
+            renderSidebar(filter = '') {
+                const listEl = document.getElementById('codexSidebarList');
+                if(!listEl) return;
+                listEl.innerHTML = '';
+                db.codex.filter(m => m.name.toLowerCase().includes(filter.toLowerCase())).forEach(m => {
+                    listEl.innerHTML += `
+                        <div class="codex-list-item ${this.activeId === m.id ? 'active' : ''}" onclick="codex.select('${m.id}')">
+                            <span class="name">${m.name}</span>
+                        </div>
+                    `;
+                });
+            },
+            filter(val) { this.renderSidebar(val); },
+            select(id) {
+                this.activeId = id;
+                this.renderSidebar();
+                const m = db.codex.find(x => x.id === id);
+                document.getElementById('codexEmpty').style.display = 'none';
+                document.getElementById('codexDetail').style.display = 'block';
+                
+                document.getElementById('mc-name').innerText = m.name;
+                document.getElementById('mc-type').innerText = m.type;
+                document.getElementById('mc-ac').innerText = m.ac;
+                document.getElementById('mc-hp').innerText = m.hp;
+                document.getElementById('mc-speed').innerText = m.speed;
+                document.getElementById('mc-str').innerText = m.str;
+                document.getElementById('mc-dex').innerText = m.dex;
+                document.getElementById('mc-con').innerText = m.con;
+                document.getElementById('mc-int').innerText = m.int;
+                document.getElementById('mc-wis').innerText = m.wis;
+                document.getElementById('mc-cha').innerText = m.cha;
+                document.getElementById('mc-traits').innerHTML = m.traits;
+                document.getElementById('mc-actions').innerHTML = m.actions;
+            },
+            add() {
+                app.showModal('Add Monster', `
+                    <div class="form-group"><label>Name</label><input type="text" id="m-name" class="input-text" value="New Monster"></div>
+                    <div class="form-group"><label>HP</label><input type="text" id="m-hp" class="input-text" value="10"></div>
+                `, () => {
+                    db.codex.push({
+                        id: Date.now().toString(), name: document.getElementById('m-name').value, type: 'Unknown',
+                        ac: '10', hp: document.getElementById('m-hp').value, speed: '30 ft.',
+                        str: '10', dex: '10', con: '10', int: '10', wis: '10', cha: '10',
+                        traits: '', actions: ''
+                    });
+                    this.renderSidebar();
+                    app.saveData();
+                    return true;
+                });
+            },
+            addToCombat() {
+                if(!this.activeId) return;
+                const m = db.codex.find(x => x.id === this.activeId);
+                db.combat.push({
+                    id: Date.now().toString(), name: m.name, type: 'enemy',
+                    init: '', hp: parseInt(m.hp) || 10, maxHp: parseInt(m.hp) || 10
+                });
+                app.saveData();
+                app.setStatus(`Added ${m.name} to Combat.`);
+                if(app.currentTab !== 'combat') app.switchTab('combat');
+                combat.render();
+            }
+        };
+
+        const combat = {
+            render() {
+                const list = document.getElementById('combatList');
+                list.innerHTML = '';
+                document.getElementById('combat-round').innerText = db.combatState.round;
+                
+                db.combat.forEach((c, i) => {
+                    let isActive = (i === db.combatState.activeIndex && db.combat.length > 0);
+                    list.innerHTML += `
+                        <div class="init-row ${c.type} ${isActive ? 'active-turn' : ''}">
+                            <input type="number" class="init-score" value="${c.init}" onchange="combat.updateInit(${i}, this.value)" placeholder="0">
+                            <div class="init-name">${c.name}</div>
+                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                                <label style="font-size:0.75rem; color:var(--text-2);">HP</label>
+                                <input type="number" class="init-hp" value="${c.hp}" onchange="combat.updateHp(${i}, this.value)">
+                                <button class="btn" style="padding:0.4rem; border-color:var(--danger); color:var(--danger);" onclick="combat.remove(${i})">X</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+            addCombatant(type) {
+                app.showModal(`Add ${type==='ally'?'Ally':'Enemy'}`, `
+                    <div class="form-group"><label>Name</label><input type="text" id="c-name" class="input-text"></div>
+                    <div class="form-group"><label>HP</label><input type="number" id="c-hp" class="input-text" value="10"></div>
+                    <div class="form-group"><label>Initiative</label><input type="number" id="c-init" class="input-text"></div>
+                `, () => {
+                    db.combat.push({
+                        id: Date.now().toString(),
+                        name: document.getElementById('c-name').value || (type==='ally'?'Player':'Enemy'),
+                        type: type,
+                        init: document.getElementById('c-init').value,
+                        hp: document.getElementById('c-hp').value,
+                        maxHp: document.getElementById('c-hp').value
+                    });
+                    this.render();
+                    app.saveData();
+                    return true;
+                });
+            },
+            updateInit(idx, val) { db.combat[idx].init = val; app.saveData(); },
+            updateHp(idx, val) { db.combat[idx].hp = val; app.saveData(); },
+            remove(idx) { db.combat.splice(idx, 1); if(db.combatState.activeIndex >= db.combat.length) db.combatState.activeIndex=0; this.render(); app.saveData(); },
+            sort() {
+                db.combat.sort((a,b) => (parseInt(b.init)||0) - (parseInt(a.init)||0));
+                db.combatState.activeIndex = 0;
+                this.render();
+                app.saveData();
+            },
+            nextTurn() {
+                if(db.combat.length === 0) return;
+                db.combatState.activeIndex++;
+                if(db.combatState.activeIndex >= db.combat.length) {
+                    db.combatState.activeIndex = 0;
+                    db.combatState.round++;
+                }
+                this.render();
+                app.saveData();
+            },
+            prevTurn() {
+                if(db.combat.length === 0) return;
+                db.combatState.activeIndex--;
+                if(db.combatState.activeIndex < 0) {
+                    db.combatState.activeIndex = db.combat.length - 1;
+                    db.combatState.round = Math.max(1, db.combatState.round - 1);
+                }
+                this.render();
+                app.saveData();
+            },
+            clear() {
+                if(confirm('Clear all combatants?')) {
+                    db.combat = [];
+                    db.combatState = { round: 1, activeIndex: 0 };
+                    this.render();
+                    app.saveData();
+                }
+            }
+        };
+
+        const lore = {
+            render() {
+                const list = document.getElementById('loreList');
+                list.innerHTML = '';
+                db.lore.forEach((l, i) => {
+                    list.innerHTML += `
+                        <div class="lore-card ${l.revealed ? 'revealed' : ''}">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <h3 style="color:var(--text-1); font-family:var(--font-display);">${l.title}</h3>
+                                <button class="btn" style="padding:0.2rem 0.5rem;" onclick="lore.remove(${i})">X</button>
+                            </div>
+                            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                                <input type="checkbox" ${l.revealed ? 'checked' : ''} onchange="lore.toggleReveal(${i}, this.checked)">
+                                <span style="color:${l.revealed ? 'var(--gold)' : 'var(--text-2)'}; font-weight:600;">Revealed</span>
+                            </label>
+                            <textarea placeholder="DM Notes..." onchange="lore.updateNotes(${i}, this.value)">${l.notes}</textarea>
+                        </div>
+                    `;
+                });
+                if(app.currentTab === 'lore') app.renderSidebar('lore');
+            },
+            addEntry() {
+                app.showModal('Add Lore Entry', `
+                    <div class="form-group"><label>Title</label><input type="text" id="l-title" class="input-text"></div>
+                `, () => {
+                    db.lore.push({ id: Date.now().toString(), title: document.getElementById('l-title').value || 'New Lore', revealed: false, notes: '' });
+                    this.render();
+                    app.saveData();
+                    return true;
+                });
+            },
+            toggleReveal(idx, val) { db.lore[idx].revealed = val; this.render(); app.saveData(); },
+            updateNotes(idx, val) { db.lore[idx].notes = val; app.saveData(); },
+            remove(idx) { if(confirm('Remove lore?')) { db.lore.splice(idx, 1); this.render(); app.saveData(); } }
+        };
+
+        const scenes = {
+            render() {
+                const list = document.getElementById('sceneList');
+                list.innerHTML = '';
+                db.scenes.forEach((s, i) => {
+                    // Use a placeholder visual if url is empty or 'placeholder'
+                    let bg = s.url;
+                    if(bg === 'Images/placeholder.png' || !bg) bg = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzc3NyIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+                    
+                    list.innerHTML += `
+                        <div class="scene-thumb" onclick="scenes.view(${i})">
+                            <img src="${bg}" alt="${s.title}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzc3NyIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+PC9zdmc+'">
+                            <div class="scene-label">${s.title}</div>
+                        </div>
+                    `;
+                });
+            },
+            addScene() {
+                app.showModal('Add Scene', `
+                    <div class="form-group"><label>Title</label><input type="text" id="s-title" class="input-text"></div>
+                    <div class="form-group"><label>Image URL / Path</label><input type="text" id="s-url" class="input-text" placeholder="Images/my_map.png"></div>
+                `, () => {
+                    db.scenes.push({ id: Date.now().toString(), title: document.getElementById('s-title').value || 'New Scene', url: document.getElementById('s-url').value });
+                    this.render();
+                    app.saveData();
+                    return true;
+                });
+            },
+            view(idx) {
+                // In a real app, this would open a fullscreen lightbox. For now, just alert.
+                app.setStatus(`Viewing scene: ${db.scenes[idx].title}`);
+            }
+        };
+
+        // --- INIT ---
+        window.onload = () => app.init();
+
+    </script>
+</body>
+</html>
