@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Session Player — Solythis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cinzel+Decorative:wght@700&family=Lora:ital,wght@0,500;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-dim: rgba(212,175,55,0.55);
+            --gold-glow: rgba(212,175,55,0.25);
+            --bg: #07080f;
+            --panel-bg: rgba(8, 10, 20, 0.96);
+            --card-bg: rgba(22, 26, 46, 0.9);
+            --border: rgba(180, 140, 60, 0.25);
+            --border-bright: rgba(212, 175, 55, 0.7);
+            --ally-color: #22d3ee;
+            --ally-bg: rgba(34, 211, 238, 0.15);
+            --ally-border: rgba(34, 211, 238, 0.6);
+            --enemy-color: #f87171;
+            --enemy-bg: rgba(248, 113, 113, 0.15);
+            --enemy-border: rgba(248, 113, 113, 0.6);
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --panel-w: 320px;
+            --thumb-h: 90px;
+            --strip-collapsed-h: 44px;
+            --strip-open-h: 160px;
+            --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- GLOBAL NAV --- */
+        #globalNav {
+            position: fixed; top: 0; left: 0; right: 0; height: 50px;
+            background: rgba(8, 10, 20, 0.98);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        #globalNav.ui-hidden { transform: translateY(-50px); }
+        .nav-brand { font-family: 'Cinzel Decorative', serif; font-size: 1rem; color: var(--gold); letter-spacing: 0.05em; }
+        .nav-brand span { color: #fff; }
+        .nav-tabs { display: flex; gap: 0.5rem; height: 100%; align-items: center; }
+        .nav-tab-btn {
+            background: transparent; border: none; color: var(--muted);
+            padding: 0.4rem 1.2rem; cursor: pointer; border-radius: 4px;
+            font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.8rem;
+            transition: var(--transition); letter-spacing: 0.05em;
+        }
+        .nav-tab-btn:hover { color: #fff; background: rgba(255,255,255,0.03); }
+        .nav-tab-btn.active { color: var(--gold); background: rgba(212, 175, 55, 0.08); border: 1px solid var(--border); }
+        .nav-actions { display: flex; gap: 0.5rem; align-items: center; }
+        .nav-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text);
+            padding: 0.4rem 0.8rem; cursor: pointer; border-radius: 4px; font-size: 0.75rem;
+            transition: var(--transition);
+        }
+        .nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* --- VIEWS --- */
+        .view-section {
+            position: absolute; top: 50px; bottom: 0; left: 0; right: 0;
+            display: none;
+        }
+        .view-section.active { display: flex; }
+
+        /* ================= PRESENTATION VIEW ================= */
+        #presentationView { top: 0; bottom: 0; }
+        #slideshow { position: absolute; inset: 0; z-index: 0; }
+        .slide {
+            position: absolute; inset: 0;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.65s cubic-bezier(0.4,0,0.2,1);
+        }
+        .slide.active { opacity: 1; pointer-events: all; }
+        .slide.prev-out { opacity: 0; transition: opacity 0.4s ease-in; }
+        .slide-img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+        .slide::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%),
+                        linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 22%, transparent 68%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+        }
+        
+        #topBar {
+            position: absolute; top: 50px; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1rem 1.5rem; background: linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, transparent 100%);
+            pointer-events: none; transition: opacity 0.4s ease;
+        }
+        #topBar.ui-hidden { opacity: 0; }
+        .top-brand { font-family: 'Cinzel Decorative', serif; font-size: 1.1rem; color: var(--gold); letter-spacing: 0.08em; text-shadow: 0 0 20px rgba(212,175,55,0.5); }
+        .top-scene-label { font-family: 'Cinzel', serif; font-size: 0.82rem; color: rgba(255,255,255,0.6); letter-spacing: 0.15em; text-transform: uppercase; }
+        .top-counter { font-family: 'Cinzel', serif; font-size: 0.82rem; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; }
+
+        #sceneTitleCard {
+            position: absolute; bottom: calc(var(--strip-collapsed-h) + 1.4rem); left: 2rem;
+            z-index: 100; pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1), bottom 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        #sceneTitleCard.ui-hidden { opacity: 0; transform: translateY(10px); }
+        #sceneTitleCard.strip-open { bottom: calc(var(--strip-open-h) + 1rem); }
+        #sceneTitleCard.entering { animation: titleEnter 0.6s cubic-bezier(0.4,0,0.2,1) forwards; }
+        @keyframes titleEnter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        .title-chapter { font-family: 'Cinzel', serif; font-size: 0.72rem; font-weight: 700; color: var(--gold); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.3rem; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
+        .title-scene { font-family: 'Lora', serif; font-style: italic; font-size: 1.75rem; color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,0.95); line-height: 1.2; }
+        .title-divider { width: 44px; height: 2px; background: var(--gold); margin-top: 0.55rem; box-shadow: 0 0 8px var(--gold-glow); }
+
+        .nav-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%); z-index: 150;
+            width: 52px; height: 88px; display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.38); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+            cursor: pointer; color: rgba(255,255,255,0.75); transition: var(--transition);
+        }
+        #prevArrow { left: 0; border-radius: 0 12px 12px 0; border-left: none; }
+        #nextArrow { right: 0; border-radius: 12px 0 0 12px; border-right: none; }
+        .nav-arrow:hover { background: rgba(212,175,55,0.16); border-color: var(--gold-dim); color: var(--gold); width: 62px; }
+        .nav-arrow svg { width: 24px; height: 24px; fill: currentColor; }
+        .nav-arrow.ui-hidden { opacity: 0; pointer-events: none; }
+        .nav-arrow.disabled { opacity: 0.18; pointer-events: none; }
+
+        #bottomDrawer {
+            position: absolute; bottom: 0; left: 0; right: 0; z-index: 200;
+            transition: height 0.38s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
+            height: var(--strip-collapsed-h); overflow: hidden;
+        }
+        #bottomDrawer::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(4,5,12,0.97) 0%, rgba(4,5,12,0.92) 60%, rgba(4,5,12,0.5) 100%);
+            backdrop-filter: blur(12px);
+        }
+        #bottomDrawer.open { height: var(--strip-open-h); }
+        #bottomDrawer.ui-hidden { opacity: 0; pointer-events: none; }
+
+        .drawer-tab-bar {
+            position: absolute; bottom: 0; left: 0; right: 0; height: var(--strip-collapsed-h);
+            display: flex; align-items: center; padding: 0 0.75rem; gap: 0.4rem; border-top: 1px solid rgba(212,175,55,0.12);
+        }
+        .tab-btn {
+            display: flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.85rem; border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); cursor: pointer;
+            color: var(--muted); font-family: 'Cinzel', serif; font-size: 0.72rem; font-weight: 700;
+            letter-spacing: 0.08em; transition: var(--transition); white-space: nowrap;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.07); color: var(--text); border-color: rgba(255,255,255,0.18); }
+        .tab-btn.active-chapter { border-color: var(--tab-color, var(--gold-dim)); color: var(--tab-color, var(--gold)); background: rgba(212,175,55,0.06); box-shadow: 0 0 8px rgba(212,175,55,0.1); }
+        .tab-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--tab-color, var(--gold-dim)); flex-shrink: 0; }
+        .tab-spacer { flex: 1; }
+        .tab-progress { display: flex; gap: 3px; align-items: center; }
+        .tdot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: background 0.2s, transform 0.2s; cursor: pointer; }
+        .tdot.active { background: var(--tab-color, var(--gold)); transform: scale(1.3); }
+
+        .drawer-toggle-btn {
+            width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); cursor: pointer; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: var(--transition); flex-shrink: 0;
+        }
+        .drawer-toggle-btn:hover { color: var(--gold); border-color: var(--gold-dim); background: rgba(212,175,55,0.08); }
+        .drawer-toggle-btn svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.35s; }
+        #bottomDrawer.open .drawer-toggle-btn svg { transform: rotate(180deg); }
+
+        .drawer-content {
+            position: absolute; top: 0; left: 0; right: 0; bottom: var(--strip-collapsed-h);
+            display: flex; align-items: center; padding: 0.7rem 1rem; gap: 0.55rem; overflow-x: auto; overflow-y: hidden;
+            scrollbar-width: thin; scrollbar-color: rgba(212,175,55,0.2) transparent;
+        }
+        .drawer-content::-webkit-scrollbar { height: 3px; }
+        .drawer-content::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 2px; }
+
+        .thumb-item {
+            flex-shrink: 0; width: calc(var(--thumb-h) * 16/9); height: var(--thumb-h); position: relative;
+            cursor: pointer; border-radius: 7px; overflow: hidden; border: 2px solid rgba(255,255,255,0.1); transition: var(--transition); opacity: 0.5;
+        }
+        .thumb-item:hover { opacity: 0.82; transform: translateY(-3px); border-color: rgba(255,255,255,0.28); }
+        .thumb-item.active { opacity: 1; border-color: var(--gold); box-shadow: 0 0 16px var(--gold-glow), 0 -3px 0 var(--gold); transform: translateY(-4px); }
+        .thumb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .thumb-label {
+            position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.82));
+            padding: 0.35rem 0.4rem 0.28rem; font-family: 'Cinzel', serif; font-size: 0.56rem; font-weight: 700;
+            color: #fff; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .thumb-item.active .thumb-label { color: var(--gold); }
+
+        .thumb-ch-header { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3rem; height: var(--thumb-h); padding: 0 0.25rem; }
+        .thumb-ch-line { width: 1px; flex: 1; background: rgba(212,175,55,0.18); }
+        .thumb-ch-label { font-family: 'Cinzel', serif; font-size: 0.54rem; font-weight: 700; white-space: nowrap; writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.12em; }
+
+        #hudToggle {
+            position: absolute; top: 60px; right: 1rem; z-index: 300; width: 34px; height: 34px;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.45); backdrop-filter: blur(8px); transition: var(--transition);
+        }
+        #hudToggle:hover { border-color: var(--gold-dim); color: var(--gold); background: rgba(212,175,55,0.1); }
+        #hudToggle svg { width: 15px; height: 15px; fill: currentColor; }
+        #hudToggle.ui-hidden { top: 1rem; }
+
+        #progressBar { position: absolute; top: 0; left: 0; height: 2px; background: var(--gold); box-shadow: 0 0 8px var(--gold); z-index: 999; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+        #autoplayIndicator {
+            position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 300; background: rgba(0,0,0,0.72);
+            border: 1px solid var(--gold-dim); border-radius: 20px; padding: 0.28rem 1rem; font-family: 'Cinzel', serif; font-size: 0.72rem;
+            color: var(--gold); letter-spacing: 0.1em; display: none; align-items: center; gap: 0.5rem; backdrop-filter: blur(8px);
+        }
+        #autoplayIndicator.visible { display: flex; }
+        #autoplayIndicator.ui-hidden { top: 1rem; }
+        .auto-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: autoPulse 1s infinite; }
+        @keyframes autoPulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+        /* ================= COMBAT TRACKER STYLE ================= */
+        #combatView { flex-direction: row; }
+        
+        .combat-map-picker {
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--gold);
+            padding: 0.35rem 0.8rem; border-radius: 4px; font-family: 'Cinzel', serif; font-size: 0.8rem;
+            outline: none; cursor: pointer; transition: var(--transition);
+        }
+        .combat-map-picker:hover { border-color: var(--gold); }
+
+        .combat-header-tools {
+            position: absolute; top: 10px; left: 1.5rem; z-index: 800; display: flex; align-items: center; gap: 0.8rem;
+            background: rgba(15, 18, 32, 0.9); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 1rem;
+            backdrop-filter: blur(8px); box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .combat-controls-group { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--muted); }
+        .combat-controls-group label { font-weight: 700; white-space: nowrap; }
+        .combat-controls-group input[type=range] { -webkit-appearance: none; width: 80px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.1); cursor: pointer; }
+        .combat-controls-group input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+        .grid-num-input { width: 44px; background: rgba(0,0,0,0.35); border: 1px solid var(--border); color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.8rem; text-align: center; border-radius: 4px; padding: 0.2rem 0.1rem; outline: none; }
+
+        .battlefield-area {
+            flex: 1; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative;
+            background: radial-gradient(circle at 50% 50%, rgba(20,24,40,0.4) 0%, rgba(7,8,15,1) 100%);
+        }
+        #mapWrapper { position: relative; display: none; width: 1280px; height: 720px; overflow: hidden; user-select: none; flex-shrink: 0; cursor: crosshair; }
+        #mapImg { display: block; width: 1280px; height: 720px; object-fit: cover; object-position: center center; }
+        #gridCanvas { position: absolute; top: 0; left: 0; pointer-events: none; }
+        #tokenLayer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+        .no-map { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: var(--muted); font-family: 'Cinzel', serif; font-size: 1.1rem; height: 100%; width: 100%; }
+        .no-map svg { opacity: 0.3; }
+
+        .token {
+            position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 50%;
+            cursor: grab; pointer-events: all; user-select: none; transition: transform 0.1s ease, box-shadow 0.15s ease;
+            font-family: 'Cinzel', serif; font-weight: 900; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            z-index: 50; border: 3px solid; flex-direction: column; gap: 0; background-size: cover; background-position: center; background-repeat: no-repeat;
+        }
+        .token:hover { transform: scale(1.12); z-index: 60; }
+        .token.dragging { cursor: grabbing; transform: scale(1.18); z-index: 200; opacity: 0.9; }
+        .token.ally {
+            background-color: #0077b6; background-image: radial-gradient(circle at 35% 35%, #48cae4 0%, #0077b6 60%, #023e8a 100%);
+            border-color: var(--ally-color); box-shadow: 0 0 10px rgba(34,211,238,0.5), 0 3px 8px rgba(0,0,0,0.6);
+        }
+        .token.enemy {
+            background-color: #c0392b; background-image: radial-gradient(circle at 35% 35%, #ff9a8b 0%, #c0392b 60%, #7b0a0a 100%);
+            border-color: var(--enemy-color); box-shadow: 0 0 10px rgba(248,113,113,0.5), 0 3px 8px rgba(0,0,0,0.6);
+        }
+        .token.ally.active-turn { box-shadow: 0 0 0 3px #fff, 0 0 16px 2px var(--ally-color), 0 3px 8px rgba(0,0,0,0.6); }
+        .token.enemy.active-turn { box-shadow: 0 0 0 3px #fff, 0 0 16px 2px var(--enemy-color), 0 3px 8px rgba(0,0,0,0.6); }
+        .token.dead { opacity: 0.4; }
+        .token-label { font-size: 0.65em; line-height: 1.1; text-align: center; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .token-name-tag {
+            position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); background: rgba(13, 15, 26, 0.85);
+            color: #fff; font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(212, 175, 55, 0.3);
+            white-space: nowrap; pointer-events: none; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 0.03em; z-index: 70; transition: opacity 0.15s;
+        }
+        .token.dragging .token-name-tag { opacity: 0; }
+
+        #initiativePanel {
+            width: var(--panel-w); background: var(--panel-bg); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; z-index: 50;
+        }
+        .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem 0.8rem; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        .panel-title { font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; }
+        .round-counter { display: flex; align-items: center; gap: 0.4rem; }
+        .round-label { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+        .round-num { font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 900; color: var(--gold); min-width: 20px; text-align: center; }
+        .round-btn { background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); width: 20px; height: 20px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        .panel-body { flex: 1; overflow-y: auto; padding: 0.8rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .panel-body::-webkit-scrollbar { width: 4px; }
+        .panel-body::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 2px; }
+        .empty-initiative { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 0.8rem; color: var(--muted); font-size: 0.8rem; text-align: center; padding: 1.5rem; }
+        .empty-initiative svg { opacity: 0.3; }
+
+        .init-row { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.8rem; display: flex; align-items: center; gap: 0.6rem; transition: var(--transition); cursor: pointer; }
+        .init-row:hover { border-color: rgba(255,255,255,0.2); }
+        .init-row.active-turn { border-color: var(--gold); background: rgba(212,175,55,0.07); box-shadow: 0 0 10px rgba(212,175,55,0.15); }
+        .init-row.ally-row { border-left: 3px solid var(--ally-color); }
+        .init-row.enemy-row { border-left: 3px solid var(--enemy-color); }
+        .init-row.dead { opacity: 0.4; }
+
+        .init-color-dot { width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-weight: 900; font-size: 0.65rem; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.8); border: 2px solid; overflow: hidden; }
+        .init-color-dot.ally { background: radial-gradient(circle at 35% 35%, #48cae4, #0077b6); border-color: var(--ally-color); }
+        .init-color-dot.enemy { background: radial-gradient(circle at 35% 35%, #ff9a8b, #c0392b); border-color: var(--enemy-color); }
+
+        .init-info { flex: 1; min-width: 0; }
+        .init-name { font-weight: 700; font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .init-type { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .init-type.ally { color: var(--ally-color); }
+        .init-type.enemy { color: var(--enemy-color); }
+
+        .init-input-wrap { display: flex; align-items: center; gap: 0.2rem; }
+        .init-score { width: 44px; background: rgba(0,0,0,0.35); border: 1px solid rgba(212,175,55,0.25); color: #fff; font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 900; text-align: center; border-radius: 4px; padding: 0.3rem 0.1rem; outline: none; }
+        .init-score:focus { border-color: var(--gold); }
+
+        .hp-wrap { display: flex; flex-direction: column; align-items: center; }
+        .hp-label { font-size: 0.6rem; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+        .hp-input { width: 44px; background: rgba(0,0,0,0.35); border: 1px solid rgba(16,185,129,0.3); color: var(--success); font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 900; text-align: center; border-radius: 4px; padding: 0.3rem 0.1rem; outline: none; }
+
+        .cond-wrap { display: flex; flex-wrap: wrap; gap: 0.2rem; margin-top: 0.25rem; }
+        .cond-badge { font-size: 0.6rem; padding: 0.05rem 0.35rem; border-radius: 10px; font-weight: 700; border: 1px solid; }
+        .cond-poisoned { background: rgba(34,197,94,0.1); color: #4ade80; border-color: rgba(34,197,94,0.3); }
+        .cond-stunned { background: rgba(251,191,36,0.1); color: #fbbf24; border-color: rgba(251,191,36,0.3); }
+        .cond-blinded { background: rgba(156,163,175,0.1); color: #9ca3af; border-color: rgba(156,163,175,0.3); }
+        .cond-prone { background: rgba(249,115,22,0.1); color: #fb923c; border-color: rgba(249,115,22,0.3); }
+        .cond-dead { background: rgba(239,68,68,0.1); color: #f87171; border-color: rgba(239,68,68,0.3); }
+        .cond-conc { background: rgba(139,92,246,0.1); color: #a78bfa; border-color: rgba(139,92,246,0.3); }
+
+        .panel-footer { border-top: 1px solid var(--border); padding: 0.6rem; display: flex; gap: 0.4rem; }
+        .panel-footer-btn { flex: 1; padding: 0.4rem; border-radius: 4px; border: 1px solid; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.2rem; }
+        .next-turn-btn { background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.4); color: var(--gold); }
+        .next-turn-btn:hover { background: rgba(212,175,55,0.2); }
+        .sort-btn { background: rgba(255,255,255,0.03); border-color: var(--border); color: var(--muted); }
+        .clear-btn { background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.3); color: var(--danger); }
+
+        #coordTip { position: fixed; background: rgba(0,0,0,0.75); color: var(--gold); font-size: 0.7rem; font-family: 'Cinzel', serif; font-weight: 700; padding: 0.2rem 0.4rem; border-radius: 4px; pointer-events: none; z-index: 9999; opacity: 0; }
+
+        #contextMenu { position: fixed; background: var(--card-bg); border: 1px solid var(--border-bright); border-radius: 8px; padding: 0.3rem; z-index: 9999; display: none; box-shadow: 0 4px 20px rgba(0,0,0,0.6); min-width: 150px; }
+        .ctx-header { padding: 0.3rem 0.6rem; font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--muted); font-weight: 700; letter-spacing: 0.05em; }
+        .ctx-separator { height: 1px; background: var(--border); margin: 0.2rem 0; }
+        .ctx-item { padding: 0.4rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; transition: background 0.15s; }
+        .ctx-item:hover { background: rgba(255,255,255,0.07); }
+        .ctx-item.danger { color: var(--danger); }
+        .ctx-item.danger:hover { background: rgba(239,68,68,0.1); }
+
+        #modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-box { background: var(--card-bg); border: 1px solid var(--border-bright); border-radius: 12px; padding: 1.5rem; width: 300px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); }
+        .modal-title { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; color: var(--gold); margin-bottom: 1rem; text-align: center; }
+        .modal-input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.9rem; border-radius: 6px; padding: 0.5rem; outline: none; margin-bottom: 1rem; }
+        .modal-actions { display: flex; gap: 0.5rem; }
+        .modal-ok { flex: 1; padding: 0.5rem; background: var(--gold); border: none; border-radius: 6px; color: #000; font-weight: 700; cursor: pointer; }
+        .modal-cancel { flex: 1; padding: 0.5rem; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <!-- GLOBAL NAV -->
+    <nav id="globalNav">
+        <div class="nav-brand">Solythis <span>D&D Player View</span></div>
+        <div class="nav-tabs">
+            <button class="nav-tab-btn active" id="tab-presentation" onclick="switchView('presentation')">🎬 Presentation Mode</button>
+            <button class="nav-tab-btn" id="tab-combat" onclick="switchView('combat')">⚔ Combat Mode</button>
+        </div>
+        <div class="nav-actions">
+            <div id="navMapPickerWrap" style="display:none; align-items:center; gap:0.5rem; margin-right:1rem;">
+                <label style="font-size:0.75rem; color:var(--gold); font-family:'Cinzel', serif; font-weight:700;">Battle Map:</label>
+                <select id="mapPicker" class="combat-map-picker" onchange="onMapChange(this.value)">
+                    <option value="">-- Select Map --</option>
+                </select>
+            </div>
+            <button class="nav-btn" onclick="toggleFullscreen()">Fullscreen</button>
+        </div>
+    </nav>
+
+    <!-- VIEWS -->
+    <!-- Presentation (Scene Viewer) -->
+    <div id="presentationView" class="view-section active">
+        <div id="progressBar"></div>
+        <div id="autoplayIndicator"><div class="auto-dot"></div>Autoplay</div>
+        <button id="hudToggle" onclick="toggleHUD()" title="Hide/Show UI (H)">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </button>
+        <div id="slideshow"></div>
+        <div id="topBar">
+            <div class="top-brand">Solythis D&D</div>
+            <div class="top-scene-label" id="topSceneLabel"></div>
+            <div class="top-counter" id="topCounter"></div>
+        </div>
+        <div id="sceneTitleCard">
+            <div class="title-chapter" id="titleChapter"></div>
+            <div class="title-scene" id="titleScene"></div>
+            <div class="title-divider"></div>
+        </div>
+        <button class="nav-arrow" id="prevArrow" onclick="navigate(-1)" title="Previous (←)">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="nav-arrow" id="nextArrow" onclick="navigate(+1)" title="Next (→)">
+            <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+        </button>
+        <div id="bottomDrawer">
+            <div class="drawer-content" id="drawerContent"></div>
+            <div class="drawer-tab-bar" id="tabBar">
+                <div class="tab-spacer"></div>
+                <button class="drawer-toggle-btn" id="drawerToggleBtn" onclick="toggleDrawer()" title="Open/Close scene panel">
+                    <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Combat Tracker Grid -->
+    <div id="combatView" class="view-section">
+        <div class="combat-header-tools">
+            <div class="combat-controls-group">
+                <label style="display:flex; align-items:center; gap:0.3rem; cursor:pointer; color:var(--text);">
+                    <input type="checkbox" id="gridToggle" checked onchange="toggleGrid()">
+                    <span>Grid Overlay</span>
+                </label>
+            </div>
+            <div style="width:1px; height:16px; background:var(--border);"></div>
+            <div class="combat-controls-group">
+                <label>Size:</label>
+                <input type="range" id="gridSizeSlider" min="20" max="120" value="40" oninput="onGridResize(this.value, 'slider')">
+                <input type="number" id="gridSizeNum" class="grid-num-input" min="20" max="120" value="40" oninput="onGridResize(this.value, 'num')">
+                <span style="color:var(--muted); font-size:0.75rem;">px</span>
+            </div>
+            <div style="width:1px; height:16px; background:var(--border);"></div>
+            <div class="combat-controls-group">
+                <button class="nav-btn" style="padding:0.2rem 0.5rem; font-weight:700;" onclick="spawnTokenManual('ally')">+ Ally</button>
+                <button class="nav-btn" style="padding:0.2rem 0.5rem; font-weight:700; border-color:rgba(248,113,113,0.4); color:var(--enemy-color);" onclick="spawnTokenManual('enemy')">+ Enemy</button>
+            </div>
+        </div>
+
+        <div class="battlefield-area" id="battlefieldArea">
+            <div class="no-map" id="noMapMsg">
+                <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+                    <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 16l4.553 2.276A1 1 0 0021 24.382V8.618a1 1 0 00-.553-.894L15 5m0 18V5M9 7l6-2"/>
+                </svg>
+                Please select a Battle Map from the top-right menu to display the grid battlefield.
+            </div>
+            <div id="mapWrapper">
+                <img id="mapImg" src="" alt="Battle Map" draggable="false">
+                <canvas id="gridCanvas"></canvas>
+                <div id="tokenLayer"></div>
+            </div>
+        </div>
+
+        <div id="initiativePanel">
+            <div class="panel-header">
+                <span class="panel-title">⚔ Initiative Order</span>
+                <div class="round-counter">
+                    <span class="round-label">Round</span>
+                    <button class="round-btn" onclick="changeRound(-1)">−</button>
+                    <span class="round-num" id="roundNum">1</span>
+                    <button class="round-btn" onclick="changeRound(+1)">+</button>
+                </div>
+            </div>
+            <div class="panel-body" id="initiativeList">
+                <div class="empty-initiative">
+                    <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002-2h2a2 2 0 002 2"/>
+                    </svg>
+                    Initiative is empty. Spawning combatants will show them here.
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button class="panel-footer-btn next-turn-btn" onclick="nextTurn()"><svg width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Next Turn</button>
+                <button class="panel-footer-btn sort-btn" onclick="sortInitiative()">Sort</button>
+                <button class="panel-footer-btn clear-btn" onclick="clearAll()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Modal Overlay -->
+    <div id="modalOverlay">
+        <div class="modal-box">
+            <div class="modal-title">🗡 Rename Token</div>
+            <input type="text" class="modal-input" id="modalInput" placeholder="Aldric, Goblin A..." maxlength="20" onkeydown="if(event.key==='Enter') confirmRename()">
+            <div class="modal-actions">
+                <button class="modal-ok" onclick="confirmRename()">Rename</button>
+                <button class="modal-cancel" onclick="cancelRename()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="contextMenu">
+        <div class="ctx-header" id="ctxHeader">Token</div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" onclick="renameToken()">Ganti Nama (Rename)</div>
+        <div class="ctx-item" onclick="toggleCondition('poisoned')">☠ Poisoned</div>
+        <div class="ctx-item" onclick="toggleCondition('stunned')">⚡ Stunned</div>
+        <div class="ctx-item" onclick="toggleCondition('blinded')">👁 Blinded</div>
+        <div class="ctx-item" onclick="toggleCondition('prone')">⬇ Prone</div>
+        <div class="ctx-item" onclick="toggleCondition('conc')">✦ Concentrating</div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item" onclick="toggleCondition('dead')">💀 Mark Dead / Alive</div>
+        <div class="ctx-separator"></div>
+        <div class="ctx-item danger" onclick="removeToken()">Remove Token</div>
+    </div>
+
+    <div id="coordTip"></div>
+
+    <!-- DATA SOURCE -->
+    <script id="session-data" type="application/json">{"scenes":[{"id":"1","title":"Pre-Highspire - Sebelum Highspire","url":"../Session/Aurelion/Scenes/PreHighspire.png"}],"combat":[{"id":"c1","name":"Aldric","type":"ally","init":"16","hp":28,"maxHp":28}],"combatState":{"round":1,"activeIndex":0}}<\/script>
+
+    <!-- CORE LOGIC -->
+    <script>
+        'use strict';
+        const db = JSON.parse(document.getElementById('session-data').textContent);
+
+        // Parse scenes to detect Chapters
+        const SCENES = db.scenes.map((s, idx) => {
+            let chapter = 'Session Scenes';
+            let title = s.title;
+            const dashIdx = s.title.indexOf(' - ');
+            if (dashIdx !== -1) {
+                chapter = s.title.substring(0, dashIdx).trim();
+                title = s.title.substring(dashIdx + 3).trim();
+            }
+            return {
+                id: s.id || ('sc-' + idx),
+                file: s.url || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzMiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzc3NyIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=',
+                chapter: chapter,
+                label: 'Scene ' + (idx + 1),
+                sceneTitle: title
+            };
+        });
+
+        // Chapter Colors Map
+        const CHAPTER_COLORS = {};
+        const colorsList = ['#cbd5e1', '#d4af37', '#8fba6e', '#9b7de8', '#ee9b00', '#0a9396', '#ca6702', '#9b2226'];
+        let colorIdx = 0;
+        SCENES.forEach(s => {
+            if (!CHAPTER_COLORS[s.chapter]) {
+                CHAPTER_COLORS[s.chapter] = colorsList[colorIdx % colorsList.length];
+                colorIdx++;
+            }
+        });
+
+        // Initialize Combat tokens from DB
+        let tokens = db.combat.map((c, i) => {
+            return {
+                id: c.id || ('tok-' + i),
+                type: c.type || 'enemy',
+                name: c.name,
+                imgUrl: '',
+                gridX: i % 15,
+                gridY: Math.floor(i / 15),
+                el: null,
+                conditions: [],
+                initScore: c.init || '',
+                hp: c.hp || 10,
+                maxHp: c.maxHp || c.hp || 10,
+                dead: false,
+                initiativeEl: null
+            };
+        });
+
+        // States
+        let currentIdx = 0;
+        let hudVisible = true;
+        let drawerOpen = false;
+        let autoplayTimer = null;
+        const AUTOPLAY_DELAY = 6000;
+
+        let gridSize = 40;
+        let showGrid = true;
+        let activeTurnId = null;
+        let round = db.combatState ? (db.combatState.round || 1) : 1;
+        let dragState = null;
+        let selectedTokenId = null;
+        let tokenCount = { ally: 0, enemy: 0 };
+
+        // View tabs
+        function switchView(viewName) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+            
+            if (viewName === 'presentation') {
+                document.getElementById('presentationView').classList.add('active');
+                document.getElementById('tab-presentation').classList.add('active');
+                document.getElementById('navMapPickerWrap').style.display = 'none';
+            } else if (viewName === 'combat') {
+                document.getElementById('presentationView').classList.remove('active');
+                document.getElementById('combatView').classList.add('active');
+                document.getElementById('tab-combat').classList.add('active');
+                document.getElementById('navMapPickerWrap').style.display = 'flex';
+                drawGrid();
+                tokens.forEach(t => renderTokenPosition(t));
+            }
+        }
+
+        // ================= PRESENTATION CONTROLLER =================
+        function buildSlides() {
+            const ss = document.getElementById('slideshow');
+            ss.innerHTML = '';
+            SCENES.forEach((scene, i) => {
+                const div = document.createElement('div');
+                div.className = 'slide';
+                div.id = 'slide-' + i;
+                const img = document.createElement('img');
+                img.className = 'slide-img';
+                img.src = scene.file;
+                img.alt = scene.chapter + ' — ' + scene.label;
+                img.draggable = false;
+                
+                div.addEventListener('click', (e) => {
+                    if (e.target === div || e.target === img) {
+                        if (drawerOpen) { closeDrawer(); return; }
+                        navigate(+1);
+                    }
+                });
+                
+                div.appendChild(img);
+                ss.appendChild(div);
+            });
+        }
+
+        function buildTabBar() {
+            const bar = document.getElementById('tabBar');
+            const spacer = bar.querySelector('.tab-spacer');
+            const chapters = [...new Set(SCENES.map(s => s.chapter))];
+            
+            chapters.forEach(ch => {
+                const color = CHAPTER_COLORS[ch] || '#d4af37';
+                const scenesInCh = SCENES.filter(s => s.chapter === ch);
+                
+                const btn = document.createElement('button');
+                btn.className = 'tab-btn';
+                btn.dataset.chapter = ch;
+                btn.style.setProperty('--tab-color', color);
+                
+                const dotsHtml = scenesInCh.map((s, di) => {
+                    return '<span class="tdot" data-chapter="' + ch + '" data-di="' + di + '" title="' + s.sceneTitle + '"></span>';
+                }).join('');
+                
+                btn.innerHTML = '<span class="tab-dot"></span>' + ch + '<span class="tab-progress">' + dotsHtml + '</span>';
+                
+                btn.addEventListener('click', () => {
+                    const firstIdx = SCENES.findIndex(s => s.chapter === ch);
+                    if (currentIdx < firstIdx || currentIdx >= firstIdx + scenesInCh.length) {
+                        goTo(firstIdx);
+                    } else {
+                        toggleDrawer();
+                    }
+                });
+                
+                btn.querySelectorAll('.tdot').forEach((dot, di) => {
+                    dot.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const firstIdx = SCENES.findIndex(s => s.chapter === ch);
+                        goTo(firstIdx + di);
+                    });
+                });
+                
+                bar.insertBefore(btn, spacer);
+            });
+        }
+
+        function buildThumbs() {
+            const content = document.getElementById('drawerContent');
+            content.innerHTML = '';
+            let lastChapter = null;
+            
+            SCENES.forEach((scene, i) => {
+                const color = CHAPTER_COLORS[scene.chapter] || '#d4af37';
+                
+                if (scene.chapter !== lastChapter) {
+                    const hdr = document.createElement('div');
+                    hdr.className = 'thumb-ch-header';
+                    hdr.innerHTML = '<div class="thumb-ch-line"></div>' +
+                                    '<div class="thumb-ch-label" style="color:' + color + '">' + scene.chapter + '</div>' +
+                                    '<div class="thumb-ch-line"></div>';
+                    content.appendChild(hdr);
+                    lastChapter = scene.chapter;
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'thumb-item';
+                item.id = 'thumb-' + i;
+                item.title = scene.chapter + ' — ' + scene.label + ': ' + scene.sceneTitle;
+                item.innerHTML = '<img class="thumb-img" src="' + scene.file + '" alt="" loading="lazy">' +
+                                 '<div class="thumb-label">' + scene.sceneTitle + '</div>';
+                item.onclick = () => { goTo(i); closeDrawer(); };
+                content.appendChild(item);
+            });
+        }
+
+        function goTo(idx, animate = true) {
+            if (idx < 0 || idx >= SCENES.length) return;
+            const prev = currentIdx;
+            currentIdx = idx;
+            const scene = SCENES[idx];
+            const color = CHAPTER_COLORS[scene.chapter] || 'var(--gold)';
+            
+            document.querySelectorAll('.slide').forEach((el, i) => {
+                if (i === idx) { el.classList.add('active'); }
+                else {
+                    if (i === prev && animate) {
+                        el.classList.add('prev-out');
+                        setTimeout(() => el.classList.remove('prev-out'), 500);
+                    }
+                    el.classList.remove('active');
+                }
+            });
+            
+            document.querySelectorAll('.thumb-item').forEach((el, i) => {
+                el.classList.toggle('active', i === idx);
+            });
+            const tEl = document.getElementById('thumb-' + idx);
+            if (tEl) tEl.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+            
+            const chapters = [...new Set(SCENES.map(s => s.chapter))];
+            chapters.forEach(ch => {
+                const tabBtn = document.querySelector('.tab-btn[data-chapter="' + ch + '"]');
+                if (!tabBtn) return;
+                const isActiveChapter = scene.chapter === ch;
+                tabBtn.classList.toggle('active-chapter', isActiveChapter);
+                
+                const firstIdx = SCENES.findIndex(s => s.chapter === ch);
+                const dots = tabBtn.querySelectorAll('.tdot');
+                dots.forEach((dot, di) => {
+                    dot.classList.toggle('active', isActiveChapter && (firstIdx + di === idx));
+                });
+            });
+            
+            document.getElementById('topSceneLabel').textContent = scene.chapter + '  ·  ' + scene.label;
+            document.getElementById('topCounter').textContent = (idx + 1) + ' / ' + SCENES.length;
+            
+            const tc = document.getElementById('sceneTitleCard');
+            document.getElementById('titleChapter').textContent = scene.chapter;
+            document.getElementById('titleChapter').style.color = color;
+            document.getElementById('titleScene').textContent = scene.sceneTitle;
+            if (animate) {
+                tc.classList.remove('entering');
+                void tc.offsetWidth;
+                tc.classList.add('entering');
+            }
+            
+            document.getElementById('prevArrow').classList.toggle('disabled', idx === 0);
+            document.getElementById('nextArrow').classList.toggle('disabled', idx === SCENES.length - 1);
+            document.getElementById('progressBar').style.width = ((idx / (SCENES.length - 1)) * 100) + '%';
+        }
+
+        function navigate(delta) { goTo(currentIdx + delta); }
+
+        function jumpToChapter(chapter) {
+            const idx = SCENES.findIndex(s => s.chapter === chapter);
+            if (idx !== -1) goTo(idx);
+        }
+
+        function toggleDrawer() { drawerOpen ? closeDrawer() : openDrawer(); }
+        function openDrawer() {
+            drawerOpen = true;
+            document.getElementById('bottomDrawer').classList.add('open');
+            document.getElementById('sceneTitleCard').classList.add('strip-open');
+        }
+        function closeDrawer() {
+            drawerOpen = false;
+            document.getElementById('bottomDrawer').classList.remove('open');
+            document.getElementById('sceneTitleCard').classList.remove('strip-open');
+        }
+
+        function toggleHUD() {
+            hudVisible = !hudVisible;
+            document.getElementById('globalNav').classList.toggle('ui-hidden', !hudVisible);
+            ['topBar','sceneTitleCard','bottomDrawer','prevArrow','nextArrow','hudToggle','autoplayIndicator'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('ui-hidden', !hudVisible);
+            });
+            if (!hudVisible && drawerOpen) closeDrawer();
+        }
+
+        function toggleAutoplay() {
+            const ind = document.getElementById('autoplayIndicator');
+            if (autoplayTimer) {
+                clearInterval(autoplayTimer); autoplayTimer = null;
+                ind.classList.remove('visible');
+            } else {
+                autoplayTimer = setInterval(() => {
+                    currentIdx < SCENES.length - 1 ? navigate(+1) : goTo(0);
+                }, AUTOPLAY_DELAY);
+                ind.classList.add('visible');
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Keyboard navigation
+        function setupKeyboard() {
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                switch (e.key) {
+                    case 'ArrowLeft': case 'ArrowUp': e.preventDefault(); navigate(-1); break;
+                    case 'ArrowRight': case 'ArrowDown': case ' ': e.preventDefault(); navigate(+1); break;
+                    case 'h': case 'H': toggleHUD(); break;
+                    case 'f': case 'F': toggleFullscreen(); break;
+                    case 'p': case 'P': toggleAutoplay(); break;
+                    case 'Tab': e.preventDefault(); toggleDrawer(); break;
+                    case 'Escape': if (drawerOpen) closeDrawer(); break;
+                    case 'Home': e.preventDefault(); goTo(0); break;
+                    case 'End': e.preventDefault(); goTo(SCENES.length - 1); break;
+                }
+            });
+        }
+
+        // ================= COMBAT CONTROLLER =================
+        function populateMapSelector() {
+            const picker = document.getElementById('mapPicker');
+            picker.innerHTML = '<option value="">-- Select Battle Map --</option>';
+            db.scenes.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.url;
+                opt.textContent = s.title;
+                picker.appendChild(opt);
+            });
+        }
+
+        function onMapChange(src) {
+            const wrapper = document.getElementById('mapWrapper');
+            const noMapMsg = document.getElementById('noMapMsg');
+            const img = document.getElementById('mapImg');
+            
+            if (!src) {
+                wrapper.style.display = 'none';
+                noMapMsg.style.display = 'flex';
+                return;
+            }
+            
+            noMapMsg.style.display = 'none';
+            wrapper.style.display = 'block';
+            img.src = src;
+        }
+
+        function drawGrid() {
+            const wrapper = document.getElementById('mapWrapper');
+            if (wrapper.style.display === 'none') return;
+            const canvas = document.getElementById('gridCanvas');
+            const W = 1280;
+            const H = 720;
+            canvas.width = W;
+            canvas.height = H;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, W, H);
+            if (!showGrid) return;
+
+            // Draw line guides (shadow)
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.lineWidth = 2.4;
+            drawLines(ctx, W, H);
+
+            // Amber guidelines
+            ctx.strokeStyle = 'rgba(255, 180, 40, 0.7)';
+            ctx.lineWidth = 1.2;
+            drawLines(ctx, W, H);
+
+            // Intersections
+            ctx.fillStyle = 'rgba(255, 200, 60, 0.5)';
+            for (let x = 0; x <= W; x += gridSize) {
+                for (let y = 0; y <= H; y += gridSize) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 1.8, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Labels
+            const stepLabel = Math.max(1, Math.ceil(80 / gridSize));
+            ctx.font = 'bold ' + Math.max(8, Math.round(gridSize * 0.22)) + 'px "Plus Jakarta Sans", sans-serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+
+            for (let row = 0; row * gridSize < H; row += stepLabel) {
+                for (let col = 0; col * gridSize < W; col += stepLabel) {
+                    const tx = col * gridSize + 3;
+                    const ty = row * gridSize + 3;
+                    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                    ctx.fillText(col + ',' + row, tx + 1, ty + 1);
+                    ctx.fillStyle = 'rgba(255, 210, 80, 0.9)';
+                    ctx.fillText(col + ',' + row, tx, ty);
+                }
+            }
+        }
+
+        function drawLines(ctx, W, H) {
+            for (let x = 0; x <= W; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+            }
+            for (let y = 0; y <= H; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+            }
+        }
+
+        function toggleGrid() {
+            showGrid = document.getElementById('gridToggle').checked;
+            drawGrid();
+        }
+
+        function onGridResize(val, source) {
+            let n = parseInt(val);
+            if (isNaN(n)) return;
+            n = Math.max(20, Math.min(120, n));
+            gridSize = n;
+            if (source !== 'slider') document.getElementById('gridSizeSlider').value = n;
+            if (source !== 'num') document.getElementById('gridSizeNum').value = n;
+            drawGrid();
+            tokens.forEach(t => renderTokenPosition(t));
+        }
+
+        function renderTokenPosition(token) {
+            if (!token.el) return;
+            const px = token.gridX * gridSize + 3;
+            const py = token.gridY * gridSize + 3;
+            const s = gridSize - 6;
+            token.el.style.left = px + 'px';
+            token.el.style.top = py + 'px';
+            token.el.style.width = s + 'px';
+            token.el.style.height = s + 'px';
+            token.el.style.fontSize = (gridSize * 0.35) + 'px';
+            token.el.style.lineHeight = '1';
+        }
+
+        function getAbbrev(name) {
+            const words = name.trim().split(/\\s+/);
+            if (words.length === 1) return name.slice(0, 2).toUpperCase();
+            return words.slice(0, 2).map(w => w[0]).join('').toUpperCase();
+        }
+
+        function createTokenElement(token) {
+            const layer = document.getElementById('tokenLayer');
+            const el = document.createElement('div');
+            el.className = 'token ' + token.type;
+            el.id = token.id;
+            
+            const abbrev = getAbbrev(token.name);
+            el.innerHTML = '<span class="token-label">' + abbrev + '</span>';
+            
+            const nameTag = document.createElement('div');
+            nameTag.className = 'token-name-tag';
+            nameTag.textContent = token.name;
+            el.appendChild(nameTag);
+
+            el.addEventListener('mousedown', onTokenMouseDown);
+            el.addEventListener('contextmenu', (e) => {
+                e.stopPropagation();
+                openContextMenu(e, token.id);
+            });
+
+            layer.appendChild(el);
+            token.el = el;
+        }
+
+        function onTokenMouseDown(e) {
+            if (e.button !== 0) return;
+            e.preventDefault();
+            e.stopPropagation();
+
+            const tokId = e.currentTarget.id;
+            const token = tokens.find(t => t.id === tokId);
+            if (!token) return;
+
+            const startMouseX = e.clientX;
+            const startMouseY = e.clientY;
+            const startPx = token.gridX * gridSize + 3;
+            const startPy = token.gridY * gridSize + 3;
+
+            dragState = { token, startMouseX, startMouseY, startPx, startPy };
+            token.el.classList.add('dragging');
+
+            window.addEventListener('mousemove', onDragMove);
+            window.addEventListener('mouseup', onDragEnd);
+        }
+
+        function onDragMove(e) {
+            if (!dragState) return;
+            const { token, startMouseX, startMouseY, startPx, startPy } = dragState;
+            const dx = e.clientX - startMouseX;
+            const dy = e.clientY - startMouseY;
+
+            const cols = Math.floor(1280 / gridSize);
+            const rows = Math.floor(720 / gridSize);
+
+            let gx = Math.round((startPx + dx - 3) / gridSize);
+            let gy = Math.round((startPy + dy - 3) / gridSize);
+            gx = Math.max(0, Math.min(cols - 1, gx));
+            gy = Math.max(0, Math.min(rows - 1, gy));
+
+            token.el.style.left = Math.max(3, Math.min((cols - 1) * gridSize + 3, startPx + dx)) + 'px';
+            token.el.style.top = Math.max(3, Math.min((rows - 1) * gridSize + 3, startPy + dy)) + 'px';
+
+            const tip = document.getElementById('coordTip');
+            tip.textContent = 'Col ' + gx + ', Row ' + gy;
+            tip.style.left = (e.clientX + 14) + 'px';
+            tip.style.top = (e.clientY - 24) + 'px';
+            tip.style.opacity = '1';
+        }
+
+        function onDragEnd(e) {
+            if (!dragState) return;
+            const { token, startMouseX, startMouseY, startPx, startPy } = dragState;
+
+            window.removeEventListener('mousemove', onDragMove);
+            window.removeEventListener('mouseup', onDragEnd);
+            token.el.classList.remove('dragging');
+            document.getElementById('coordTip').style.opacity = '0';
+
+            const dx = e.clientX - startMouseX;
+            const dy = e.clientY - startMouseY;
+            const cols = Math.floor(1280 / gridSize);
+            const rows = Math.floor(720 / gridSize);
+
+            let gx = Math.round((startPx + dx - 3) / gridSize);
+            let gy = Math.round((startPy + dy - 3) / gridSize);
+            gx = Math.max(0, Math.min(cols - 1, gx));
+            gy = Math.max(0, Math.min(rows - 1, gy));
+
+            const occupied = tokens.find(t => t.id !== token.id && t.gridX === gx && t.gridY === gy);
+            if (!occupied) {
+                token.gridX = gx;
+                token.gridY = gy;
+            }
+
+            renderTokenPosition(token);
+            dragState = null;
+        }
+
+        function highlightToken(tokenId) {
+            tokens.forEach(t => {
+                if (t.el) t.el.classList.remove('active-turn');
+            });
+            const t = tokens.find(tok => tok.id === tokenId);
+            if (t && t.el) {
+                t.el.classList.add('active-turn');
+            }
+        }
+
+        function renderInitiative() {
+            const list = document.getElementById('initiativeList');
+            list.innerHTML = '';
+            document.getElementById('roundNum').textContent = round;
+
+            if (tokens.length === 0) {
+                list.innerHTML = '<div class="empty-initiative">Initiative is empty. Spawn combatants to begin.</div>';
+                return;
+            }
+
+            tokens.forEach(c => {
+                const isActive = (c.id === activeTurnId);
+                const abbrev = getAbbrev(c.name);
+                
+                let badgesHtml = '';
+                c.conditions.forEach(cond => {
+                    badgesHtml += '<span class="cond-badge cond-' + cond + '">' + cond.slice(0,3).toUpperCase() + '</span>';
+                });
+
+                list.innerHTML += '<div class="init-row ' + c.type + '-row ' + (isActive ? 'active-turn' : '') + ' ' + (c.dead ? 'dead' : '') + '" onclick="highlightToken(\\\'' + c.id + '\\\')">' +
+                    '<div class="init-color-dot ' + c.type + '">' + abbrev + '</div>' +
+                    '<div class="init-info">' +
+                        '<div class="init-name">' + c.name + '</div>' +
+                        '<div class="init-type ' + c.type + '">' + c.type.toUpperCase() + '</div>' +
+                        '<div class="cond-wrap">' + badgesHtml + '</div>' +
+                    '</div>' +
+                    '<div class="init-input-wrap">' +
+                        '<span class="init-label-sm" style="font-size:0.6rem; color:var(--muted); font-weight:700;">INIT</span>' +
+                        '<input type="number" class="init-score" value="' + c.initScore + '" onchange="updateTokenInit(\\\'' + c.id + '\\\', this.value)">' +
+                    '</div>' +
+                    '<div class="hp-wrap" style="margin-left:0.5rem;">' +
+                        '<span class="hp-label">HP</span>' +
+                        '<input type="number" class="hp-input" value="' + c.hp + '" onchange="updateTokenHp(\\\'' + c.id + '\\\', this.value)">' +
+                    '</div>' +
+                '</div>';
+            });
+            
+            // Sync active turn visual ring
+            tokens.forEach(t => {
+                if (t.el) t.el.classList.toggle('active-turn', t.id === activeTurnId);
+            });
+        }
+
+        function updateTokenInit(id, val) {
+            const t = tokens.find(tok => tok.id === id);
+            if (t) t.initScore = parseInt(val) || 0;
+        }
+
+        function updateTokenHp(id, val) {
+            const t = tokens.find(tok => tok.id === id);
+            if (t) {
+                t.hp = parseInt(val) || 0;
+                t.dead = (t.hp <= 0);
+                if (t.dead && !t.conditions.includes('dead')) t.conditions.push('dead');
+                if (!t.dead) t.conditions = t.conditions.filter(c => c !== 'dead');
+                if (t.el) {
+                    t.el.classList.toggle('dead', t.dead);
+                    t.el.style.opacity = t.dead ? '0.4' : '1';
+                }
+                renderInitiative();
+            }
+        }
+
+        function changeRound(delta) {
+            round = Math.max(1, round + delta);
+            document.getElementById('roundNum').textContent = round;
+        }
+
+        function sortInitiative() {
+            tokens.sort((a, b) => (parseInt(b.initScore) || 0) - (parseInt(a.initScore) || 0));
+            if (tokens.length > 0) activeTurnId = tokens[0].id;
+            renderInitiative();
+        }
+
+        function nextTurn() {
+            if (tokens.length === 0) return;
+            const currentIdx = tokens.findIndex(t => t.id === activeTurnId);
+            let nextIdx = currentIdx + 1;
+            if (nextIdx >= tokens.length) {
+                nextIdx = 0;
+                changeRound(1);
+            }
+            activeTurnId = tokens[nextIdx].id;
+            renderInitiative();
+            highlightToken(activeTurnId);
+        }
+
+        function clearAll() {
+            if (confirm('Clear all tokens and reset?')) {
+                tokens.forEach(t => { if(t.el) t.el.remove(); });
+                tokens = [];
+                activeTurnId = null;
+                round = 1;
+                renderInitiative();
+            }
+        }
+
+        // Token renaming modal
+        let renameTargetId = null;
+        function openRenameModal(id, currentName) {
+            renameTargetId = id;
+            document.getElementById('modalInput').value = currentName;
+            document.getElementById('modalOverlay').style.display = 'flex';
+            document.getElementById('modalInput').focus();
+        }
+        function confirmRename() {
+            const newName = document.getElementById('modalInput').value.trim();
+            if (newName && renameTargetId) {
+                const t = tokens.find(tok => tok.id === renameTargetId);
+                if (t) {
+                    t.name = newName;
+                    if (t.el) {
+                        const abbrev = getAbbrev(newName);
+                        const label = t.el.querySelector('.token-label');
+                        if (label) label.textContent = abbrev;
+                        const nameTag = t.el.querySelector('.token-name-tag');
+                        if (nameTag) nameTag.textContent = newName;
+                    }
+                    renderInitiative();
+                }
+            }
+            cancelRename();
+        }
+        function cancelRename() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            renameTargetId = null;
+        }
+
+        function renameToken() {
+            document.getElementById('contextMenu').style.display = 'none';
+            if (!selectedTokenId) return;
+            const t = tokens.find(tok => tok.id === selectedTokenId);
+            if (t) openRenameModal(t.id, t.name);
+        }
+
+        function removeToken() {
+            document.getElementById('contextMenu').style.display = 'none';
+            if (!selectedTokenId) return;
+            const idx = tokens.findIndex(tok => tok.id === selectedTokenId);
+            if (idx !== -1) {
+                const token = tokens[idx];
+                if (token.el) token.el.remove();
+                tokens.splice(idx, 1);
+                if (activeTurnId === selectedTokenId) activeTurnId = null;
+                renderInitiative();
+            }
+            selectedTokenId = null;
+        }
+
+        function toggleCondition(cond) {
+            document.getElementById('contextMenu').style.display = 'none';
+            if (!selectedTokenId) return;
+            const token = tokens.find(t => t.id === selectedTokenId);
+            if (!token) return;
+            
+            if (cond === 'dead') {
+                token.dead = !token.dead;
+                if (token.dead) {
+                    token.hp = 0;
+                    if (!token.conditions.includes('dead')) token.conditions.push('dead');
+                } else {
+                    token.hp = token.maxHp;
+                    token.conditions = token.conditions.filter(c => c !== 'dead');
+                }
+            } else {
+                const idx = token.conditions.indexOf(cond);
+                if (idx === -1) {
+                    token.conditions.push(cond);
+                } else {
+                    token.conditions.splice(idx, 1);
+                }
+            }
+            renderInitiative();
+            if (token.el) {
+                token.el.classList.toggle('dead', token.dead);
+                token.el.style.opacity = token.dead ? '0.4' : '1';
+            }
+        }
+
+        function openContextMenu(e, tokenId) {
+            selectedTokenId = tokenId;
+            const token = tokens.find(t => t.id === tokenId);
+            document.getElementById('ctxHeader').textContent = token ? token.name : 'Token';
+
+            const menu = document.getElementById('contextMenu');
+            menu.style.display = 'block';
+            menu.style.left = e.clientX + 'px';
+            menu.style.top  = e.clientY + 'px';
+
+            const rect = menu.getBoundingClientRect();
+            if (rect.right  > window.innerWidth)  menu.style.left = (e.clientX - rect.width)  + 'px';
+            if (rect.bottom > window.innerHeight) menu.style.top  = (e.clientY - rect.height) + 'px';
+
+            e.stopPropagation();
+        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('contextMenu').style.display = 'none';
+        });
+
+        function spawnTokenManual(type) {
+            const wrapper = document.getElementById('mapWrapper');
+            if (wrapper.style.display === 'none') {
+                alert('Please select a battle map first!');
+                return;
+            }
+            tokenCount[type]++;
+            const label = type === 'ally' ? 'Player' : 'Enemy';
+            const name = prompt('Enter ' + label + ' Name:', label + ' ' + tokenCount[type]);
+            if (name === null) return;
+            const finalName = name.trim() || (label + ' ' + tokenCount[type]);
+
+            const cols = Math.floor(1280 / gridSize);
+            const rows = Math.floor(720 / gridSize);
+            const gx = Math.min(cols - 1, tokens.length % cols);
+            const gy = Math.min(rows - 1, Math.floor(tokens.length / cols));
+
+            const id = 'tok-manual-' + Date.now();
+            const token = {
+                id: id,
+                type: type,
+                name: finalName,
+                imgUrl: '',
+                gridX: gx,
+                gridY: gy,
+                el: null,
+                conditions: [],
+                initScore: '',
+                hp: 10,
+                maxHp: 10,
+                dead: false,
+                initiativeEl: null
+            };
+            createTokenElement(token);
+            tokens.push(token);
+            renderInitiative();
+            renderTokenPosition(token);
+        }
+
+        // Load init
+        window.addEventListener('DOMContentLoaded', () => {
+            buildSlides();
+            buildTabBar();
+            buildThumbs();
+            populateMapSelector();
+            
+            goTo(0, false);
+            setupKeyboard();
+            
+            tokens.forEach(t => {
+                createTokenElement(t);
+            });
+            renderInitiative();
+
+            document.getElementById('mapImg').addEventListener('load', () => {
+                drawGrid();
+                tokens.forEach(t => renderTokenPosition(t));
+            });
+        });
+    <\/script>
+</body>
+
+</html>
