@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enemy Creator - Solythis D&D</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-dark: #07090e;
+            --bg-card: rgba(17, 22, 34, 0.85);
+            --bg-sidebar: rgba(10, 13, 20, 0.95);
+            --gold-primary: #d4af37;
+            --gold-secondary: #f3e5ab;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-gold: rgba(212, 175, 55, 0.2);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --red-accent: #c0392b;
+            --red-glow: rgba(192, 57, 43, 0.2);
+            --green-accent: #27ae60;
+
+            --dnd-parchment: #fdfaf3;
+            --dnd-red: #58180d;
+            --dnd-text: #2c1e13;
+            --dnd-accent: #8c1e18;
+            --dnd-divider: #dcd1b4;
+            --dnd-stat-bg: #f3ebd3;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(212, 175, 55, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(192, 57, 43, 0.03) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,0.4); }
+
+        /* ── Top Nav ── */
+        .top-nav {
+            position: sticky; top: 0; z-index: 200;
+            background: rgba(10,13,20,0.97);
+            border-bottom: 1px solid var(--border-gold);
+            backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.9rem 2.5rem;
+        }
+        .nav-left { display: flex; align-items: center; gap: 1rem; }
+        .back-btn {
+            display: flex; align-items: center; gap: 0.5rem;
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px;
+            padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid transparent;
+            transition: all 0.25s ease;
+        }
+        .back-btn:hover { color: var(--gold-secondary); border-color: var(--border-gold); background: rgba(255,255,255,0.03); }
+        .back-btn svg { width: 14px; height: 14px; fill: currentColor; }
+        .nav-divider { width: 1px; height: 20px; background: var(--border-gold); }
+        .nav-title {
+            font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--gold-secondary), var(--gold-primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .nav-subtitle { font-size: 0.78rem; color: var(--text-secondary); letter-spacing: 0.5px; }
+
+        /* ── Layout ── */
+        .page-layout {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2.5rem 4rem;
+            align-items: start;
+        }
+
+        /* ── Section Cards (Form) ── */
+        .form-col { display: flex; flex-direction: column; gap: 1.5rem; }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.6rem 1.8rem;
+            backdrop-filter: blur(6px);
+            transition: border-color 0.3s ease;
+        }
+        .section-card:focus-within { border-color: rgba(212,175,55,0.15); }
+
+        .section-card-title {
+            font-family: 'Cinzel', serif; font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: var(--gold-primary); margin-bottom: 1.2rem;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .section-card-title::after {
+            content: ''; flex: 1; height: 1px;
+            background: linear-gradient(to right, rgba(212,175,55,0.2), transparent);
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-label {
+            font-size: 0.78rem; font-weight: 600; letter-spacing: 0.5px;
+            color: var(--text-secondary); text-transform: uppercase;
+        }
+        .form-input, .form-select, .form-textarea {
+            background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 7px; padding: 0.65rem 0.9rem;
+            color: var(--text-primary); font-family: 'Outfit', sans-serif; font-size: 0.9rem;
+            outline: none; transition: all 0.25s ease; width: 100%;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: rgba(212,175,55,0.4);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.06);
+            background: rgba(0,0,0,0.5);
+        }
+        .form-select { appearance: none; cursor: pointer; }
+        .form-select option { background: #111520; }
+        .form-textarea { resize: vertical; min-height: 70px; }
+
+        /* Ability Scores */
+        .ability-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; }
+        .ability-block { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+        .ability-label {
+            font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 700;
+            color: var(--gold-primary); letter-spacing: 1px;
+        }
+        .ability-input {
+            background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 7px; padding: 0.6rem 0.4rem;
+            color: var(--text-primary); font-family: 'Outfit', sans-serif;
+            font-size: 1rem; font-weight: 700; text-align: center; width: 100%;
+            outline: none; transition: all 0.25s ease;
+        }
+        .ability-input:focus { border-color: rgba(212,175,55,0.4); box-shadow: 0 0 0 3px rgba(212,175,55,0.06); }
+        .ability-mod {
+            font-size: 0.78rem; color: var(--text-secondary); min-height: 1rem;
+            font-weight: 500; transition: color 0.2s ease;
+        }
+
+        /* Dynamic Lists (Traits, Actions, etc.) */
+        .dynamic-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .dynamic-item {
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px; padding: 1rem;
+            display: flex; flex-direction: column; gap: 0.6rem;
+        }
+        .dynamic-item-header { display: flex; gap: 0.6rem; align-items: flex-start; }
+        .dynamic-item-header .form-input { flex: 1; }
+        .remove-btn {
+            background: rgba(192,57,43,0.1); border: 1px solid rgba(192,57,43,0.2);
+            border-radius: 6px; padding: 0.4rem 0.6rem; color: #e57373;
+            cursor: pointer; font-size: 0.8rem; transition: all 0.2s ease;
+            flex-shrink: 0; display: flex; align-items: center;
+        }
+        .remove-btn:hover { background: rgba(192,57,43,0.2); border-color: rgba(192,57,43,0.4); }
+        .add-btn {
+            background: transparent; border: 1px dashed rgba(212,175,55,0.25);
+            border-radius: 7px; padding: 0.6rem 1rem;
+            color: var(--text-secondary); font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem; cursor: pointer; transition: all 0.25s ease;
+            display: flex; align-items: center; gap: 0.4rem; justify-content: center;
+            width: 100%; margin-top: 0.25rem;
+        }
+        .add-btn:hover { border-color: rgba(212,175,55,0.5); color: var(--gold-secondary); background: rgba(212,175,55,0.04); }
+
+        /* Image Upload */
+        .image-upload-area {
+            border: 2px dashed rgba(212,175,55,0.2); border-radius: 10px;
+            padding: 2rem; text-align: center; cursor: pointer;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .image-upload-area:hover, .image-upload-area.dragover {
+            border-color: rgba(212,175,55,0.5);
+            background: rgba(212,175,55,0.04);
+        }
+        .image-upload-area input[type="file"] { display: none; }
+        .upload-icon { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.5; }
+        .upload-text { font-size: 0.9rem; color: var(--text-secondary); }
+        .upload-hint { font-size: 0.78rem; color: var(--text-secondary); opacity: 0.6; margin-top: 0.25rem; }
+        .image-preview-wrap { position: relative; }
+        .image-preview {
+            max-width: 100%; max-height: 200px; border-radius: 8px;
+            object-fit: contain; display: block; margin: 0 auto;
+        }
+        .clear-image-btn {
+            position: absolute; top: 0.5rem; right: 0.5rem;
+            background: rgba(192,57,43,0.8); border: none; border-radius: 50%;
+            width: 28px; height: 28px; color: white; cursor: pointer;
+            font-size: 1rem; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s ease;
+        }
+        .clear-image-btn:hover { background: rgba(192,57,43,1); }
+        .image-filename { font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.5rem; }
+
+        /* ── Preview Col ── */
+        .preview-col { position: sticky; top: 80px; }
+        .preview-label {
+            font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 3px; color: var(--text-secondary); text-transform: uppercase;
+            margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.6rem;
+        }
+        .preview-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to right, rgba(255,255,255,0.1), transparent); }
+
+        .stat-block-preview {
+            background-color: var(--dnd-parchment); color: var(--dnd-text);
+            border-radius: 6px; padding: 1.5rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid var(--dnd-divider);
+            border-top: 4px solid var(--dnd-accent);
+            border-bottom: 4px solid var(--dnd-accent);
+            max-height: calc(100vh - 160px); overflow-y: auto;
+        }
+        .preview-img { width: 100%; border-radius: 6px; margin-bottom: 1rem; object-fit: cover; max-height: 180px; display: none; }
+        .p-name { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; color: var(--dnd-red); text-transform: uppercase; line-height: 1.1; }
+        .p-subtitle { font-style: italic; font-size: 0.85rem; color: #554433; margin-top: 0.2rem; }
+        .p-divider { height: 4px; background: var(--dnd-accent); clip-path: polygon(0 40%, 50% 0, 100% 40%, 100% 60%, 50% 100%, 0 60%); margin: 0.6rem 0; }
+        .p-info { font-size: 0.88rem; margin-bottom: 0.2rem; }
+        .p-info strong { color: var(--dnd-red); font-weight: 700; }
+        .p-stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin: 0.5rem 0; }
+        .p-stat-cell { background: #f1ebd9; border-radius: 3px; text-align: center; padding: 0.2rem 0.1rem; }
+        .p-stat-name { font-family: 'Cinzel', serif; font-size: 0.6rem; font-weight: 700; color: var(--dnd-red); }
+        .p-stat-val { font-size: 0.8rem; font-weight: 700; }
+        .p-stat-mod { font-size: 0.7rem; color: #554433; }
+        .p-section-title { font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 700; color: var(--dnd-red); border-top: 1px solid var(--dnd-accent); padding-top: 0.4rem; margin: 0.8rem 0 0.4rem; letter-spacing: 0.5px; text-transform: uppercase; }
+        .p-desc { font-size: 0.82rem; line-height: 1.4; margin-bottom: 0.35rem; }
+        .p-desc strong { font-style: italic; }
+
+        /* ── Action Buttons ── */
+        .action-bar {
+            position: sticky; bottom: 0; z-index: 100;
+            background: rgba(10,13,20,0.97); border-top: 1px solid var(--border-gold);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2.5rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        }
+        .action-bar-left { display: flex; align-items: center; gap: 0.75rem; }
+        .action-bar-right { display: flex; align-items: center; gap: 0.75rem; }
+
+        .btn {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600;
+            padding: 0.7rem 1.4rem; border-radius: 8px; cursor: pointer;
+            transition: all 0.25s ease; border: 1px solid transparent;
+        }
+        .btn svg { width: 16px; height: 16px; fill: currentColor; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-primary), #b8941f);
+            color: #07090e; border-color: var(--gold-primary);
+            box-shadow: 0 4px 15px rgba(212,175,55,0.2);
+        }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(212,175,55,0.35); transform: translateY(-1px); }
+        .btn-danger {
+            background: rgba(192,57,43,0.1); color: #e57373;
+            border-color: rgba(192,57,43,0.3);
+        }
+        .btn-danger:hover { background: rgba(192,57,43,0.2); border-color: rgba(192,57,43,0.5); }
+        .btn-ghost { background: transparent; color: var(--text-secondary); border-color: rgba(255,255,255,0.1); }
+        .btn-ghost:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); border-color: rgba(255,255,255,0.15); }
+        .btn-success { background: rgba(39,174,96,0.1); color: #6fcf97; border-color: rgba(39,174,96,0.3); }
+        .btn-success:hover { background: rgba(39,174,96,0.2); border-color: rgba(39,174,96,0.5); }
+
+        /* ── Saved Monsters List ── */
+        .saved-section { margin-top: 1.5rem; }
+        .saved-monster-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 0.4rem;
+            cursor: pointer; transition: all 0.25s ease;
+        }
+        .saved-monster-item:hover { border-color: rgba(212,175,55,0.2); background: rgba(212,175,55,0.04); }
+        .saved-monster-item.editing { border-color: rgba(212,175,55,0.4); background: rgba(212,175,55,0.07); }
+        .saved-item-name { font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
+        .saved-item-meta { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.1rem; }
+        .saved-item-badge {
+            font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px;
+            background: rgba(212,175,55,0.1); color: var(--gold-secondary);
+            border: 1px solid rgba(212,175,55,0.15); font-family: 'Cinzel', serif;
+        }
+        .saved-item-actions { display: flex; gap: 0.4rem; margin-left: 0.5rem; }
+        .icon-btn {
+            background: transparent; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px; padding: 0.3rem 0.5rem; cursor: pointer;
+            transition: all 0.2s ease; display: flex; align-items: center;
+        }
+        .icon-btn svg { width: 14px; height: 14px; }
+        .icon-btn.edit-btn { color: var(--gold-secondary); }
+        .icon-btn.edit-btn:hover { background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.3); }
+        .icon-btn.del-btn { color: #e57373; }
+        .icon-btn.del-btn:hover { background: rgba(192,57,43,0.15); border-color: rgba(192,57,43,0.3); }
+
+        /* Toast */
+        .toast-container { position: fixed; bottom: 80px; right: 2rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+        .toast {
+            background: rgba(17,22,34,0.97); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 0.75rem 1.2rem;
+            font-size: 0.88rem; color: var(--text-primary);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            animation: slideIn 0.3s ease, fadeOut 0.4s ease 2.5s forwards;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .toast.success { border-left: 3px solid var(--green-accent); }
+        .toast.error { border-left: 3px solid var(--red-accent); }
+        .toast.info { border-left: 3px solid var(--gold-primary); }
+        @keyframes slideIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+        @keyframes fadeOut { from { opacity:1; } to { opacity:0; pointer-events:none; } }
+
+        /* Modal Confirm */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            z-index: 5000; display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #0e1220; border: 1px solid var(--border-gold);
+            border-radius: 12px; padding: 2rem; max-width: 400px; width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .modal-title { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--gold-secondary); margin-bottom: 0.75rem; }
+        .modal-text { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+        /* Empty state saved */
+        .saved-empty { text-align: center; color: var(--text-secondary); font-size: 0.85rem; padding: 1.5rem; font-style: italic; }
+
+        @media (max-width: 1100px) {
+            .page-layout { grid-template-columns: 1fr; }
+            .preview-col { position: static; }
+            .ability-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 640px) {
+            .page-layout { padding: 1.2rem 1rem 5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid .span-2 { grid-column: span 1; }
+            .form-grid-3 { grid-template-columns: 1fr 1fr; }
+            .ability-grid { grid-template-columns: repeat(3,1fr); }
+            .top-nav { padding: 0.75rem 1rem; }
+            .action-bar { padding: 0.75rem 1rem; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Nav -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <a href="Monster_Codex.html" class="back-btn">
+                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                Kembali
+            </a>
+            <div class="nav-divider"></div>
+            <div>
+                <div class="nav-title">ENEMY CREATOR</div>
+                <div class="nav-subtitle">Buat & kelola custom monster</div>
+            </div>
+        </div>
+        <div id="editing-badge" style="display:none; font-size:0.8rem; color:var(--gold-secondary); background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); border-radius:6px; padding:0.3rem 0.8rem; font-family:'Cinzel',serif;">
+            ✏️ Mode Edit
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="page-layout">
+
+        <!-- Form Column -->
+        <div class="form-col">
+
+            <!-- Identity -->
+            <div class="section-card">
+                <div class="section-card-title">Identitas</div>
+                <div class="form-grid">
+                    <div class="form-group span-2">
+                        <label class="form-label">Nama Monster *</label>
+                        <input type="text" class="form-input" id="f-name" placeholder="Contoh: Shadow Drake" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ukuran</label>
+                        <select class="form-select" id="f-size" onchange="updatePreview()">
+                            <option value="Tiny">Tiny</option>
+                            <option value="Small">Small</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Large">Large</option>
+                            <option value="Huge">Huge</option>
+                            <option value="Gargantuan">Gargantuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipe</label>
+                        <select class="form-select" id="f-type" onchange="updatePreview()">
+                            <option value="Aberration">Aberration</option>
+                            <option value="Beast">Beast</option>
+                            <option value="Celestial">Celestial</option>
+                            <option value="Construct">Construct</option>
+                            <option value="Dragon">Dragon</option>
+                            <option value="Elemental">Elemental</option>
+                            <option value="Fey">Fey</option>
+                            <option value="Fiend">Fiend</option>
+                            <option value="Giant">Giant</option>
+                            <option value="Humanoid" selected>Humanoid</option>
+                            <option value="Monstrosity">Monstrosity</option>
+                            <option value="Ooze">Ooze</option>
+                            <option value="Plant">Plant</option>
+                            <option value="Undead">Undead</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Alignment</label>
+                        <select class="form-select" id="f-alignment" onchange="updatePreview()">
+                            <option value="Lawful Good">Lawful Good</option>
+                            <option value="Neutral Good">Neutral Good</option>
+                            <option value="Chaotic Good">Chaotic Good</option>
+                            <option value="Lawful Neutral">Lawful Neutral</option>
+                            <option value="True Neutral">True Neutral</option>
+                            <option value="Chaotic Neutral" selected>Chaotic Neutral</option>
+                            <option value="Lawful Evil">Lawful Evil</option>
+                            <option value="Neutral Evil">Neutral Evil</option>
+                            <option value="Chaotic Evil">Chaotic Evil</option>
+                            <option value="Unaligned">Unaligned</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Challenge Rating (CR)</label>
+                        <select class="form-select" id="f-cr" onchange="updatePreview()">
+                            <option>0</option><option>1/8</option><option>1/4</option><option>1/2</option>
+                            <option value="1" selected>1</option><option>2</option><option>3</option>
+                            <option>4</option><option>5</option><option>6</option><option>7</option>
+                            <option>8</option><option>9</option><option>10</option><option>11</option>
+                            <option>12</option><option>13</option><option>14</option><option>15</option>
+                            <option>16</option><option>17</option><option>18</option><option>19</option>
+                            <option>20</option><option>21</option><option>22</option><option>23</option>
+                            <option>24</option><option>25</option><option>26</option><option>27</option>
+                            <option>28</option><option>29</option><option>30</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Combat Stats -->
+            <div class="section-card">
+                <div class="section-card-title">Statistik Tempur</div>
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Armor Class</label>
+                        <input type="text" class="form-input" id="f-ac" placeholder="12 (natural armor)" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hit Points</label>
+                        <input type="text" class="form-input" id="f-hp" placeholder="45 (7d8 + 14)" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Speed</label>
+                        <input type="text" class="form-input" id="f-speed" placeholder="30 ft." oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Saving Throws</label>
+                        <input type="text" class="form-input" id="f-saves" placeholder="Dex +4, Wis +3" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skills</label>
+                        <input type="text" class="form-input" id="f-skills" placeholder="Stealth +6, Perception +3" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Senses</label>
+                        <input type="text" class="form-input" id="f-senses" placeholder="Darkvision 60 ft., passive Perception 13" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Languages</label>
+                        <input type="text" class="form-input" id="f-languages" placeholder="Common, Elvish" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vuln. / Resist. / Imun.</label>
+                        <input type="text" class="form-input" id="f-immunes" placeholder="Fire; Bludgeoning; Poison, Charmed" oninput="updatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gear</label>
+                        <input type="text" class="form-input" id="f-gear" placeholder="Shortsword, Chain shirt" oninput="updatePreview()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ability Scores -->
+            <div class="section-card">
+                <div class="section-card-title">Ability Scores</div>
+                <div class="ability-grid">
+                    <div class="ability-block">
+                        <div class="ability-label">STR</div>
+                        <input type="number" class="ability-input" id="ab-str" value="10" min="1" max="30" oninput="updateAbilityMod('str'); updatePreview()">
+                        <div class="ability-mod" id="mod-str">+0</div>
+                    </div>
+                    <div class="ability-block">
+                        <div class="ability-label">DEX</div>
+                        <input type="number" class="ability-input" id="ab-dex" value="10" min="1" max="30" oninput="updateAbilityMod('dex'); updatePreview()">
+                        <div class="ability-mod" id="mod-dex">+0</div>
+                    </div>
+                    <div class="ability-block">
+                        <div class="ability-label">CON</div>
+                        <input type="number" class="ability-input" id="ab-con" value="10" min="1" max="30" oninput="updateAbilityMod('con'); updatePreview()">
+                        <div class="ability-mod" id="mod-con">+0</div>
+                    </div>
+                    <div class="ability-block">
+                        <div class="ability-label">INT</div>
+                        <input type="number" class="ability-input" id="ab-int" value="10" min="1" max="30" oninput="updateAbilityMod('int'); updatePreview()">
+                        <div class="ability-mod" id="mod-int">+0</div>
+                    </div>
+                    <div class="ability-block">
+                        <div class="ability-label">WIS</div>
+                        <input type="number" class="ability-input" id="ab-wis" value="10" min="1" max="30" oninput="updateAbilityMod('wis'); updatePreview()">
+                        <div class="ability-mod" id="mod-wis">+0</div>
+                    </div>
+                    <div class="ability-block">
+                        <div class="ability-label">CHA</div>
+                        <input type="number" class="ability-input" id="ab-cha" value="10" min="1" max="30" oninput="updateAbilityMod('cha'); updatePreview()">
+                        <div class="ability-mod" id="mod-cha">+0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traits -->
+            <div class="section-card">
+                <div class="section-card-title">Traits</div>
+                <div class="dynamic-list" id="traits-list"></div>
+                <button class="add-btn" onclick="addDynamicItem('traits')">
+                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    Tambah Trait
+                </button>
+            </div>
+
+            <!-- Actions -->
+            <div class="section-card">
+                <div class="section-card-title">Actions</div>
+                <div class="dynamic-list" id="actions-list"></div>
+                <button class="add-btn" onclick="addDynamicItem('actions')">
+                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    Tambah Action
+                </button>
+            </div>
+
+            <!-- Reactions -->
+            <div class="section-card">
+                <div class="section-card-title">Reactions <span style="font-size:0.7rem;color:var(--text-secondary);font-family:'Outfit',sans-serif;font-weight:400;letter-spacing:0;text-transform:none;">(opsional)</span></div>
+                <div class="dynamic-list" id="reactions-list"></div>
+                <button class="add-btn" onclick="addDynamicItem('reactions')">
+                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    Tambah Reaction
+                </button>
+            </div>
+
+            <!-- Legendary Actions -->
+            <div class="section-card">
+                <div class="section-card-title">Legendary Actions <span style="font-size:0.7rem;color:var(--text-secondary);font-family:'Outfit',sans-serif;font-weight:400;letter-spacing:0;text-transform:none;">(opsional)</span></div>
+                <div class="dynamic-list" id="legendary-list"></div>
+                <button class="add-btn" onclick="addDynamicItem('legendary')">
+                    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    Tambah Legendary Action
+                </button>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="section-card">
+                <div class="section-card-title">Ilustrasi Monster</div>
+                <div class="image-upload-area" id="upload-area" onclick="document.getElementById('img-file').click()">
+                    <div id="upload-placeholder">
+                        <div class="upload-icon">🖼️</div>
+                        <div class="upload-text">Klik atau drag & drop gambar ke sini</div>
+                        <div class="upload-hint">JPG, PNG, WEBP — disarankan max 600px lebar</div>
+                    </div>
+                    <div id="upload-preview-wrap" class="image-preview-wrap" style="display:none;">
+                        <img id="upload-preview-img" class="image-preview" src="" alt="Preview">
+                        <button class="clear-image-btn" onclick="clearImage(event)" title="Hapus gambar">✕</button>
+                        <div class="image-filename" id="upload-filename"></div>
+                    </div>
+                    <input type="file" id="img-file" accept="image/*" onchange="handleImageUpload(event)">
+                </div>
+                <p style="font-size:0.78rem;color:var(--text-secondary);margin-top:0.6rem;">
+                    Gambar akan disalin ke folder <code style="background:rgba(255,255,255,0.05);padding:0.1rem 0.35rem;border-radius:3px;">images/</code> dengan nama sesuai ID monster.
+                </p>
+            </div>
+
+            <!-- Saved Custom Monsters List -->
+            <div class="section-card saved-section">
+                <div class="section-card-title">Custom Monsters Tersimpan</div>
+                <div id="saved-list"></div>
+            </div>
+
+        </div>
+
+        <!-- Preview Column -->
+        <div class="preview-col">
+            <div class="preview-label">Preview Stat Block</div>
+            <div class="stat-block-preview" id="stat-preview">
+                <img id="prev-img" class="preview-img" src="" alt="">
+                <div class="p-name" id="prev-name">Nama Monster</div>
+                <div class="p-subtitle" id="prev-subtitle">Medium Humanoid, Chaotic Neutral</div>
+                <div class="p-divider"></div>
+                <div class="p-info"><strong>AC</strong> <span id="prev-ac">—</span></div>
+                <div class="p-info"><strong>HP</strong> <span id="prev-hp">—</span></div>
+                <div class="p-info"><strong>Speed</strong> <span id="prev-speed">—</span></div>
+                <div class="p-divider"></div>
+                <div class="p-stats-grid" id="prev-stats">
+                    <!-- filled by JS -->
+                </div>
+                <div class="p-divider"></div>
+                <div id="prev-extras"></div>
+                <div id="prev-traits-section"></div>
+                <div id="prev-actions-section"></div>
+                <div id="prev-reactions-section"></div>
+                <div id="prev-legendary-section"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+        <div class="action-bar-left">
+            <button class="btn btn-ghost" onclick="resetForm()">
+                <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                Reset Form
+            </button>
+            <button class="btn btn-danger" id="delete-btn" style="display:none;" onclick="deleteCurrentMonster()">
+                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                Hapus Monster
+            </button>
+        </div>
+        <div class="action-bar-right">
+            <button class="btn btn-success" onclick="exportJSON()">
+                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                Export JSON
+            </button>
+            <button class="btn btn-primary" onclick="saveMonster()">
+                <svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+                Simpan Monster
+            </button>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-box">
+            <div class="modal-title" id="modal-title">Konfirmasi</div>
+            <div class="modal-text" id="modal-text">Yakin?</div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+                <button class="btn btn-danger" id="modal-confirm-btn">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const STORAGE_KEY = 'solythis_custom_monsters';
+let customMonsters = loadFromStorage();
+let editingId = null;
+let currentImageData = null;  // { dataUrl, filename, extension }
+
+// ============================================================
+// STORAGE (localStorage as JSON proxy for offline use)
+// ============================================================
+function loadFromStorage() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+}
+
+function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(customMonsters));
+}
+
+// ============================================================
+// ABILITY SCORE HELPERS
+// ============================================================
+function calcMod(score) {
+    const n = parseInt(score) || 10;
+    const mod = Math.floor((n - 10) / 2);
+    return (mod >= 0 ? '+' : '') + mod;
+}
+
+function updateAbilityMod(attr) {
+    const val = document.getElementById(`ab-${attr}`).value;
+    const modEl = document.getElementById(`mod-${attr}`);
+    const mod = calcMod(val);
+    modEl.textContent = mod;
+    modEl.style.color = parseInt(val) > 10 ? '#6fcf97' : parseInt(val) < 10 ? '#e57373' : 'var(--text-secondary)';
+}
+
+['str','dex','con','int','wis','cha'].forEach(updateAbilityMod);
+
+// ============================================================
+// DYNAMIC LISTS (Traits / Actions / Reactions / Legendary)
+// ============================================================
+const listConfig = {
+    traits: { label: 'Nama Trait', placeholder: 'Pack Tactics. The creature has advantage...' },
+    actions: { label: 'Nama Action', placeholder: 'Multiattack. The creature makes two attacks...' },
+    reactions: { label: 'Nama Reaction', placeholder: 'Parry. The creature adds 2 to its AC...' },
+    legendary: { label: 'Nama Action', placeholder: 'Detect. The creature makes a Wisdom (Perception) check.' }
+};
+
+function addDynamicItem(type, nameVal = '', descVal = '') {
+    const list = document.getElementById(`${type}-list`);
+    const cfg = listConfig[type];
+    const item = document.createElement('div');
+    item.className = 'dynamic-item';
+    item.innerHTML = `
+        <div class="dynamic-item-header">
+            <input type="text" class="form-input" placeholder="${cfg.label}" value="${escHtml(nameVal)}" oninput="updatePreview()">
+            <button class="remove-btn" onclick="this.closest('.dynamic-item').remove(); updatePreview();" title="Hapus">✕</button>
+        </div>
+        <textarea class="form-textarea" placeholder="${cfg.placeholder}" oninput="updatePreview()">${escHtml(descVal)}</textarea>
+    `;
+    list.appendChild(item);
+    updatePreview();
+}
+
+function getListItems(type) {
+    const list = document.getElementById(`${type}-list`);
+    return [...list.querySelectorAll('.dynamic-item')].map(item => ({
+        name: item.querySelector('input').value.trim(),
+        desc: item.querySelector('textarea').value.trim()
+    })).filter(i => i.name || i.desc);
+}
+
+// ============================================================
+// IMAGE HANDLING
+// ============================================================
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const ext = file.name.split('.').pop().toLowerCase();
+    const reader = new FileReader();
+    reader.onload = e => {
+        currentImageData = { dataUrl: e.target.result, filename: file.name, extension: ext };
+        document.getElementById('upload-placeholder').style.display = 'none';
+        document.getElementById('upload-preview-wrap').style.display = 'block';
+        document.getElementById('upload-preview-img').src = e.target.result;
+        document.getElementById('upload-filename').textContent = file.name;
+        updatePreview();
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearImage(event) {
+    event.stopPropagation();
+    currentImageData = null;
+    document.getElementById('img-file').value = '';
+    document.getElementById('upload-preview-wrap').style.display = 'none';
+    document.getElementById('upload-placeholder').style.display = 'block';
+    updatePreview();
+}
+
+// Drag & drop
+const uploadArea = document.getElementById('upload-area');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        document.getElementById('img-file').files = dt.files;
+        handleImageUpload({ target: { files: [file] } });
+    }
+});
+
+// ============================================================
+// LIVE PREVIEW
+// ============================================================
+function updatePreview() {
+    const name = v('f-name') || 'Nama Monster';
+    const size = v('f-size');
+    const type = v('f-type');
+    const alignment = v('f-alignment');
+
+    document.getElementById('prev-name').textContent = name;
+    document.getElementById('prev-subtitle').textContent = `${size} ${type}, ${alignment}`;
+    document.getElementById('prev-ac').textContent = v('f-ac') || '—';
+    document.getElementById('prev-hp').textContent = v('f-hp') || '—';
+    document.getElementById('prev-speed').textContent = v('f-speed') || '—';
+
+    // Stats grid
+    const attrs = ['STR','DEX','CON','INT','WIS','CHA'];
+    const ids = ['str','dex','con','int','wis','cha'];
+    document.getElementById('prev-stats').innerHTML = attrs.map((a, i) => {
+        const val = document.getElementById(`ab-${ids[i]}`).value || 10;
+        const mod = calcMod(val);
+        return `<div class="p-stat-cell"><div class="p-stat-name">${a}</div><div class="p-stat-val">${val}</div><div class="p-stat-mod">${mod}</div></div>`;
+    }).join('');
+
+    // Extras
+    const extras = [
+        ['Saving Throws', 'f-saves'], ['Skills', 'f-skills'],
+        ['Immunities/Resist.', 'f-immunes'], ['Senses', 'f-senses'],
+        ['Languages', 'f-languages'], ['CR', 'f-cr'], ['Gear', 'f-gear']
+    ].filter(([, id]) => v(id)).map(([label, id]) =>
+        `<div class="p-info"><strong>${label}</strong> ${v(id)}</div>`
+    ).join('');
+    document.getElementById('prev-extras').innerHTML = extras;
+
+    // Sections
+    renderPreviewSection('prev-traits-section', 'Traits', getListItems('traits'));
+    renderPreviewSection('prev-actions-section', 'Actions', getListItems('actions'));
+    renderPreviewSection('prev-reactions-section', 'Reactions', getListItems('reactions'));
+    renderPreviewSection('prev-legendary-section', 'Legendary Actions', getListItems('legendary'));
+
+    // Image
+    const prevImg = document.getElementById('prev-img');
+    if (currentImageData) {
+        prevImg.src = currentImageData.dataUrl;
+        prevImg.style.display = 'block';
+    } else {
+        prevImg.style.display = 'none';
+    }
+}
+
+function renderPreviewSection(elId, title, items) {
+    const el = document.getElementById(elId);
+    if (!items.length) { el.innerHTML = ''; return; }
+    el.innerHTML = `<div class="p-section-title">${title}</div>` +
+        items.map(i => `<div class="p-desc"><strong>${escHtml(i.name)}.</strong> ${escHtml(i.desc)}</div>`).join('');
+}
+
+function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ============================================================
+// SAVE / EDIT / DELETE
+// ============================================================
+function generateId(name) {
+    return 'custom-' + name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '-' + Date.now().toString(36);
+}
+
+function collectFormData() {
+    const name = v('f-name');
+    if (!name) { showToast('Nama monster harus diisi!', 'error'); return null; }
+
+    const attrs = {};
+    ['str','dex','con','int','wis','cha'].forEach(a => {
+        const val = document.getElementById(`ab-${a}`).value || '10';
+        const mod = calcMod(val);
+        attrs[a] = { val, mod, save: mod };
+    });
+
+    return {
+        id: editingId || generateId(name),
+        name,
+        sizeType: `${v('f-size')} ${v('f-type')}, ${v('f-alignment')}`,
+        ac: v('f-ac'),
+        hp: v('f-hp'),
+        speed: v('f-speed'),
+        cr: v('f-cr'),
+        savingThrows: v('f-saves'),
+        skills: v('f-skills'),
+        immunities: v('f-immunes'),
+        senses: v('f-senses'),
+        languages: v('f-languages'),
+        gear: v('f-gear'),
+        attributes: attrs,
+        traits: getListItems('traits'),
+        actions: getListItems('actions'),
+        reactions: getListItems('reactions'),
+        legendaryActions: getListItems('legendary'),
+        image: currentImageData ? `images/${generateSafeFilename(name, currentImageData.extension)}` : '',
+        imageData: currentImageData ? currentImageData.dataUrl : null,
+        isCustom: true,
+        _meta: { size: v('f-size'), type: v('f-type'), alignment: v('f-alignment'), cr: v('f-cr') }
+    };
+}
+
+function generateSafeFilename(name, ext) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '.' + ext;
+}
+
+function saveMonster() {
+    const data = collectFormData();
+    if (!data) return;
+
+    customMonsters[data.id] = data;
+    saveToStorage();
+
+    showToast(editingId ? `"${data.name}" berhasil diperbarui!` : `"${data.name}" berhasil disimpan!`, 'success');
+
+    editingId = data.id; // stay in edit mode for the just-saved monster
+    document.getElementById('editing-badge').style.display = 'block';
+    document.getElementById('delete-btn').style.display = 'flex';
+
+    renderSavedList();
+}
+
+function editMonster(id) {
+    const m = customMonsters[id];
+    if (!m) return;
+    editingId = id;
+
+    // Fill identity
+    setVal('f-name', m.name);
+    const meta = m._meta || {};
+    setVal('f-size', meta.size || 'Medium');
+    setVal('f-type', meta.type || 'Humanoid');
+    setVal('f-alignment', meta.alignment || 'Chaotic Neutral');
+    setVal('f-cr', meta.cr || '1');
+
+    // Fill combat
+    setVal('f-ac', m.ac);
+    setVal('f-hp', m.hp);
+    setVal('f-speed', m.speed);
+    setVal('f-saves', m.savingThrows);
+    setVal('f-skills', m.skills);
+    setVal('f-senses', m.senses);
+    setVal('f-languages', m.languages);
+    setVal('f-immunes', m.immunities);
+    setVal('f-gear', m.gear);
+
+    // Ability scores
+    ['str','dex','con','int','wis','cha'].forEach(a => {
+        const el = document.getElementById(`ab-${a}`);
+        if (el && m.attributes && m.attributes[a]) {
+            el.value = m.attributes[a].val;
+            updateAbilityMod(a);
+        }
+    });
+
+    // Clear and repopulate dynamic lists
+    ['traits','actions','reactions','legendary'].forEach(type => {
+        document.getElementById(`${type}-list`).innerHTML = '';
+    });
+    (m.traits || []).forEach(t => addDynamicItem('traits', t.name, t.desc));
+    (m.actions || []).forEach(a => addDynamicItem('actions', a.name, a.desc));
+    (m.reactions || []).forEach(r => addDynamicItem('reactions', r.name, r.desc));
+    (m.legendaryActions || []).forEach(l => addDynamicItem('legendary', l.name, l.desc));
+
+    // Image
+    if (m.imageData) {
+        currentImageData = { dataUrl: m.imageData, filename: m.image, extension: m.image.split('.').pop() };
+        document.getElementById('upload-placeholder').style.display = 'none';
+        document.getElementById('upload-preview-wrap').style.display = 'block';
+        document.getElementById('upload-preview-img').src = m.imageData;
+        document.getElementById('upload-filename').textContent = m.image;
+    } else {
+        clearImage({ stopPropagation: () => {} });
+    }
+
+    document.getElementById('editing-badge').style.display = 'block';
+    document.getElementById('delete-btn').style.display = 'flex';
+    renderSavedList();
+    updatePreview();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast(`Mengedit "${m.name}"`, 'info');
+}
+
+function deleteCurrentMonster() {
+    if (!editingId) return;
+    const name = customMonsters[editingId]?.name || 'monster ini';
+    openModal(
+        'Hapus Monster',
+        `Yakin ingin menghapus "${name}"? Aksi ini tidak bisa dibatalkan.`,
+        () => {
+            delete customMonsters[editingId];
+            saveToStorage();
+            resetForm();
+            renderSavedList();
+            showToast(`"${name}" dihapus.`, 'info');
+        }
+    );
+}
+
+function deleteMonster(id, event) {
+    event.stopPropagation();
+    const name = customMonsters[id]?.name || 'monster ini';
+    openModal('Hapus Monster', `Yakin ingin menghapus "${name}"?`, () => {
+        delete customMonsters[id];
+        saveToStorage();
+        if (editingId === id) resetForm();
+        renderSavedList();
+        showToast(`"${name}" dihapus.`, 'info');
+    });
+}
+
+function resetForm() {
+    editingId = null;
+    currentImageData = null;
+
+    setVal('f-name',''); setVal('f-ac',''); setVal('f-hp',''); setVal('f-speed','');
+    setVal('f-saves',''); setVal('f-skills',''); setVal('f-senses',''); setVal('f-languages','');
+    setVal('f-immunes',''); setVal('f-gear','');
+    setVal('f-size','Medium'); setVal('f-type','Humanoid'); setVal('f-alignment','Chaotic Neutral'); setVal('f-cr','1');
+
+    ['str','dex','con','int','wis','cha'].forEach(a => {
+        document.getElementById(`ab-${a}`).value = 10;
+        updateAbilityMod(a);
+    });
+
+    ['traits','actions','reactions','legendary'].forEach(t => {
+        document.getElementById(`${t}-list`).innerHTML = '';
+    });
+
+    document.getElementById('img-file').value = '';
+    document.getElementById('upload-preview-wrap').style.display = 'none';
+    document.getElementById('upload-placeholder').style.display = 'block';
+
+    document.getElementById('editing-badge').style.display = 'none';
+    document.getElementById('delete-btn').style.display = 'none';
+
+    renderSavedList();
+    updatePreview();
+}
+
+function setVal(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.value = val || '';
+}
+
+// ============================================================
+// RENDER SAVED LIST
+// ============================================================
+function renderSavedList() {
+    const container = document.getElementById('saved-list');
+    const keys = Object.keys(customMonsters);
+
+    if (keys.length === 0) {
+        container.innerHTML = '<div class="saved-empty">Belum ada custom monster. Buat satu di atas!</div>';
+        return;
+    }
+
+    container.innerHTML = keys.map(id => {
+        const m = customMonsters[id];
+        const isEditing = editingId === id;
+        return `
+        <div class="saved-monster-item ${isEditing ? 'editing' : ''}" onclick="editMonster('${id}')">
+            <div>
+                <div class="saved-item-name">${escHtml(m.name)}</div>
+                <div class="saved-item-meta">${m.sizeType || ''} — CR ${m._meta?.cr || m.cr || '?'}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+                ${isEditing ? '<span style="font-size:0.7rem;color:var(--gold-primary);font-family:Cinzel,serif;">✏️</span>' : ''}
+                <div class="saved-item-actions">
+                    <button class="icon-btn del-btn" onclick="deleteMonster('${id}', event)" title="Hapus">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ============================================================
+// EXPORT JSON
+// Generate a merged JSON that adds custom monsters into
+// the same "Monsters (Custom)" section of 11_monsters.json format
+// ============================================================
+async function exportJSON() {
+    const keys = Object.keys(customMonsters);
+    if (keys.length === 0) { showToast('Tidak ada custom monster untuk diekspor!', 'error'); return; }
+
+    // Try to load existing JSON
+    let baseJson = {};
+    try {
+        const res = await fetch('11_monsters.json');
+        if (res.ok) baseJson = await res.json();
+    } catch {}
+
+    // Build the custom section entries
+    const customSection = {};
+    keys.forEach(id => {
+        const m = customMonsters[id];
+        // Convert back to JSON format (simplified content array)
+        const contentArr = buildContentArray(m);
+        customSection[m.name] = { content: contentArr };
+    });
+
+    // Inject into Monsters root
+    if (!baseJson['Monsters']) baseJson['Monsters'] = {};
+    baseJson['Monsters']['Monsters (Custom)'] = customSection;
+
+    // Download
+    const blob = new Blob([JSON.stringify(baseJson, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '11_monsters.json';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showToast(`JSON berhasil diekspor (${keys.length} custom monster)`, 'success');
+}
+
+function buildContentArray(m) {
+    const attrs = m.attributes || {};
+    const content = [];
+
+    // Subtitle line
+    content.push(`*${m.sizeType}*`);
+
+    // Stats
+    content.push(`**Armor Class** ${m.ac}`);
+    content.push(`**Hit Points** ${m.hp}`);
+    content.push(`**Speed** ${m.speed}`);
+
+    // Ability score table
+    const statKeys = ['STR','DEX','CON','INT','WIS','CHA'];
+    const attrIds = ['str','dex','con','int','wis','cha'];
+    const tableRow = {};
+    statKeys.forEach((sk, i) => {
+        const a = attrs[attrIds[i]] || { val: '10', mod: '+0' };
+        tableRow[sk] = [`${a.val} (${a.mod})`];
+    });
+    content.push({ table: tableRow });
+
+    if (m.savingThrows) content.push(`**Saving Throws** ${m.savingThrows}`);
+    if (m.skills) content.push(`**Skills** ${m.skills}`);
+    if (m.immunities) content.push(`**Damage Immunities** ${m.immunities}`);
+    if (m.senses) content.push(`**Senses** ${m.senses}`);
+    if (m.languages) content.push(`**Languages** ${m.languages}`);
+    if (m.cr) content.push(`**Challenge** ${m.cr}`);
+    if (m.gear) content.push(`**Gear** ${m.gear}`);
+
+    (m.traits || []).forEach(t => content.push(`***${t.name}.*** ${t.desc}`));
+    if (m.actions?.length) { content.push('**Actions**'); (m.actions).forEach(a => content.push(`***${a.name}.*** ${a.desc}`)); }
+    if (m.reactions?.length) { content.push('**Reactions**'); (m.reactions).forEach(r => content.push(`***${r.name}.*** ${r.desc}`)); }
+    if (m.legendaryActions?.length) { content.push('**Legendary Actions**'); (m.legendaryActions).forEach(l => content.push(`***${l.name}.*** ${l.desc}`)); }
+
+    return content;
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+let _modalCallback = null;
+function openModal(title, text, onConfirm) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-text').textContent = text;
+    _modalCallback = onConfirm;
+    document.getElementById('confirm-modal').classList.add('active');
+    document.getElementById('modal-confirm-btn').onclick = () => { closeModal(); if (_modalCallback) _modalCallback(); };
+}
+function closeModal() { document.getElementById('confirm-modal').classList.remove('active'); }
+document.getElementById('confirm-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, type = 'info') {
+    const icons = { success: '✅', error: '❌', info: '💡' };
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<span>${icons[type]}</span> ${msg}`;
+    document.getElementById('toast-container').appendChild(toast);
+    setTimeout(() => toast.remove(), 3200);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderSavedList();
+updatePreview();
+</script>
+</body>
+</html>
