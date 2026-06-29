@@ -678,14 +678,16 @@
 </head>
 
 <body>
-
     <!-- TOP NAVIGATION -->
     <nav id="topNav">
-        <div class="brand">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--gold)">
-                <path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99z" />
-            </svg>
-            <span>D&D</span> Session Builder
+        <div style="display:flex;align-items:center;gap:12px;">
+            <a href="../dashboard.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;flex-shrink:0;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Dashboard</a>
+            <div class="brand">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--gold)">
+                    <path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99z" />
+                </svg>
+                <span>D&D</span> Session Builder
+            </div>
         </div>
         <div class="tabs" id="tabContainer">
             <button class="tab-btn active" data-target="dashboard">Dashboard</button>

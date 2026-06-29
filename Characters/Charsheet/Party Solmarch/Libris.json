@@ -1,0 +1,28 @@
+{
+  "id": "libris_001",
+  "name": "Libris",
+  "alias": "Sang Ksatria Ordo Keemasan",
+  "party": "Party Solmarch",
+  "race": "Orc",
+  "class": "Paladin",
+  "subclass": "Oath of Devotion",
+  "age": "TODO",
+  "gender": "TODO",
+  "alignment": "TODO",
+  "height": "TODO",
+  "backstory_summary": "Seorang Orc prajurit veteran dari perang parit era mesiu yang mengikrarkan Sumpah Pengabdian (Oath of Devotion) kepada 'Sang Keemasan' — sebuah makanan Tahu Isi hangat yang ia temukan di reruntuhan desa bersalju yang kelaparan. Setelah gugur sebagai martir dalam pertempuran menahan serbuan ribuan mayat hidup di lembah gelap sendirian, jiwanya terlempar lintas dimensi ke dunia baru akibat anomali spasial Divine Smite.",
+  "lore_pointer": {
+    "origin": "Benua tak dikenal, garis depan perang parit militeristik — Era Mesiu",
+    "important_people": [
+      "TODO: Nama Orang 1 (hubungan)"
+    ],
+    "important_places": [
+      "Reruntuhan Desa Kelaparan (Tempat ia menemukan 'Sang Keemasan' / Tahu Isi)",
+      "Lembah Gelap (Tempat ia menahan mayat hidup & gugur sebagai martir)"
+    ],
+    "important_organizations": [
+      "Unit Militer Parit (Masa lalu: pasukan tempat ia bertugas sebagai penembak)",
+      "Ordo Keemasan (Didirikan sendiri: sekte pengabdi Tahu Isi)"
+    ]
+  }
+}

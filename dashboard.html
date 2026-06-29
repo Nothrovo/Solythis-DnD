@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solythis Campaign Dashboard</title>
+  <meta name="description" content="Pusat Kendali Campaign D&D Solythis Chronicles — akses cepat ke semua modul DM." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="theme.css" />
+
+  <style>
+    /* ── PAGE-SPECIFIC OVERRIDES ─────────────────── */
+    body {
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Starfield canvas */
+    #star-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HEADER ──────────────────────────────────── */
+    .db-header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 56px 24px 44px;
+      text-align: center;
+      border-bottom: 1px solid var(--sol-border);
+      background: linear-gradient(180deg,
+        rgba(7,9,14,0.95) 0%,
+        rgba(13,15,26,0.85) 100%);
+      backdrop-filter: blur(12px);
+    }
+
+    .db-header-rune {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 18px var(--sol-gold-glow));
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.75; }
+      50%       { opacity: 1; filter: drop-shadow(0 0 28px var(--sol-gold-glow)); }
+    }
+
+    .db-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+      font-weight: 700;
+      color: var(--sol-gold);
+      letter-spacing: 0.12em;
+      text-shadow: 0 0 60px rgba(212,175,55,0.35);
+      line-height: 1.2;
+    }
+
+    .db-subtitle {
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sol-text-faint);
+      margin-top: 8px;
+    }
+
+    /* Status pills */
+    .db-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: var(--sol-r-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid;
+      cursor: default;
+      transition: all var(--sol-t) var(--sol-ease);
+    }
+    .status-pill--active {
+      background: rgba(16,185,129,0.12);
+      border-color: rgba(16,185,129,0.4);
+      color: #10b981;
+    }
+    .status-pill--location {
+      background: var(--sol-gold-dim);
+      border-color: var(--sol-gold-border);
+      color: var(--sol-gold-light);
+    }
+    .status-pill--session {
+      background: rgba(124,58,237,0.12);
+      border-color: rgba(124,58,237,0.35);
+      color: var(--sol-purple-light);
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: blink 1.8s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.2 } }
+
+    /* Editable location */
+    #editable-location {
+      cursor: text;
+      border-bottom: 1px dashed var(--sol-gold-border);
+      min-width: 40px;
+      display: inline-block;
+      transition: border-color 0.2s;
+    }
+    #editable-location:focus {
+      outline: none;
+      border-color: var(--sol-gold);
+    }
+
+    /* ── MAIN GRID ───────────────────────────────── */
+    .db-main {
+      position: relative;
+      z-index: 5;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 28px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 28px 32px;
+    }
+
+    /* ── MODULE CARDS ────────────────────────────── */
+    .mod-card {
+      position: relative;
+      background: rgba(13,15,26,0.82);
+      border: 1px solid var(--sol-border);
+      border-radius: var(--sol-r-xl);
+      padding: 36px 36px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow: hidden;
+      transition: border-color var(--sol-t) var(--sol-ease),
+                  box-shadow var(--sol-t) var(--sol-ease),
+                  transform var(--sol-t) var(--sol-ease);
+    }
+    .mod-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--card-accent-color, transparent);
+      opacity: 0.03;
+      pointer-events: none;
+      transition: opacity var(--sol-t) var(--sol-ease);
+    }
+    .mod-card:hover {
+      border-color: var(--sol-gold-border-bright);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px var(--sol-gold-dim), var(--sol-shadow-gold);
+      transform: translateY(-4px);
+    }
+    .mod-card:hover::before { opacity: 0.06; }
+
+    /* Card colour variants */
+    .mod-card--heroes  { --card-accent-color: radial-gradient(circle at top left, #d4af37, transparent 65%); }
+    .mod-card--combat  { --card-accent-color: radial-gradient(circle at top left, #ef4444, transparent 65%); }
+    .mod-card--lore    { --card-accent-color: radial-gradient(circle at top left, #7c3aed, transparent 65%); }
+    .mod-card--dm      { --card-accent-color: radial-gradient(circle at top left, #22d3ee, transparent 65%); }
+
+    .mod-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .mod-icon {
+      font-size: 2.4rem;
+      flex-shrink: 0;
+      line-height: 1;
+      filter: drop-shadow(0 0 12px rgba(212,175,55,0.35));
+    }
+
+    .mod-title-block {}
+
+    .mod-category {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sol-text-faint);
+      margin-bottom: 4px;
+    }
+
+    .mod-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--sol-text);
+      line-height: 1.25;
+    }
+
+    .mod-desc {
+      font-size: 0.85rem;
+      color: var(--sol-text-dim);
+      line-height: 1.7;
+      flex: 1;
+    }
+
+    .mod-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mod-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: var(--sol-r-md);
+      border: 1px solid var(--sol-border);
+      background: rgba(255,255,255,0.02);
+      text-decoration: none;
+      color: var(--sol-text-dim);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all var(--sol-t-fast) var(--sol-ease);
+    }
+    .mod-link:hover {
+      background: var(--sol-gold-dim);
+      border-color: var(--sol-gold-border-bright);
+      color: var(--sol-gold-light);
+      transform: translateX(4px);
+      box-shadow: 0 0 16px var(--sol-gold-glow);
+    }
+    .mod-link-icon { font-size: 1rem; flex-shrink: 0; }
+    .mod-link-label { flex: 1; }
+    .mod-link-arrow {
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity var(--sol-t-fast) var(--sol-ease), transform var(--sol-t-fast) var(--sol-ease);
+    }
+    .mod-link:hover .mod-link-arrow { opacity: 1; transform: translateX(3px); }
+
+    /* Card divider */
+    .mod-divider {
+      height: 1px;
+      background: var(--sol-border);
+      margin: 4px 0;
+    }
+
+    /* ── QUICK NOTES PANEL ───────────────────────── */
+    .notes-panel {
+      grid-column: 1 / -1;
+      background: rgba(13,15,26,0.82);
+      border: 1px solid var(--sol-border);
+      border-radius: var(--sol-r-xl);
+      padding: 28px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .notes-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .notes-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--sol-gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .notes-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .notes-btn {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--sol-r-full);
+      border: 1px solid var(--sol-border);
+      background: var(--sol-gold-dim);
+      color: var(--sol-gold-light);
+      cursor: pointer;
+      transition: all var(--sol-t-fast) var(--sol-ease);
+    }
+    .notes-btn:hover {
+      background: var(--sol-gold);
+      border-color: var(--sol-gold);
+      color: var(--sol-bg);
+    }
+    .notes-btn--danger:hover {
+      background: var(--sol-danger);
+      border-color: var(--sol-danger);
+      color: #fff;
+    }
+
+    #session-notes {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--sol-border);
+      border-radius: var(--sol-r-md);
+      color: var(--sol-text);
+      font-family: var(--sol-font-body);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      padding: 14px 18px;
+      transition: border-color var(--sol-t-fast) var(--sol-ease);
+    }
+    #session-notes:focus {
+      outline: none;
+      border-color: var(--sol-gold-border-bright);
+      box-shadow: 0 0 12px var(--sol-gold-glow);
+    }
+    #session-notes::placeholder { color: var(--sol-text-faint); }
+
+    .notes-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .notes-save-indicator {
+      font-size: 0.72rem;
+      color: var(--sol-text-faint);
+      transition: color 0.5s;
+    }
+    .notes-save-indicator.saved { color: var(--sol-success); }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    .db-footer {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid var(--sol-border);
+      font-size: 0.72rem;
+      color: var(--sol-text-faint);
+      letter-spacing: 0.08em;
+    }
+    .db-footer span { color: var(--sol-gold); }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 860px) {
+      .db-main { grid-template-columns: 1fr; padding: 24px 16px 32px; }
+      .notes-panel { grid-column: 1; }
+      .mod-card { padding: 24px 20px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .db-header { padding: 36px 16px 32px; }
+      .db-title { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="star-canvas" aria-hidden="true"></canvas>
+
+  <!-- ── HEADER ─────────────────────────────────── -->
+  <header class="db-header">
+    <div class="db-header-rune" aria-hidden="true">⚔</div>
+    <h1 class="db-title">SOLYTHIS</h1>
+    <p class="db-subtitle">Campaign Dashboard — Dungeon Master Control Hub</p>
+
+    <div class="db-status-bar">
+      <div class="status-pill status-pill--active">
+        <span class="status-dot"></span>
+        Campaign Active
+      </div>
+      <div class="status-pill status-pill--location">
+        📍 Location: <span id="editable-location" contenteditable="true" spellcheck="false" title="Klik untuk edit">Aurelion</span>
+      </div>
+      <div class="status-pill status-pill--session" id="session-pill">
+        ✦ Session #<span id="session-number" contenteditable="true" spellcheck="false">1</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN GRID ──────────────────────────────── -->
+  <main class="db-main">
+
+    <!-- CARD 1: Hero Codex & Parties -->
+    <div class="mod-card mod-card--heroes">
+      <div class="mod-card-header">
+        <div class="mod-icon">🧑‍🤝‍🧑</div>
+        <div class="mod-title-block">
+          <p class="mod-category">Module I</p>
+          <h2 class="mod-title">Hero Codex & Parties</h2>
+        </div>
+      </div>
+      <p class="mod-desc">Kelola lembar karakter dan galeri party Solmarch &amp; Vaelthar. Akses detail backstory, stats D&D, lore pointers, dan chronicles masing-masing hero.</p>
+      <div class="mod-divider"></div>
+      <nav class="mod-links" aria-label="Hero Codex links">
+        <a class="mod-link" href="Characters/index.html" id="link-gallery">
+          <span class="mod-link-icon">🗂</span>
+          <span class="mod-link-label">Galeri Karakter & Filter Party</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+        <a class="mod-link" href="Characters/detail.html" id="link-detail">
+          <span class="mod-link-icon">📜</span>
+          <span class="mod-link-label">Codex Detail Sheet</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- CARD 2: Combat & Bestiary -->
+    <div class="mod-card mod-card--combat">
+      <div class="mod-card-header">
+        <div class="mod-icon">⚔</div>
+        <div class="mod-title-block">
+          <p class="mod-category">Module II</p>
+          <h2 class="mod-title">Combat & Bestiary</h2>
+        </div>
+      </div>
+      <p class="mod-desc">Kelola pertempuran aktif dengan initiative tracker, lacak HP dan status efek, serta jelajahi ensiklopedia monster &amp; tool pembuatan enemy custom.</p>
+      <div class="mod-divider"></div>
+      <nav class="mod-links" aria-label="Combat links">
+        <a class="mod-link" href="Battles/combat_tracker.html" id="link-combat">
+          <span class="mod-link-icon">🎯</span>
+          <span class="mod-link-label">Combat Initiative Tracker</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+        <a class="mod-link" href="Creatures or Monsters/Monster Codex.html" id="link-codex">
+          <span class="mod-link-icon">📖</span>
+          <span class="mod-link-label">Monster Codex — Ensiklopedia</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+        <a class="mod-link" href="Creatures or Monsters/Enemy_Creator.html" id="link-enemy">
+          <span class="mod-link-icon">🧟</span>
+          <span class="mod-link-label">Enemy Creator — Tool Custom</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- CARD 3: World Lore & Chronicles -->
+    <div class="mod-card mod-card--lore">
+      <div class="mod-card-header">
+        <div class="mod-icon">🌐</div>
+        <div class="mod-title-block">
+          <p class="mod-category">Module III</p>
+          <h2 class="mod-title">World Lore & Chronicles</h2>
+        </div>
+      </div>
+      <p class="mod-desc">Jelajahi arsip sejarah dan kronologi dunia Aurelion. Kendalikan mekanisme reveal lore secara bertahap kepada pemain saat sesi berlangsung.</p>
+      <div class="mod-divider"></div>
+      <nav class="mod-links" aria-label="Lore links">
+        <a class="mod-link" href="Lores/Aurelion Lores.html" id="link-lores">
+          <span class="mod-link-icon">🏛</span>
+          <span class="mod-link-label">Aurelion Lores — Arsip Dunia</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+        <a class="mod-link" href="Lores/lore_reveal.html" id="link-reveal">
+          <span class="mod-link-icon">🔮</span>
+          <span class="mod-link-label">Lore Reveal — Tool Ungkap Rahasia</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- CARD 4: DM Tools & Sessions -->
+    <div class="mod-card mod-card--dm">
+      <div class="mod-card-header">
+        <div class="mod-icon">🎲</div>
+        <div class="mod-title-block">
+          <p class="mod-category">Module IV</p>
+          <h2 class="mod-title">DM Tools & Sessions</h2>
+        </div>
+      </div>
+      <p class="mod-desc">Rancang skenario dan rundown sesi secara terstruktur, lalu kendalikan scene visualizer untuk menampilkan gambar dan adegan secara live kepada pemain.</p>
+      <div class="mod-divider"></div>
+      <nav class="mod-links" aria-label="DM Tools links">
+        <a class="mod-link" href="template/session_builder.html" id="link-builder">
+          <span class="mod-link-icon">📋</span>
+          <span class="mod-link-label">Session Builder — Skenario Sesi</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+        <a class="mod-link" href="Session/Aurelion/scene_viewer.html" id="link-scene">
+          <span class="mod-link-icon">🖼</span>
+          <span class="mod-link-label">Scene Viewer — Visualisasi Adegan</span>
+          <span class="mod-link-arrow">→</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- QUICK NOTES SCRATCHPAD -->
+    <section class="notes-panel" aria-label="Session Notes Scratchpad">
+      <div class="notes-header">
+        <h2 class="notes-title">
+          ✏ Session Scratchpad
+        </h2>
+        <div class="notes-actions">
+          <button class="notes-btn notes-btn--danger" id="btn-clear" title="Hapus semua catatan">Hapus</button>
+          <button class="notes-btn" id="btn-copy" title="Salin ke clipboard">Salin</button>
+        </div>
+      </div>
+      <textarea
+        id="session-notes"
+        placeholder="Tulis catatan sesi di sini — NPC baru, plot twist, keputusan pemain, info penting... Semua tersimpan otomatis di browser."
+        aria-label="Session notes scratchpad"
+        spellcheck="false"
+      ></textarea>
+      <div class="notes-footer">
+        <span class="notes-save-indicator" id="save-indicator">Catatan tersimpan otomatis di browser.</span>
+        <span class="sol-faint" style="font-size:0.72rem;" id="char-count">0 karakter</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── FOOTER ─────────────────────────────────── -->
+  <footer class="db-footer">
+    <span>SOLYTHIS</span> D&amp;D Campaign Dashboard &mdash; Dungeon Master Hub &mdash; All modules served locally
+  </footer>
+
+  <script>
+    'use strict';
+
+    /* ── STAR CANVAS ─────────────────────────────── */
+    (function() {
+      const canvas = document.getElementById('star-canvas');
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      const N = 120;
+
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        stars = [];
+        for (let i = 0; i < N; i++) {
+          stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 1.4 + 0.2,
+            a: Math.random() * 0.7 + 0.1,
+            da: (Math.random() * 0.007 + 0.002) * (Math.random() < 0.5 ? 1 : -1),
+            vy: Math.random() * 0.025 + 0.005
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const s of stars) {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, Math.min(1, s.a));
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+          s.a += s.da;
+          if (s.a > 0.85 || s.a < 0.05) s.da *= -1;
+          s.y += s.vy;
+          if (s.y > canvas.height + 2) { s.y = -2; s.x = Math.random() * canvas.width; }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      resize(); init(); draw();
+      window.addEventListener('resize', () => { resize(); init(); });
+    })();
+
+    /* ── EDITABLE STATUS PERSISTENCE ────────────── */
+    const LOCATION_KEY = 'sol_location';
+    const SESSION_KEY  = 'sol_session_num';
+    const NOTES_KEY    = 'sol_notes';
+
+    const locationEl = document.getElementById('editable-location');
+    const sessionEl  = document.getElementById('session-number');
+    const notesEl    = document.getElementById('session-notes');
+    const saveInd    = document.getElementById('save-indicator');
+    const charCount  = document.getElementById('char-count');
+
+    // Restore persisted values
+    if (localStorage.getItem(LOCATION_KEY)) locationEl.textContent = localStorage.getItem(LOCATION_KEY);
+    if (localStorage.getItem(SESSION_KEY))  sessionEl.textContent  = localStorage.getItem(SESSION_KEY);
+    if (localStorage.getItem(NOTES_KEY))    notesEl.value          = localStorage.getItem(NOTES_KEY);
+    charCount.textContent = notesEl.value.length + ' karakter';
+
+    // Persist location & session on blur
+    locationEl.addEventListener('blur', () => {
+      localStorage.setItem(LOCATION_KEY, locationEl.textContent.trim() || 'Aurelion');
+    });
+    sessionEl.addEventListener('blur', () => {
+      localStorage.setItem(SESSION_KEY, sessionEl.textContent.trim() || '1');
+    });
+
+    // Prevent newlines in contenteditable pills
+    [locationEl, sessionEl].forEach(el => {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+      });
+    });
+
+    /* ── NOTES AUTOSAVE ──────────────────────────── */
+    let saveTimeout;
+    function triggerSave() {
+      clearTimeout(saveTimeout);
+      saveInd.className = 'notes-save-indicator';
+      saveInd.textContent = 'Menyimpan...';
+      saveTimeout = setTimeout(() => {
+        localStorage.setItem(NOTES_KEY, notesEl.value);
+        saveInd.className = 'notes-save-indicator saved';
+        saveInd.textContent = '✓ Tersimpan';
+        setTimeout(() => {
+          saveInd.className = 'notes-save-indicator';
+          saveInd.textContent = 'Catatan tersimpan otomatis di browser.';
+        }, 2500);
+      }, 600);
+    }
+
+    notesEl.addEventListener('input', () => {
+      charCount.textContent = notesEl.value.length + ' karakter';
+      triggerSave();
+    });
+
+    /* ── NOTES ACTIONS ───────────────────────────── */
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      if (!notesEl.value.trim() || confirm('Hapus semua catatan sesi ini?')) {
+        notesEl.value = '';
+        charCount.textContent = '0 karakter';
+        localStorage.removeItem(NOTES_KEY);
+        saveInd.className = 'notes-save-indicator';
+        saveInd.textContent = 'Catatan dihapus.';
+      }
+    });
+
+    document.getElementById('btn-copy').addEventListener('click', () => {
+      if (!notesEl.value.trim()) return;
+      navigator.clipboard.writeText(notesEl.value).then(() => {
+        const btn = document.getElementById('btn-copy');
+        btn.textContent = '✓ Tersalin!';
+        setTimeout(() => { btn.textContent = 'Salin'; }, 1800);
+      });
+    });
+  </script>
+</body>
+</html>

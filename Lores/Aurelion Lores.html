@@ -24,6 +24,7 @@
             --loop3-color: #3b82f6;
             --brackenford-color: #2dd4bf;
             --graymere-color: #c084fc;
+            --greymere-color: #fb923c;
             --accent-purple: #a855f7;
             --accent-green: #10b981;
         }
@@ -1154,6 +1155,7 @@
     </style>
 </head>
 <body>
+  <a href="../dashboard.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Dashboard</a>
 
     <!-- Sidebar Navigation -->
     <aside>
@@ -1272,6 +1274,36 @@
                     <li>
                         <a class="nav-link sub-link" data-target="tab-oldbattlefield-pointer">
                             <span class="sub-indicator" style="color: var(--graymere-color);">•</span> Pointer
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Greymere Dropdown Sub-section -->
+            <li class="nav-item">
+                <div class="nav-section-title" id="greymere-toggle">
+                    <div style="display: flex; align-items: center; gap: 0.85rem;">
+                        <span style="width: 18px; height: 18px; display: inline-block;"></span>
+                        <span style="color: var(--greymere-color);">Greymere</span>
+                    </div>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </div>
+                <ul class="nav-submenu">
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-greymere-naratif">
+                            <span class="sub-indicator" style="color: var(--greymere-color);">•</span> Naratif
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-greymere-scene">
+                            <span class="sub-indicator" style="color: var(--greymere-color);">•</span> Scene
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-greymere-pointer">
+                            <span class="sub-indicator" style="color: var(--greymere-color);">•</span> Pointer
                         </a>
                     </li>
                 </ul>
@@ -2486,6 +2518,429 @@
             </div>
         </div>
 
+
+        <!-- ==================== TAB: GREYMERE NARATIF ==================== -->
+        <div id="tab-greymere-naratif" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--greymere-color);">Skenario Aurelion — Greymere</div>
+                <h1 style="border-bottom-color: var(--greymere-color);">Sangkar Asap &amp; Kebohongan</h1>
+                <p class="section-desc">Selamat datang di Greymere, sebuah kota administratif militer yang nampaknya meriah namun dipenuhi asap manis obat candu terlarang "Loop".</p>
+            </header>
+
+            <!-- Condition Card -->
+            <div class="info-banner" style="border-color: var(--greymere-color); background: linear-gradient(90deg, rgba(251, 146, 60, 0.08) 0%, rgba(10, 13, 20, 0.4) 100%);">
+                <span class="info-banner-badge" style="background: var(--greymere-color);">Pengantar Sesi</span>
+                <h3>Mafia Lokal &amp; Candu "Loop"</h3>
+                <p>Alih-alih hanya ancaman kosmik, di Greymere para pemain dihadapkan pada kebobrokan moral fana. Pesta perdamaian didekorasi dengan mewah, namun udara kota dipenuhi asap manis beraroma ungu yang aneh dari obat terlarang bernama <strong>"Loop"</strong>. Sensasi "high" obat ini sebenarnya adalah kristalisasi memori dari timeline lama yang terhapus yang dianggap warga sebagai mimpi indah.</p>
+            </div>
+
+            <!-- Narrative Timeline -->
+            <div class="scene-container">
+                <!-- Fase I -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Fase I</span>
+                    <h3 class="scene-title">Masalah Administrasi di Gerbang Kota</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Gerbang Utama Greymere</span>
+                        <span class="meta-badge" style="color: var(--greymere-color);">🔍 Hambatan: Penjagaan Birokratis</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Setelah menembus kabut mengerikan Old Battlefield, Party C tiba di depan dinding megah Greymere. Penjagaan sangat ketat dan birokratis pasca-insiden lockdown di Highspire dan Brackenford. Prajurit Aurelion meminta surat jalan/kredensial resmi. Masalahnya, mereka keluar dari Brackenford secara ilegal setelah mencuri kunci gerbang. Party harus mencari taktik penyusupan atau pemalsuan dokumen.</p>
+                    </div>
+                </div>
+
+                <!-- Fase II -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Fase II</span>
+                    <h3 class="scene-title">Kemeriahan yang Palsu &amp; Pip sang Tour Guide</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Jalanan &amp; Pasar Festival</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">👤 NPC: Pip (10 tahun)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Begitu masuk, lampion pesta tampak gemerlap. Tapi udara berbau manis dan pekat oleh asap candu "Loop" yang diisap warga dari pipa kecil. Seorang anak jalanan bernama <strong>Pip</strong> menawarkan jasanya sebagai penunjuk jalan demi koin untuk merawat adiknya, <strong>Lily</strong>. Pip menunjukkan poin penting di kota dan membisikkan bahwa "Loop" dikendalikan secara rahasia oleh keluarga bangsawan atas.</p>
+                    </div>
+                </div>
+
+                <!-- Fase III -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Fase III</span>
+                    <h3 class="scene-title">Dilema Moral &amp; Konspirasi Bawah Tanah</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lokasi: Gang Kumuh &amp; Gedung Arsip</span>
+                        <span class="meta-badge" style="color: var(--accent-purple);">🔮 Kejadian: Konflik Preman Mafia</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Party C memergoki preman mafia bangsawan menyeret paksa <strong>Irelia</strong>, pengasuh panti asuhan tempat Pip dan Lily tinggal, karena utang operasional panti asuhan yang menumpuk akibat pajak sewenang-wenang. Kejadian ini memicu percabangan cerita: menolong atau mengabaikan demi rute tercepat ke Gedung Arsip Kerajaan (<em>Graymere Royal Annex Archive</em>). Sungguh ironis, gudang obat candu dan markas mafia ini bertempat tepat di bawah ruang arsip negara, memisahkan keagungan literatur tinggi di atas dengan perbudakan rakyat jelata di bawah tanah.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: GREYMERE SCENE ==================== -->
+        <div id="tab-greymere-scene" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--greymere-color);">Skenario Aurelion — Greymere</div>
+                <h1 style="border-bottom-color: var(--greymere-color);">Scene Sesi 2 — Greymere: Sangkar Asap &amp; Kebohongan</h1>
+                <p class="section-desc">Panduan alur, branching quest, dan interaksi investigasi di kota Greymere untuk Dungeon Master (DM).</p>
+            </header>
+
+            <div class="cosmic-alert" style="background: rgba(251, 146, 60, 0.015); border-color: rgba(251, 146, 60, 0.2);">
+                <div class="cosmic-title" style="color: var(--greymere-color);">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    Fokus Utama Sesi 2
+                </div>
+                <p style="font-size: 0.98rem; color: var(--text-secondary); line-height: 1.6;">
+                    Investigasi jalanan kota, dilema moral (side-quest), pembobolan markas mafia/ruang arsip, serta transisi akhir menuju reruntuhan Eldenfall.
+                </p>
+            </div>
+
+            <div class="scene-container">
+                <!-- Scene I -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Scene I</span>
+                    <h3 class="scene-title">Halangan Pertama: Kredensial Palsu</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Gerbang Utama Greymere</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">🎭 Fokus: Penjagaan Administrasi</span>
+                        <span class="meta-badge" style="color: #f87171;">⚡ Tensi: Sedang (Deception / Persuasi)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Party C tiba di depan dinding Greymere setelah menembus Old Battlefield. Prajurit penjaga menghentikan mereka dan meminta Surat Jalan/Kredensial Resmi. Karena menyusup keluar secara ilegal dari Brackenford, Party harus memutar otak: Victor (Wizard) dapat memalsukan dokumen, Bard menggunakan pesonanya, atau Bloodhunter/Paladin mencari celah penyelundupan di dinding samping.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Party berhasil masuk dan menyadari ketatnya birokrasi pertahanan yang ternyata bisa diakali.</p>
+                    </div>
+                </div>
+
+                <!-- Scene II -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Scene II</span>
+                    <h3 class="scene-title">Bocil Tour Guide &amp; Asap "Loop" (Free Roam)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Jalanan Festival Greymere</span>
+                        <span class="meta-badge" style="color: var(--loop3-color);">🎭 Fokus: Atmosphere &amp; Lore Drop Awal</span>
+                        <span class="meta-badge" style="color: #60a5fa;">⚡ Tensi: Santai tapi Janggal</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Di dalam kota, festival sangat meriah. Namun, udara dipenuhi asap ungu berbau manis yang janggal. Banyak warga teler dan tersenyum kosong. Pip (bocah jalanan 10 tahun) menawarkan jasa Tour Guide seharga beberapa koin emas demi membelikan obat/makanan untuk adiknya, Lily.</p>
+                        <p>Pip menjelaskan point of interest kota: kedai makan, Gedung Arsip (Royal Annex Archive), dan memperingatkan soal asap "Loop". "Orang yang mengisapnya bilang mereka bisa merasakan hidup di dunia lain," jelas Pip. (Party A &amp; B yang mengingat timeline asli akan merinding mendengar ini).</p>
+                    </div>
+                </div>
+
+                <!-- Scene III -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Scene III</span>
+                    <h3 class="scene-title">Konflik Jalanan (Event Pilihan Moral)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Gang / Pinggiran Pasar Festival</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">🎭 Fokus: Pilihan Branching Story</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚡ Tensi: Tegang</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Party melihat 3-4 preman mafia (anak buah Lord Campbell) menarik paksa Irelia, pemilik panti asuhan kumuh (tempat tinggal Pip dan Lily) berambut hitam pixie cut yang menangis karena tidak sanggup melunasi utang operasional panti asuhan yang menumpuk. Preman berniat membawanya pergi sebagai jaminan. Pip ketakutan dan membisikkan: "Jangan ikut campur, mereka anjing bangsawan atas."</p>
+                        <p style="margin-top: 0.5rem; color: #f87171;"><strong>Pilihan Pemain Dimulai di Sini:</strong> Keputusan pemain menentukan alur penyelidikan berikutnya.</p>
+                    </div>
+                </div>
+
+                <!-- Scene IV (Cabang A) -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Scene IV (Cabang A)</span>
+                    <h3 class="scene-title">Jalur Pembelaan (Side Quest Mafia)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Gang Kumuh &rarr; Bawah Tanah Arsip</span>
+                        <span class="meta-badge" style="color: var(--accent-purple);">⚔️ Fokus: Penyelamatan Lily, Infiltrasi Gudang Obat</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚡ Tensi: Sangat Tinggi (Combat)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Party menghajar preman untuk menyelamatkan Irelia. Sebagai aksi balasan karena kehilangan target jaminan utang, mafia menculik Lily (salah satu anak yatim piatu terdekat Pip) sebagai sandera pengganti. Party harus menyerbu markas mereka yang ternyata bertempat di ruang bawah tanah Gedung Arsip Kerajaan (Graymere Royal Annex Archive), yang disalahgunakan oleh bangsawan korup.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output:</strong> Menggerebek bawah tanah, membebaskan Lily, menumpas sindikat, dan sekaligus membuka brankas rahasia tempat dokumen sejarah disembunyikan.</p>
+                    </div>
+                </div>
+
+                <!-- Scene IV (Cabang B) -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Scene IV (Cabang B)</span>
+                    <h3 class="scene-title">Jalur Pengabaian (Jalur Cepat / Stealth)</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lantai Atas Gedung Arsip Kerajaan</span>
+                        <span class="meta-badge" style="color: var(--brackenford-color);">👤 Fokus: Murni Penyusupan (Stealth)</span>
+                        <span class="meta-badge" style="color: #60a5fa;">⚡ Tensi: Sedang (Stealth &amp; Heist)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Demi efisiensi misi, Party memilih diam membiarkan Irelia dibawa pergi. Pip sangat kecewa namun tetap memandu Party. Di malam hari, Party langsung menyelinap murni ke Gedung Arsip Kerajaan lantai atas yang dikhususkan bagi kaum bangsawan murni untuk mencari dokumen.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output:</strong> Party masuk tanpa perlu berurusan dengan penculikan Lily atau pertempuran bawah tanah, murni mengandalkan kepintaran taktis/penyamaran.</p>
+                    </div>
+                </div>
+
+                <!-- Scene V -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Scene V</span>
+                    <h3 class="scene-title">Lore Drop: Menggali Kebenaran Aurelion</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Ruang Arsip / Bawah Tanah Gedung Arsip</span>
+                        <span class="meta-badge" style="color: var(--loop1-color);">📜 Fokus: Dokumen Klasifikasi Rahasia</span>
+                        <span class="meta-badge" style="color: #60a5fa;">⚡ Tensi: Rendah (Pencarian Dokumen)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Baik lewat jalur mafia (bawah tanah) maupun penyusupan murni (lantai atas), Party C akhirnya menemukan berkas usang bersegel kerajaan: <strong>Varkath Intelligence Memo</strong> dan <strong>Royal Decree 1300-A</strong>.</p>
+                        <p>Dokumen ini membuktikan bahwa pembunuhan Prosperina didasari fitnah adu domba dari intelijen Varkath. Surat eksekusi tidur/buta dikeluarkan oleh Raja Aurelion sendiri karena paranoia yang hebat. Pahlawan mereka tidak gugur terhormat di medan perang, melainkan dieksekusi secara keji.</p>
+                    </div>
+                </div>
+
+                <!-- Scene VI -->
+                <div class="scene-box" style="border-left-color: var(--greymere-color);">
+                    <span class="scene-num" style="color: var(--greymere-color);">Scene VI</span>
+                    <h3 class="scene-title">Meninggalkan Sangkar Asap</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Gerbang Belakang Greymere</span>
+                        <span class="meta-badge" style="color: var(--loop3-color);">🎭 Fokus: Transisi Menuju Eldenfall</span>
+                        <span class="meta-badge" style="color: #f87171;">⚡ Tensi: Tenang &rarr; Mencekam</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Kejadian:</strong> Setelah mengamankan lore utama (dan menyelamatkan sandera), Party C menyelinap keluar melalui gerbang belakang kota. Mereka meninggalkan riuh kota yang teler di bawah selimut candu "Loop" dan melangkah ke jalanan sunyi yang gelap. Di ujung jalan tersebut, kabut dingin Eldenfall dan makam Prosperina telah menanti mereka.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: GREYMERE POINTER ==================== -->
+        <div id="tab-greymere-pointer" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--greymere-color);">Skenario Aurelion — Greymere</div>
+                <h1>Pointer Sesi 2 (Greymere)</h1>
+                <p class="section-desc">Master data lokasi, tokoh penting, dan sifat mekanik item kunci untuk panduan DM.</p>
+            </header>
+
+            <!-- Lokasi Penting -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-top-color: var(--greymere-color);">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    🏙️ Kota &amp; Lokasi Penting
+                </h2>
+                <div class="locations-grid">
+                    <div class="location-card">
+                        <div class="location-icon">🚪</div>
+                        <h3 class="location-name">Gerbang Utama &amp; Karantina</h3>
+                        <p class="location-desc">Pintu masuk kota yang dijaga ketat oleh birokrasi pertahanan Aurelion. Prajurit memeriksa surat jalan secara ketat menyusul insiden di wilayah sebelumnya.</p>
+                    </div>
+                    <div class="location-card">
+                        <div class="location-icon">🌆</div>
+                        <h3 class="location-name">Jalanan &amp; Pasar Festival</h3>
+                        <p class="location-desc">Dipenuhi gemerlap lampion namun diselimuti aroma manis candu "Loop". Tempat di mana preman mafia bangsawan mengawasi dan menjerat rakyat kecil.</p>
+                    </div>
+                    <div class="location-card">
+                        <div class="location-icon">📚</div>
+                        <h3 class="location-name">Royal Annex Archive</h3>
+                        <p class="location-desc">Gedung arsip resmi kerajaan. Lantai atas berisi data literatur bangsawan, sedangkan bawah tanahnya disalahgunakan sebagai pabrik candu dan markas rahasia mafia.</p>
+                    </div>
+                    <div class="location-card">
+                        <div class="location-icon">🍺</div>
+                        <h3 class="location-name">Tavern "The Gilded Keg"</h3>
+                        <p class="location-desc">Kedai mewah di distrik bangsawan yang dijaga ketat preman. Tempat para petinggi, militer korup, dan bangsawan menikmati candu "Loop" kualitas terbaik.</p>
+                    </div>
+                    <div class="location-card">
+                        <div class="location-icon">🏚️</div>
+                        <h3 class="location-name">Distrik Slum &amp; Panti Asuhan</h3>
+                        <p class="location-desc">Daerah kumuh reyot di barat kota yang tidak tersentuh lampion. Tempat berdirinya panti asuhan tempat tinggal Pip, Lily, dan anak-anak telantar lainnya di bawah asuhan Irelia.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NPC Penting -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-top-color: var(--greymere-color);">
+                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    👥 NPC Penting di Greymere
+                </h2>
+                <div class="npc-grid">
+                    <div class="npc-card">
+                        <div class="npc-header">
+                            <div class="npc-avatar">👦</div>
+                            <div class="npc-identity">
+                                <h3>Pip</h3>
+                                <span>Bocah Penunjuk Jalan (Slum Kid)</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Lokasi:</strong> Jalanan pasar festival / Panti Asuhan Slum.</div>
+                            <div class="npc-meta-item"><strong>Kepribadian:</strong> Cerdik, ulet, sangat menyayangi adiknya Lily, bersikap defensif namun sangat membantu jika disuap emas.</div>
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> Menunjukkan lokasi free roam di kota, memperkenalkan lore candu "Loop", dan memohon bantuan jika Irelia atau Lily ditangkap oleh mafia.</div>
+                            <div class="npc-quote">
+                                "Tuan-tuan butuh penunjuk arah? Cukup beberapa koin emas, saya tahu tempat terbaik untuk makan... dan tempat terburuk untuk didekati."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="npc-card">
+                        <div class="npc-header">
+                            <div class="npc-avatar">👧</div>
+                            <div class="npc-identity">
+                                <h3>Lily</h3>
+                                <span>Adik Perempuan Pip (Anak Panti)</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Lokasi:</strong> Panti Asuhan Slum / Sel tahanan bawah tanah mafia.</div>
+                            <div class="npc-meta-item"><strong>Kepribadian:</strong> Lemah, sakit-sakitan, penakut namun percaya penuh pada kakaknya Pip dan pengasuhnya Irelia.</div>
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> Menjadi target penyelamatan (sandera) di markas mafia jika Party menghalangi penahanan Irelia di jalanan.</div>
+                        </div>
+                    </div>
+
+                    <div class="npc-card">
+                        <div class="npc-header">
+                            <div class="npc-avatar">👩</div>
+                            <div class="npc-identity">
+                                <h3>Irelia</h3>
+                                <span>Pemilik Panti Asuhan Slum</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Lokasi:</strong> Panti Asuhan Slum / Sel tahanan mafia.</div>
+                            <div class="npc-meta-item"><strong>Kepribadian:</strong> Welas asih, tangguh di bawah tekanan, protektif terhadap anak-anak asuhnya (termasuk Pip dan Lily).</div>
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> Trigger moral di jalanan. Wanita berambut hitam pixie cut yang diseret preman bukan karena candu, melainkan utang panti asuhan yang menumpuk akibat pajak sewenang-wenang.</div>
+                        </div>
+                    </div>
+
+                    <div class="npc-card">
+                        <div class="npc-header">
+                            <div class="npc-avatar">👑</div>
+                            <div class="npc-identity">
+                                <h3>Lord Campbell the Corrupt</h3>
+                                <span>Bangsawan Lokal / Kartel Loop</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Lokasi:</strong> Gedung Arsip Atas / Tavern The Gilded Keg.</div>
+                            <div class="npc-meta-item"><strong>Kepribadian:</strong> Serakah, licik, berlindung di balik status aristokrat kerajaan dan perlindungan politik suap.</div>
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> Bos operasional lapangan sindikat obat candu "Loop" yang menjadi target interogasi atau pembubaran mafia.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lore & Dokumen Rahasia -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-top-color: var(--greymere-color);">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    📜 Lore Drop &amp; Dokumen Temuan
+                </h2>
+
+                <!-- Item 1 -->
+                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.3); background: linear-gradient(90deg, rgba(251, 146, 60, 0.04) 0%, rgba(10, 13, 20, 0.5) 100%); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(251, 146, 60, 0.3); background: rgba(251, 146, 60, 0.1);">🧪</div>
+                        <div class="item-identity">
+                            <h3>Obat Candu "Loop"</h3>
+                            <span class="item-badge" style="background: rgba(251, 146, 60, 0.15); color: #fb923c; border-color: rgba(251, 146, 60, 0.2);">Narkotika Kosmik</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #fb923c;">Efek Halusinasi</div>
+                            <div class="item-spec-value">Pengisap merasakan sensasi "terbang" dan melihat sekilas memori kehidupan lain yang indah.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #fb923c;">Asal Lore (Meta)</div>
+                            <div class="item-spec-value">Bahan baku obat ini merembes dari energi residu garis waktu (timeline lama) yang terhapus pasca-reset kosmik, menyusup ke tanaman lokal.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.3); background: linear-gradient(90deg, rgba(251, 146, 60, 0.04) 0%, rgba(10, 13, 20, 0.5) 100%);">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(251, 146, 60, 0.3); background: rgba(251, 146, 60, 0.1);">📜</div>
+                        <div class="item-identity">
+                            <h3>Memo Intelijen &amp; Royal Decree 1300-A</h3>
+                            <span class="item-badge" style="background: rgba(251, 146, 60, 0.15); color: #fb923c; border-color: rgba(251, 146, 60, 0.2);">Dokumen Sangat Rahasia</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #fb923c;">Isi Memo Varkath</div>
+                            <div class="item-spec-value">"Bibit telah ditanam. Bibit telah disebar. Kini hanya tinggal menuai." (Rencana adu domba Varkath agar Aurelion membunuh pahlawannya sendiri).</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #fb923c;">Fakta Kunci</div>
+                            <div class="item-spec-value">Prosperina tidak gugur di tangan iblis, melainkan dieksekusi secara buta oleh rajanya sendiri karena fitnah Varkath. Dokumen disembunyikan di arsip.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Infiltrasi Struktur Gedung -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-top-color: var(--greymere-color);">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 3.99L19.53 19H4.47L12 5.99zM13 16h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>
+                    🏛50 Peta Infiltrasi Gedung: Royal Annex Archive
+                </h2>
+                
+                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.2); background: rgba(255, 255, 255, 0.015); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(251, 146, 60, 0.2); background: rgba(255, 255, 255, 0.05);">📚</div>
+                        <div class="item-identity">
+                            <h3>Lantai Atas: The Noble's Grand Archive</h3>
+                            <span class="item-badge" style="background: rgba(255,255,255,0.05); color: #fff;">Area Steril Bangsawan</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--greymere-color);">Kondisi Area</div>
+                            <div class="item-spec-value">Rak kayu jati menjulang tinggi, sepi, dihiasi lampu kristal. Dijaga prajurit elit. Hanya diakses oleh perwira tinggi dan bangsawan bersertifikat khusus.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--greymere-color);">Lore Temuan</div>
+                            <div class="item-spec-value">Surat menyurat diplomatik Benua Solmarch, memo intrik Varkath, dan dekrit pembantaian Prosperina di brankas kaca berkunci.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.2); background: rgba(255, 255, 255, 0.015); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(251, 146, 60, 0.2); background: rgba(255, 255, 255, 0.05);">🚪</div>
+                        <div class="item-identity">
+                            <h3>Jalur Rahasia: Pintu di Balik Pengetahuan</h3>
+                            <span class="item-badge" style="background: rgba(255,255,255,0.05); color: #fff;">Mekanik Investigasi</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--greymere-color);">Lokasi Celah</div>
+                            <div class="item-spec-value">Di lorong paling belakang lantai arsip, tersembunyi di balik rak teologi kuno berdebu yang jarang dibaca.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--greymere-color);">Cara Kerja</div>
+                            <div class="item-spec-value">Pencarian Investigation/Perception memperlihatkan goresan lantai kayu rak geser. Menarik buku teologi tertentu menggeser rak raksasa membuka tangga batu gelap ke bawah tanah.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.2); background: rgba(255, 255, 255, 0.015);">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(251, 146, 60, 0.2); background: rgba(255, 255, 255, 0.05);">💨</div>
+                        <div class="item-identity">
+                            <h3>Ruang Bawah Tanah: The Loop Syndicate Hideout</h3>
+                            <span class="item-badge" style="background: rgba(255,255,255,0.05); color: #fff;">Combat &amp; Side-Quest</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--greymere-color);">Pabrik &amp; Gudang Loop</div>
+                            <div class="item-spec-value">Bawah tanah luas berbau kimia pekat dengan genangan asap ungu di lantai. Mafia melinting zirah candu, menghitung emas, dan berjudi.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--greymere-color);">Sel &amp; Kantor Bos</div>
+                            <div class="item-spec-value">Kerangkeng besi tempat menahan sandera (Lily dan warga lain). Ruang teralis kecil tempat pimpinan syndikasi merencanakan penyelundupan lewat dokumen palsu.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            </div>
+        </div>
+
     </main>
 
     <!-- Tab switching and interactive scripts -->
@@ -2512,6 +2967,14 @@
 
         oldbattlefieldToggle.addEventListener('click', function(e) {
             oldbattlefieldParent.classList.toggle('expanded');
+        });
+
+        // Dropdown toggle for Greymere
+        const greymereToggle = document.getElementById('greymere-toggle');
+        const greymereParent = greymereToggle.closest('.nav-item');
+
+        greymereToggle.addEventListener('click', function(e) {
+            greymereParent.classList.toggle('expanded');
         });
 
         // Tab Switching Logic
@@ -2553,6 +3016,8 @@
                         brackenfordParent.classList.add('expanded');
                     } else if (targetId.includes('oldbattlefield')) {
                         oldbattlefieldParent.classList.add('expanded');
+                    } else if (targetId.includes('greymere')) {
+                        greymereParent.classList.add('expanded');
                     }
 
                     // Smooth scroll to top of page

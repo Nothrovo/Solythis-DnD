@@ -141,13 +141,6 @@
         .nav-arrow.disabled { opacity: 0.18; pointer-events: none; }
 
         /* ─── BOTTOM DRAWER ──────────────────────── */
-        /*  Structure:
-              #bottomDrawer          ← fixed, grows upward
-                .drawer-tab-bar      ← always visible strip (handle)
-                  .tab-btn           ← chapter jump tabs
-                  .drawer-toggle-btn ← open/close chevron
-                .drawer-content      ← thumbnail area (shown when open)
-        */
         #bottomDrawer {
             position: fixed; bottom: 0; left: 0; right: 0;
             z-index: 200;
@@ -158,7 +151,6 @@
         #bottomDrawer.open { height: var(--strip-open-h); }
         #bottomDrawer.ui-hidden { opacity: 0; pointer-events: none; }
 
-        /* Glass background covering the whole drawer height */
         #bottomDrawer::before {
             content: '';
             position: absolute; inset: 0;
@@ -166,7 +158,6 @@
             backdrop-filter: blur(12px);
         }
 
-        /* Tab bar — the always-visible handle strip */
         .drawer-tab-bar {
             position: absolute; bottom: 0; left: 0; right: 0;
             height: var(--strip-collapsed-h);
@@ -207,10 +198,8 @@
             flex-shrink: 0;
         }
 
-        /* Spacer pushes toggle button to the right */
         .tab-spacer { flex: 1; }
 
-        /* Progress dots (scene position within chapter) */
         .tab-progress {
             display: flex; gap: 3px; align-items: center;
         }
@@ -225,7 +214,6 @@
             transform: scale(1.3);
         }
 
-        /* Toggle (chevron) button */
         .drawer-toggle-btn {
             width: 32px; height: 32px;
             border-radius: 8px;
@@ -241,7 +229,6 @@
         .drawer-toggle-btn svg { width: 16px; height: 16px; fill: currentColor; transition: transform 0.35s; }
         #bottomDrawer.open .drawer-toggle-btn svg { transform: rotate(180deg); }
 
-        /* Content area — thumbnail scroll */
         .drawer-content {
             position: absolute; top: 0; left: 0; right: 0;
             bottom: var(--strip-collapsed-h);
@@ -255,7 +242,6 @@
         .drawer-content::-webkit-scrollbar { height: 3px; }
         .drawer-content::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 2px; }
 
-        /* Thumbnail items */
         .thumb-item {
             flex-shrink: 0;
             width: calc(var(--thumb-h) * 16/9);
@@ -283,20 +269,6 @@
         }
         .thumb-item.active .thumb-label { color: var(--gold); }
 
-        /* Chapter group header inside content */
-        .thumb-ch-header {
-            flex-shrink: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 0.3rem; height: var(--thumb-h); padding: 0 0.25rem;
-        }
-        .thumb-ch-line { width: 1px; flex: 1; background: rgba(212,175,55,0.18); }
-        .thumb-ch-label {
-            font-family: 'Cinzel', serif; font-size: 0.54rem; font-weight: 700;
-            white-space: nowrap; writing-mode: vertical-rl;
-            transform: rotate(180deg); letter-spacing: 0.12em;
-        }
-
-        /* ─── HUD TOGGLE ────────────────────────── */
         #hudToggle {
             position: fixed; top: 1rem; right: 1rem; z-index: 300;
             width: 34px; height: 34px;
@@ -309,14 +281,12 @@
         #hudToggle:hover { border-color: var(--gold-dim); color: var(--gold); background: rgba(212,175,55,0.1); }
         #hudToggle svg { width: 15px; height: 15px; fill: currentColor; }
 
-        /* ─── PROGRESS BAR ──────────────────────── */
         #progressBar {
             position: fixed; top: 0; left: 0; height: 2px;
             background: var(--gold); box-shadow: 0 0 8px var(--gold);
             z-index: 999; transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
         }
 
-        /* ─── AUTOPLAY INDICATOR ────────────────── */
         #autoplayIndicator {
             position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
             z-index: 300; background: rgba(0,0,0,0.72);
@@ -333,116 +303,770 @@
             background: var(--gold); animation: autoPulse 1s infinite;
         }
         @keyframes autoPulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+        /* ─── PLACE GALLERY ─── */
+        #placeGalleryView {
+            position: absolute; inset: 0; z-index: 10;
+            overflow-y: auto; padding: 2.5rem 2rem;
+            background: radial-gradient(circle at 50% 30%, #111326 0%, #07080f 80%);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .gallery-header {
+            width: 100%; max-width: 1200px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 2.5rem; border-bottom: 1px solid rgba(212,175,55,0.2);
+            padding-bottom: 1.2rem;
+        }
+        .gallery-title {
+            font-family: 'Cinzel Decorative', serif; font-size: 2rem;
+            color: var(--gold); text-shadow: 0 0 15px rgba(212,175,55,0.3);
+            text-align: center; flex: 1; margin: 0 1.5rem;
+        }
+        .dash-back-btn, .back-to-gallery-btn {
+            font-family: inherit; font-size: 0.8rem; font-weight: 600;
+            color: #f3e5ab; text-decoration: none; padding: 6px 16px;
+            border: 1px solid rgba(212,175,55,0.25); border-radius: 999px;
+            background: rgba(212,175,55,0.1); display: inline-flex;
+            align-items: center; gap: 6px; transition: var(--transition);
+            white-space: nowrap; cursor: pointer;
+        }
+        .dash-back-btn:hover, .back-to-gallery-btn:hover {
+            background: var(--gold); color: #07090e; border-color: var(--gold);
+            box-shadow: 0 0 12px rgba(212,175,55,0.4);
+        }
+        .gold-action-btn {
+            font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 700;
+            color: #07090e; background: var(--gold); border: 1px solid var(--gold);
+            border-radius: 6px; padding: 7px 18px; cursor: pointer;
+            box-shadow: 0 0 10px rgba(212,175,55,0.2); transition: var(--transition);
+            letter-spacing: 0.05em;
+        }
+        .gold-action-btn:hover {
+            background: #fff; border-color: #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.4);
+        }
+        .gold-action-btn-sm {
+            font-family: 'Cinzel', serif; font-size: 0.72rem; font-weight: 700;
+            color: #07090e; background: var(--gold); border: 1px solid var(--gold);
+            border-radius: 5px; padding: 4px 12px; cursor: pointer;
+            transition: var(--transition); letter-spacing: 0.05em;
+        }
+        .gold-action-btn-sm:hover {
+            background: #fff; border-color: #fff;
+        }
+
+        .gallery-grid {
+            width: 100%; max-width: 1200px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem; padding-bottom: 3rem;
+        }
+
+        .place-card {
+            background: rgba(13, 16, 33, 0.65);
+            border: 1px solid rgba(212,175,55,0.18);
+            border-radius: 12px; overflow: hidden; cursor: pointer;
+            position: relative; height: 180px;
+            transition: var(--transition);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+        }
+        .place-card-img {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; object-position: center; filter: brightness(0.55);
+            transition: var(--transition);
+        }
+        .place-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--gold);
+            box-shadow: 0 12px 30px rgba(212,175,55,0.22), 0 0 15px rgba(212,175,55,0.1);
+        }
+        .place-card:hover .place-card-img {
+            transform: scale(1.08); filter: brightness(0.7);
+        }
+        .place-card-name {
+            font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700;
+            color: #fff; letter-spacing: 0.08em; text-align: center;
+            z-index: 2; padding: 1.2rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 1px 2px rgba(212,175,55,0.3);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            background: linear-gradient(to top, rgba(7,9,19,0.92) 0%, rgba(7,9,19,0.4) 60%, transparent 100%);
+        }
+
+        .add-place-card {
+            background: rgba(255,255,255,0.02);
+            border: 2px dashed rgba(212,175,55,0.25);
+            border-radius: 12px; height: 180px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.8rem; transition: var(--transition);
+        }
+        .add-place-card:hover {
+            background: rgba(212,175,55,0.05);
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212,175,55,0.15);
+        }
+        .add-place-card svg {
+            width: 38px; height: 38px; color: var(--gold-dim);
+            transition: var(--transition);
+        }
+        .add-place-card:hover svg {
+            color: var(--gold); transform: scale(1.1);
+        }
+        .add-place-label {
+            font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 700;
+            color: var(--gold-dim); letter-spacing: 0.05em; transition: var(--transition);
+        }
+        .add-place-card:hover .add-place-label {
+            color: var(--gold);
+        }
+
+        /* ─── MODALS ─── */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.78);
+            z-index: 10000; display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(6px); transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: rgba(8, 10, 20, 0.98);
+            border: 1px solid var(--gold-dim);
+            border-radius: 10px; padding: 2rem; width: 420px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(212,175,55,0.15);
+        }
+        .modal-title {
+            font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 700;
+            color: var(--gold); border-bottom: 1px solid rgba(212,175,55,0.25);
+            padding-bottom: 0.6rem; margin-bottom: 1.2rem; text-align: center;
+            letter-spacing: 0.08em;
+        }
+        .modal-label {
+            font-size: 0.72rem; color: var(--muted); font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;
+        }
+        .modal-input {
+            width: 100%; background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 6px;
+            color: #fff; padding: 0.6rem 0.8rem; font-size: 0.88rem;
+            margin-bottom: 1.2rem; outline: none; transition: var(--transition);
+        }
+        .modal-input:focus {
+            border-color: var(--gold); background: rgba(255,255,255,0.06);
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+        .file-upload-row {
+            display: flex; gap: 0.8rem; align-items: center; margin-bottom: 1.2rem;
+        }
+        .modal-btn {
+            font-family: inherit; font-size: 0.78rem; font-weight: 600;
+            color: #fff; background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 6px;
+            padding: 6px 14px; cursor: pointer; transition: var(--transition);
+        }
+        .modal-btn:hover {
+            background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25);
+        }
+        .file-name-span {
+            font-size: 0.75rem; color: var(--muted);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;
+        }
+        .modal-actions {
+            display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 0.5rem;
+        }
+        .modal-ok {
+            font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 700;
+            color: #07090e; background: var(--gold); border: 1px solid var(--gold);
+            border-radius: 5px; padding: 6px 18px; cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-ok:hover {
+            background: #fff; border-color: #fff;
+        }
+        .modal-cancel {
+            font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 700;
+            color: var(--muted); background: transparent; border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 5px; padding: 6px 18px; cursor: pointer;
+            transition: var(--transition);
+        }
+        .modal-cancel:hover {
+            color: #fff; border-color: rgba(255,255,255,0.3);
+        }
+
+        /* ─── THUMBNAIL DELETE & DRAGGING ─── */
+        .thumb-item {
+            position: relative;
+        }
+        .thumb-delete-btn {
+            position: absolute; top: 4px; right: 4px; z-index: 5;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: rgba(220, 38, 38, 0.85); border: 1px solid rgba(255,255,255,0.25);
+            color: #fff; font-size: 0.72rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0; transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            padding-bottom: 2px;
+        }
+        .thumb-item:hover .thumb-delete-btn { opacity: 1; }
+        .thumb-delete-btn:hover { background: rgb(220, 38, 38); transform: scale(1.15); }
+
+        .thumb-item.dragging {
+            opacity: 0.3;
+            border: 2px dashed var(--gold);
+        }
     </style>
 </head>
 <body>
-
-    <div id="progressBar"></div>
-
-    <div id="autoplayIndicator">
-        <div class="auto-dot"></div>
-        Autoplay
+    <!-- ─── PLACE GALLERY VIEW ─── -->
+    <div id="placeGalleryView">
+        <header class="gallery-header">
+            <a href="../../dashboard.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Dashboard</a>
+            <h1 class="gallery-title">Aurelion Lore Scenes</h1>
+            <button class="gold-action-btn" onclick="openAddPlaceModal()">+ Tambah Tempat</button>
+        </header>
+        <div class="gallery-grid" id="placesGrid">
+            <!-- Place cards injected by JS -->
+        </div>
     </div>
 
-    <button id="hudToggle" onclick="toggleHUD()" title="Sembunyikan / Tampilkan UI  (H)">
-        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-    </button>
+    <!-- ─── SCENE VIEWER CONTAINER ─── -->
+    <div id="sceneViewContainer" style="display: none;">
+        <div id="progressBar"></div>
 
-    <div id="slideshow"></div>
+        <div id="autoplayIndicator">
+            <div class="auto-dot"></div>
+            Autoplay
+        </div>
 
-    <div id="topBar">
-        <div class="top-brand">Aurelion</div>
-        <div class="top-scene-label" id="topSceneLabel"></div>
-        <div class="top-counter"     id="topCounter"></div>
+        <button id="hudToggle" onclick="toggleHUD()" title="Sembunyikan / Tampilkan UI (H)">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </button>
+
+        <div id="slideshow"></div>
+
+        <div id="topBar">
+            <div style="display:flex; align-items:center; gap:1rem; pointer-events:all;">
+                <button class="back-to-gallery-btn" onclick="closePlaceViewer()">← Kembali</button>
+                <div class="top-brand" id="topBrandName">Aurelion</div>
+            </div>
+            <div class="top-scene-label" id="topSceneLabel"></div>
+            <div style="display:flex; align-items:center; gap:1rem; pointer-events:all;">
+                <button class="gold-action-btn-sm" onclick="openAddSceneModal()">+ Tambah Gambar</button>
+                <div class="top-counter" id="topCounter"></div>
+            </div>
+        </div>
+
+        <div id="sceneTitleCard">
+            <div class="title-chapter" id="titleChapter"></div>
+            <div class="title-scene"   id="titleScene"></div>
+            <div class="title-divider"></div>
+        </div>
+
+        <!-- Prev / Next -->
+        <button class="nav-arrow" id="prevArrow" onclick="navigate(-1)" title="Sebelumnya (←)">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="nav-arrow" id="nextArrow" onclick="navigate(+1)" title="Berikutnya (→)">
+            <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+        </button>
+
+        <!-- Bottom Drawer -->
+        <div id="bottomDrawer">
+            <!-- Thumbnail scroll area (visible only when open) -->
+            <div class="drawer-content" id="drawerContent"></div>
+
+            <!-- Tab bar (always visible) -->
+            <div class="drawer-tab-bar" id="tabBar">
+                <!-- subcategory tabs (Bangunan, Orang, Scene) injected by JS -->
+                <div class="tab-spacer"></div>
+                <button class="drawer-toggle-btn" id="drawerToggleBtn" onclick="toggleDrawer()" title="Buka/tutup scene panel">
+                    <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div id="sceneTitleCard">
-        <div class="title-chapter" id="titleChapter"></div>
-        <div class="title-scene"   id="titleScene"></div>
-        <div class="title-divider"></div>
+    <!-- ─── MODALS ─── -->
+    <!-- Modal Tambah Tempat -->
+    <div class="modal-overlay" id="addPlaceModal">
+        <div class="modal-box">
+            <div class="modal-title">🏰 Tambah Tempat Baru</div>
+            <div class="modal-label">Nama Tempat</div>
+            <input type="text" class="modal-input" id="newPlaceName" placeholder="Cth: Greymere, Slums..." maxlength="32">
+            
+            <div class="modal-label">Gambar Sampul (Opsional)</div>
+            <div class="file-upload-row">
+                <button class="modal-btn" onclick="document.getElementById('placeCoverFile').click()">📁 Pilih File Gambar</button>
+                <span id="placeCoverName" class="file-name-span">Tidak ada file</span>
+            </div>
+            <input type="file" id="placeCoverFile" accept="image/*" style="display:none;" onchange="handlePlaceCoverUpload(event)">
+            
+            <div class="modal-actions">
+                <button class="modal-ok" onclick="saveNewPlace()">Simpan</button>
+                <button class="modal-cancel" onclick="closeAddPlaceModal()">Batal</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Prev / Next -->
-    <button class="nav-arrow" id="prevArrow" onclick="navigate(-1)" title="Sebelumnya  (←)">
-        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-    </button>
-    <button class="nav-arrow" id="nextArrow" onclick="navigate(+1)" title="Berikutnya  (→)">
-        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
-    </button>
+    <!-- Modal Tambah Scene/Gambar -->
+    <div class="modal-overlay" id="addSceneModal">
+        <div class="modal-box">
+            <div class="modal-title">🌅 Tambah Gambar Baru</div>
+            
+            <div class="modal-label">Sub-Kategori</div>
+            <select class="modal-input" id="newSceneCategory" style="background:#0d0f1a; color:#fff;">
+                <option value="scene">Scene (Umum / Lanskap)</option>
+                <option value="bangunan">Bangunan (Lokasi / Ruangan)</option>
+                <option value="orang">Orang (NPC / Tokoh)</option>
+            </select>
 
-    <!-- Bottom Drawer -->
-    <div id="bottomDrawer">
-        <!-- Thumbnail scroll area (visible only when open) -->
-        <div class="drawer-content" id="drawerContent"></div>
+            <div class="modal-label">Judul Gambar / Scene</div>
+            <input type="text" class="modal-input" id="newSceneTitle" placeholder="Cth: Panti Asuhan, Irelia, Slum Alley..." maxlength="48">
 
-        <!-- Tab bar (always visible) -->
-        <div class="drawer-tab-bar" id="tabBar">
-            <!-- chapter tab buttons injected by JS -->
-            <div class="tab-spacer"></div>
-            <button class="drawer-toggle-btn" id="drawerToggleBtn" onclick="toggleDrawer()" title="Buka/tutup scene panel">
-                <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
-            </button>
+            <div class="modal-label">File Gambar</div>
+            <div class="file-upload-row">
+                <button class="modal-btn" onclick="document.getElementById('sceneImgFile').click()">📁 Pilih File Gambar</button>
+                <span id="sceneImgName" class="file-name-span">Tidak ada file</span>
+            </div>
+            <input type="file" id="sceneImgFile" accept="image/*" style="display:none;" onchange="handleSceneImgUpload(event)">
+            
+            <div class="modal-actions">
+                <button class="modal-ok" onclick="saveNewScene()">Simpan</button>
+                <button class="modal-cancel" onclick="closeAddSceneModal()">Batal</button>
+            </div>
         </div>
     </div>
 
     <script>
     'use strict';
 
-    // ══════════════════════════════════════════
-    //   SCENE DATA
-    // ══════════════════════════════════════════
-    const SCENES = [
-        { id:'prehighspire-1', file:'Scenes/PreHighspire.png',  chapter:'Pre-Highspire',   label:'Scene 1', sceneTitle:'Sebelum Highspire'     },
-        { id:'highspire-1', file:'Scenes/Highspire1.png',       chapter:'Highspire',       label:'Scene 1', sceneTitle:'Kota Highspire'      },
-        { id:'highspire-2', file:'Scenes/Highspire2.png',       chapter:'Highspire',       label:'Scene 2', sceneTitle:'Jalan Highspire'      },
-        { id:'highspire-3', file:'Scenes/Highspire3.png',       chapter:'Highspire',       label:'Scene 3', sceneTitle:'Guild Kerajaan'        },
-        { id:'highspire-4', file:'Scenes/Highspire4.png',       chapter:'Highspire',       label:'Scene 4', sceneTitle:'Keberangkatan'         },
-        { id:'breck-1',     file:'Scenes/Breckenford1.png',     chapter:'Breckenford',     label:'Scene 1', sceneTitle:'Desa Breckenford'      },
-        { id:'breck-2',     file:'Scenes/Breckenford2.png',     chapter:'Breckenford',     label:'Scene 2', sceneTitle:'Penginapan Tua'        },
-        { id:'breck-3',     file:'Scenes/Breckenford3.png',     chapter:'Breckenford',     label:'Scene 3', sceneTitle:'Para Veteran'           },
-        { id:'breck-4',     file:'Scenes/Breckenford4.png',     chapter:'Breckenford',     label:'Scene 4', sceneTitle:'Catatan Berdarah'      },
-        { id:'breck-5',     file:'Scenes/Breckenford5.png',     chapter:'Breckenford',     label:'Scene 5', sceneTitle:'Peninggalan Perang'    },
-        { id:'oldbattle-1', file:'Scenes/OldBattlefield1.png',  chapter:'Old Battlefield', label:'Scene 1', sceneTitle:'Hutan Bekas Perang'   },
+    const DB_NAME = 'SceneViewerDB';
+    const DB_VERSION = 1;
+    let db = null;
+
+    // Default static data for first-time setup
+    const DEFAULT_PLACES = [
+        { name: 'Pre-Highspire', cover: 'Scenes/PreHighspire.png' },
+        { name: 'Highspire',     cover: 'Scenes/Highspire1.png' },
+        { name: 'Breckenford',   cover: 'Scenes/Breckenford1.png' },
+        { name: 'Old Battlefield', cover: 'Scenes/OldBattlefield1.png' }
     ];
 
-    const CHAPTER_COLORS = {
-        'Pre-Highspire':   '#cbd5e1',
-        'Highspire':       '#d4af37',
-        'Breckenford':     '#8fba6e',
-        'Old Battlefield': '#9b7de8',
+    const DEFAULT_SCENES = [
+        { place: 'Pre-Highspire', category: 'scene', file: 'Scenes/PreHighspire.png',  label: 'Scene 1', sceneTitle: 'Sebelum Highspire' },
+        { place: 'Highspire',     category: 'scene', file: 'Scenes/Highspire1.png',       label: 'Scene 1', sceneTitle: 'Kota Highspire' },
+        { place: 'Highspire',     category: 'scene', file: 'Scenes/Highspire2.png',       label: 'Scene 2', sceneTitle: 'Jalan Highspire' },
+        { place: 'Highspire',     category: 'scene', file: 'Scenes/Highspire3.png',       label: 'Scene 3', sceneTitle: 'Guild Kerajaan' },
+        { place: 'Highspire',     category: 'scene', file: 'Scenes/Highspire4.png',       label: 'Scene 4', sceneTitle: 'Keberangkatan' },
+        { place: 'Breckenford',   category: 'scene', file: 'Scenes/Breckenford1.png',     label: 'Scene 1', sceneTitle: 'Desa Breckenford' },
+        { place: 'Breckenford',   category: 'scene', file: 'Scenes/Breckenford2.png',     label: 'Scene 2', sceneTitle: 'Penginapan Tua' },
+        { place: 'Breckenford',   category: 'scene', file: 'Scenes/Breckenford3.png',     label: 'Scene 3', sceneTitle: 'Para Veteran' },
+        { place: 'Breckenford',   category: 'scene', file: 'Scenes/Breckenford4.png',     label: 'Scene 4', sceneTitle: 'Catatan Berdarah' },
+        { place: 'Breckenford',   category: 'scene', file: 'Scenes/Breckenford5.png',     label: 'Scene 5', sceneTitle: 'Peninggalan Perang' },
+        { place: 'Old Battlefield',category: 'scene', file: 'Scenes/OldBattlefield1.png',  label: 'Scene 1', sceneTitle: 'Hutan Bekas Perang' }
+    ];
+
+    const CATEGORY_COLORS = {
+        'scene':    '#d4af37', // Gold
+        'bangunan': '#8fba6e', // Green
+        'orang':    '#9b7de8'  // Violet
     };
 
-    // ══════════════════════════════════════════
-    //   STATE
-    // ══════════════════════════════════════════
-    let currentIdx   = 0;
-    let hudVisible   = true;
-    let drawerOpen   = false;
-    let autoplayTimer = null;
+    // State
+    let activeView      = 'gallery'; // 'gallery' | 'viewer'
+    let activePlace     = null;      // name of active place
+    let activeCategory  = 'scene';   // 'scene' | 'bangunan' | 'orang'
+    let placesList      = [];
+    let scenesList      = [];        // all scenes from DB
+    let filteredScenes  = [];        // scenes filtered by activePlace & activeCategory
+    let currentIdx      = 0;
+    let hudVisible      = true;
+    let drawerOpen      = false;
+    let autoplayTimer   = null;
     const AUTOPLAY_DELAY = 6000;
 
+    // Temporary upload variables
+    let tempPlaceCoverBase64 = null;
+    let tempSceneImgBase64   = null;
+
     // ══════════════════════════════════════════
-    //   INIT
+    //   INDEXEDDB INITIALIZATION
+    // ══════════════════════════════════════════
+    function initDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('places')) {
+                    db.createObjectStore('places', { keyPath: 'name' });
+                }
+                if (!db.objectStoreNames.contains('scenes')) {
+                    db.createObjectStore('scenes', { keyPath: 'id', autoIncrement: true });
+                }
+            };
+            request.onsuccess = (e) => resolve(e.target.result);
+            request.onerror = (e) => reject(e.target.error);
+        });
+    }
+
+    async function loadData() {
+        try {
+            db = await initDB();
+            
+            // Fetch places
+            let dbPlaces = await getStoreData('places');
+            let dbScenes = await getStoreData('scenes');
+
+            // Pre-populate if empty
+            if (dbPlaces.length === 0) {
+                for (const p of DEFAULT_PLACES) {
+                    await saveToStore('places', p);
+                }
+                dbPlaces = await getStoreData('places');
+            }
+            if (dbScenes.length === 0) {
+                for (const s of DEFAULT_SCENES) {
+                    await saveToStore('scenes', s);
+                }
+                dbScenes = await getStoreData('scenes');
+            }
+
+            placesList = dbPlaces;
+            scenesList = dbScenes;
+
+            renderPlaceGallery();
+        } catch (e) {
+            console.error('Database load error:', e);
+        }
+    }
+
+    function getStoreData(storeName) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(storeName, 'readonly');
+            const store = transaction.objectStore(storeName);
+            const request = store.getAll();
+            request.onsuccess = () => {
+                let result = request.result;
+                if (storeName === 'scenes') {
+                    result.sort((a, b) => (a.order || 0) - (b.order || 0));
+                }
+                resolve(result);
+            };
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    function saveToStore(storeName, item) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(storeName, 'readwrite');
+            const store = transaction.objectStore(storeName);
+            const request = store.put(item);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    function deleteFromStore(storeName, key) {
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(storeName, 'readwrite');
+            const store = transaction.objectStore(storeName);
+            const request = store.delete(key);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    // ══════════════════════════════════════════
+    //   DOM CONTENT LOADED
     // ══════════════════════════════════════════
     window.addEventListener('DOMContentLoaded', () => {
-        buildSlides();
-        buildTabBar();
-        buildThumbs();
-        goTo(0, false);
+        loadData();
         setupKeyboard();
     });
+
+    // ══════════════════════════════════════════
+    //   RENDERERS & INTERACTIVE LOGIC
+    // ══════════════════════════════════════════
+    function renderPlaceGallery() {
+        const grid = document.getElementById('placesGrid');
+        grid.innerHTML = '';
+
+        placesList.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'place-card';
+            card.onclick = () => openPlaceViewer(p.name);
+            
+            let imgHtml = '';
+            if (p.cover) {
+                imgHtml = `<img src="${p.cover}" class="place-card-img" alt="${p.name}">`;
+            } else {
+                // Look for the first scene of this place as cover
+                const firstScene = scenesList.find(s => s.place === p.name);
+                if (firstScene) {
+                    imgHtml = `<img src="${firstScene.file}" class="place-card-img" alt="${p.name}">`;
+                } else {
+                    // Default dark gold placeholder gradient
+                    imgHtml = `<div class="place-card-img" style="background:linear-gradient(135deg, #11142b 0%, #07090e 100%);"></div>`;
+                }
+            }
+
+            card.innerHTML = `
+                ${imgHtml}
+                <div class="place-card-name">${p.name}</div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // Add Place card
+        const addCard = document.createElement('div');
+        addCard.className = 'add-place-card';
+        addCard.onclick = openAddPlaceModal;
+        addCard.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <div class="add-place-label">Tambah Tempat</div>
+        `;
+        grid.appendChild(addCard);
+    }
+
+    function openPlaceViewer(placeName) {
+        activePlace = placeName;
+        activeView = 'viewer';
+        activeCategory = 'scene';
+
+        document.getElementById('placeGalleryView').style.display = 'none';
+        document.getElementById('sceneViewContainer').style.display = 'block';
+        
+        document.getElementById('topBrandName').textContent = placeName;
+
+        const scenesInCat = scenesList.filter(s => s.place === placeName && s.category === activeCategory);
+        filteredScenes = scenesInCat;
+
+        buildSubCategoryTabs();
+        buildThumbs();
+        buildSlides();
+
+        if (filteredScenes.length > 0) {
+            goTo(0, false);
+        } else {
+            switchCategory('scene');
+        }
+    }
+
+    function closePlaceViewer() {
+        activeView = 'gallery';
+        activePlace = null;
+        
+        // Stop autoplay if running
+        if (autoplayTimer) {
+            toggleAutoplay();
+        }
+
+        document.getElementById('placeGalleryView').style.display = 'flex';
+        document.getElementById('sceneViewContainer').style.display = 'none';
+        
+        // Reset slideshow container
+        document.getElementById('slideshow').innerHTML = '';
+        document.getElementById('drawerContent').innerHTML = '';
+    }
+
+    // ── Sub-Category Tabs ──────────────────────────
+    function buildSubCategoryTabs() {
+        const bar = document.getElementById('tabBar');
+        const spacer = bar.querySelector('.tab-spacer');
+        
+        // Remove existing tab buttons
+        const existingTabs = bar.querySelectorAll('.tab-btn');
+        existingTabs.forEach(t => t.remove());
+
+        const categories = [
+            { id: 'scene',    label: '🌅 Scene',    color: CATEGORY_COLORS.scene },
+            { id: 'bangunan', label: '🏛 Bangunan', color: CATEGORY_COLORS.bangunan },
+            { id: 'orang',    label: '👥 Orang',    color: CATEGORY_COLORS.orang }
+        ];
+
+        categories.forEach(cat => {
+            const scenesInCat = scenesList.filter(s => s.place === activePlace && s.category === cat.id);
+            
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn';
+            if (activeCategory === cat.id) btn.classList.add('active-chapter');
+            btn.style.setProperty('--tab-color', cat.color);
+
+            // Progress dots
+            const dotsHtml = scenesInCat.map((s, di) =>
+                `<span class="tdot" data-category="${cat.id}" data-di="${di}" title="${s.sceneTitle}"></span>`
+            ).join('');
+
+            btn.innerHTML = `<span class="tab-dot"></span>${cat.label}<span class="tab-progress">${dotsHtml}</span>`;
+
+            btn.addEventListener('click', () => {
+                if (activeCategory !== cat.id) {
+                    switchCategory(cat.id);
+                } else {
+                    toggleDrawer();
+                }
+            });
+
+            // Dot clicks
+            btn.querySelectorAll('.tdot').forEach((dot, di) => {
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (activeCategory !== cat.id) {
+                        activeCategory = cat.id;
+                        buildSubCategoryTabs();
+                        buildThumbs();
+                        buildSlides();
+                        goTo(di);
+                    } else {
+                        goTo(di);
+                    }
+                });
+            });
+
+            bar.insertBefore(btn, spacer);
+        });
+    }
+
+    function switchCategory(catId) {
+        activeCategory = catId;
+        const scenesInCat = scenesList.filter(s => s.place === activePlace && s.category === catId);
+        filteredScenes = scenesInCat;
+        
+        buildSubCategoryTabs();
+        buildThumbs();
+        buildSlides();
+        
+        if (filteredScenes.length > 0) {
+            goTo(0, false);
+        } else {
+            const ss = document.getElementById('slideshow');
+            ss.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:\'Cinzel\',serif;font-size:1.2rem;background:#05070e;">Belum ada gambar di kategori ini.</div>';
+            document.getElementById('topSceneLabel').textContent = '';
+            document.getElementById('topCounter').textContent = '0 / 0';
+            document.getElementById('titleChapter').textContent = '';
+            document.getElementById('titleScene').textContent = 'Kategori Kosong';
+            document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('prevArrow').classList.add('disabled');
+            document.getElementById('nextArrow').classList.add('disabled');
+        }
+    }
+
+    // ── Thumbnails ───────────────────────────────
+    function buildThumbs() {
+        const content = document.getElementById('drawerContent');
+        content.innerHTML = ''; // Clear previous thumbs
+        
+        filteredScenes.forEach((scene, i) => {
+            const item = document.createElement('div');
+            item.className = 'thumb-item';
+            item.id = `thumb-${i}`;
+            item.title = `${scene.place} — ${scene.label}: ${scene.sceneTitle}`;
+            item.draggable = true;
+            item.innerHTML = `
+                <img class="thumb-img" src="${scene.file}" alt="" loading="lazy">
+                <div class="thumb-label">${scene.sceneTitle}</div>
+                <button class="thumb-delete-btn" title="Hapus Scene">&times;</button>
+            `;
+            
+            item.addEventListener('click', (e) => {
+                if (e.target.classList.contains('thumb-delete-btn')) return;
+                goTo(i);
+                closeDrawer();
+            });
+
+            const delBtn = item.querySelector('.thumb-delete-btn');
+            delBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteSceneItem(scene.id, scene.sceneTitle);
+            });
+
+            // Drag and Drop
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', i);
+                item.classList.add('dragging');
+            });
+
+            item.addEventListener('dragend', () => {
+                item.classList.remove('dragging');
+            });
+
+            item.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            item.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                item.style.borderColor = 'var(--gold)';
+                item.style.transform = 'translateY(-2px)';
+            });
+
+            item.addEventListener('dragleave', () => {
+                item.style.borderColor = '';
+                item.style.transform = '';
+            });
+
+            item.addEventListener('drop', (e) => {
+                e.preventDefault();
+                item.style.borderColor = '';
+                item.style.transform = '';
+                const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+                const toIdx = i;
+                if (fromIdx !== toIdx) {
+                    reorderScenes(fromIdx, toIdx);
+                }
+            });
+
+            content.appendChild(item);
+        });
+    }
+
+    async function deleteSceneItem(id, title) {
+        if (!confirm(`Hapus gambar "${title}"?`)) return;
+        try {
+            await deleteFromStore('scenes', id);
+            scenesList = await getStoreData('scenes');
+            switchCategory(activeCategory);
+        } catch (e) {
+            console.error('Failed to delete scene:', e);
+        }
+    }
+
+    async function reorderScenes(fromIdx, toIdx) {
+        const movedItem = filteredScenes.splice(fromIdx, 1)[0];
+        filteredScenes.splice(toIdx, 0, movedItem);
+
+        filteredScenes.forEach((s, idx) => {
+            s.order = idx;
+        });
+
+        try {
+            for (const s of filteredScenes) {
+                await saveToStore('scenes', s);
+            }
+            scenesList = await getStoreData('scenes');
+            
+            buildSubCategoryTabs();
+            buildThumbs();
+            buildSlides();
+            goTo(toIdx, false);
+        } catch (e) {
+            console.error('Failed to save reordered scenes:', e);
+        }
+    }
 
     // ── Slides ──────────────────────────────────
     function buildSlides() {
         const ss = document.getElementById('slideshow');
-        SCENES.forEach((scene, i) => {
+        ss.innerHTML = ''; // Clear previous slides
+        filteredScenes.forEach((scene, i) => {
             const div = document.createElement('div');
             div.className = 'slide';
             div.id = `slide-${i}`;
             const img = document.createElement('img');
             img.className = 'slide-img';
             img.src = scene.file;
-            img.alt = `${scene.chapter} — ${scene.label}`;
+            img.alt = `${scene.place} — ${scene.label}`;
             img.draggable = false;
             div.addEventListener('click', (e) => {
                 if (e.target === div || e.target === img) {
@@ -455,94 +1079,15 @@
         });
     }
 
-    // ── Tab bar ──────────────────────────────────
-    function buildTabBar() {
-        const bar = document.getElementById('tabBar');
-        const spacer = bar.querySelector('.tab-spacer');
-        const toggleBtn = bar.querySelector('.drawer-toggle-btn');
-
-        const chapters = [...new Set(SCENES.map(s => s.chapter))];
-        chapters.forEach(ch => {
-            const color = CHAPTER_COLORS[ch] || '#d4af37';
-            const scenesInCh = SCENES.filter(s => s.chapter === ch);
-
-            const btn = document.createElement('button');
-            btn.className = 'tab-btn';
-            btn.dataset.chapter = ch;
-            btn.style.setProperty('--tab-color', color);
-
-            // Progress dots (one per scene in chapter)
-            const dotsHtml = scenesInCh.map((s, di) =>
-                `<span class="tdot" data-chapter="${ch}" data-di="${di}" title="${s.sceneTitle}"></span>`
-            ).join('');
-
-            btn.innerHTML = `<span class="tab-dot"></span>${ch}<span class="tab-progress">${dotsHtml}</span>`;
-
-            // Click chapter tab → jump to first scene of that chapter (or open drawer)
-            btn.addEventListener('click', () => {
-                const firstIdx = SCENES.findIndex(s => s.chapter === ch);
-                if (currentIdx < firstIdx || currentIdx >= firstIdx + scenesInCh.length) {
-                    goTo(firstIdx);
-                } else {
-                    toggleDrawer();
-                }
-            });
-
-            // Dot clicks
-            btn.querySelectorAll('.tdot').forEach((dot, di) => {
-                dot.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const firstIdx = SCENES.findIndex(s => s.chapter === ch);
-                    goTo(firstIdx + di);
-                });
-            });
-
-            bar.insertBefore(btn, spacer);
-        });
-    }
-
-    // ── Thumbnails ───────────────────────────────
-    function buildThumbs() {
-        const content = document.getElementById('drawerContent');
-        let lastChapter = null;
-
-        SCENES.forEach((scene, i) => {
-            const color = CHAPTER_COLORS[scene.chapter] || '#d4af37';
-
-            if (scene.chapter !== lastChapter) {
-                if (lastChapter !== null) {
-                    const hdr = document.createElement('div');
-                    hdr.className = 'thumb-ch-header';
-                    hdr.innerHTML = `
-                        <div class="thumb-ch-line"></div>
-                        <div class="thumb-ch-label" style="color:${color}">${scene.chapter}</div>
-                        <div class="thumb-ch-line"></div>`;
-                    content.appendChild(hdr);
-                }
-                lastChapter = scene.chapter;
-            }
-
-            const item = document.createElement('div');
-            item.className = 'thumb-item';
-            item.id = `thumb-${i}`;
-            item.title = `${scene.chapter} — ${scene.label}: ${scene.sceneTitle}`;
-            item.innerHTML = `
-                <img class="thumb-img" src="${scene.file}" alt="" loading="lazy">
-                <div class="thumb-label">${scene.sceneTitle}</div>`;
-            item.onclick = () => { goTo(i); closeDrawer(); };
-            content.appendChild(item);
-        });
-    }
-
     // ══════════════════════════════════════════
     //   NAVIGATION
     // ══════════════════════════════════════════
     function goTo(idx, animate = true) {
-        if (idx < 0 || idx >= SCENES.length) return;
+        if (idx < 0 || idx >= filteredScenes.length) return;
         const prev = currentIdx;
         currentIdx = idx;
-        const scene = SCENES[idx];
-        const color = CHAPTER_COLORS[scene.chapter] || 'var(--gold)';
+        const scene = filteredScenes[idx];
+        const color = CATEGORY_COLORS[scene.category] || 'var(--gold)';
 
         // Slides
         document.querySelectorAll('.slide').forEach((el, i) => {
@@ -562,28 +1107,22 @@
         });
         document.getElementById(`thumb-${idx}`)?.scrollIntoView({ inline:'center', behavior:'smooth', block:'nearest' });
 
-        // Tab buttons + dots
-        const chapters = [...new Set(SCENES.map(s => s.chapter))];
-        chapters.forEach(ch => {
-            const tabBtn = document.querySelector(`.tab-btn[data-chapter="${ch}"]`);
-            if (!tabBtn) return;
-            const isActiveChapter = scene.chapter === ch;
-            tabBtn.classList.toggle('active-chapter', isActiveChapter);
-
-            const firstIdx = SCENES.findIndex(s => s.chapter === ch);
+        // Tab progress dots
+        const tabBtn = document.querySelector(`.tab-btn.active-chapter`);
+        if (tabBtn) {
             const dots = tabBtn.querySelectorAll('.tdot');
             dots.forEach((dot, di) => {
-                dot.classList.toggle('active', isActiveChapter && (firstIdx + di === idx));
+                dot.classList.toggle('active', di === idx);
             });
-        });
+        }
 
         // Top bar
-        document.getElementById('topSceneLabel').textContent = `${scene.chapter}  ·  ${scene.label}`;
-        document.getElementById('topCounter').textContent = `${idx + 1} / ${SCENES.length}`;
+        document.getElementById('topSceneLabel').textContent = `${scene.category.toUpperCase()}  ·  ${scene.label}`;
+        document.getElementById('topCounter').textContent = `${idx + 1} / ${filteredScenes.length}`;
 
         // Title card
         const tc = document.getElementById('sceneTitleCard');
-        document.getElementById('titleChapter').textContent = scene.chapter;
+        document.getElementById('titleChapter').textContent = scene.place;
         document.getElementById('titleChapter').style.color = color;
         document.getElementById('titleScene').textContent = scene.sceneTitle;
         if (animate) {
@@ -594,19 +1133,14 @@
 
         // Arrows
         document.getElementById('prevArrow').classList.toggle('disabled', idx === 0);
-        document.getElementById('nextArrow').classList.toggle('disabled', idx === SCENES.length - 1);
+        document.getElementById('nextArrow').classList.toggle('disabled', idx === filteredScenes.length - 1);
 
         // Progress bar
         document.getElementById('progressBar').style.width =
-            ((idx / (SCENES.length - 1)) * 100) + '%';
+            filteredScenes.length > 1 ? ((idx / (filteredScenes.length - 1)) * 100) + '%' : '100%';
     }
 
     function navigate(delta) { goTo(currentIdx + delta); }
-
-    function jumpToChapter(chapter) {
-        const idx = SCENES.findIndex(s => s.chapter === chapter);
-        if (idx !== -1) goTo(idx);
-    }
 
     // ══════════════════════════════════════════
     //   DRAWER (bottom panel)
@@ -646,7 +1180,7 @@
             ind.classList.remove('visible');
         } else {
             autoplayTimer = setInterval(() => {
-                currentIdx < SCENES.length - 1 ? navigate(+1) : goTo(0);
+                currentIdx < filteredScenes.length - 1 ? navigate(+1) : goTo(0);
             }, AUTOPLAY_DELAY);
             ind.classList.add('visible');
         }
@@ -662,11 +1196,123 @@
     }
 
     // ══════════════════════════════════════════
+    //   MODAL ACTIONS & FILE UPLOADS
+    // ══════════════════════════════════════════
+    function openAddPlaceModal() {
+        document.getElementById('addPlaceModal').classList.add('show');
+    }
+    function closeAddPlaceModal() {
+        document.getElementById('addPlaceModal').classList.remove('show');
+    }
+    function openAddSceneModal() {
+        document.getElementById('addSceneModal').classList.add('show');
+    }
+    function closeAddSceneModal() {
+        document.getElementById('addSceneModal').classList.remove('show');
+    }
+
+    function handlePlaceCoverUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        document.getElementById('placeCoverName').textContent = file.name;
+        
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            tempPlaceCoverBase64 = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function handleSceneImgUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        document.getElementById('sceneImgName').textContent = file.name;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            tempSceneImgBase64 = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function saveNewPlace() {
+        const nameInput = document.getElementById('newPlaceName');
+        const name = nameInput.value.trim();
+        if (!name) { alert('Nama tempat harus diisi!'); return; }
+        
+        if (placesList.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+            alert('Nama tempat sudah ada!');
+            return;
+        }
+
+        const newPlace = {
+            name: name,
+            cover: tempPlaceCoverBase64 || ''
+        };
+
+        try {
+            await saveToStore('places', newPlace);
+            placesList.push(newPlace);
+            renderPlaceGallery();
+            closeAddPlaceModal();
+            
+            // Reset modal values
+            nameInput.value = '';
+            document.getElementById('placeCoverFile').value = '';
+            document.getElementById('placeCoverName').textContent = 'Tidak ada file';
+            tempPlaceCoverBase64 = null;
+        } catch (e) {
+            console.error('Error saving place:', e);
+        }
+    }
+
+    async function saveNewScene() {
+        const titleInput = document.getElementById('newSceneTitle');
+        const sceneTitle = titleInput.value.trim();
+        if (!sceneTitle) { alert('Judul gambar harus diisi!'); return; }
+        if (!tempSceneImgBase64) { alert('Pilih file gambar terlebih dahulu!'); return; }
+
+        const category = document.getElementById('newSceneCategory').value;
+
+        // Determine scene label (e.g. Scene 1)
+        const scenesInCat = scenesList.filter(s => s.place === activePlace && s.category === category);
+        const label = `Scene ${scenesInCat.length + 1}`;
+
+        const newScene = {
+            place: activePlace,
+            category: category,
+            file: tempSceneImgBase64,
+            label: label,
+            sceneTitle: sceneTitle,
+            order: scenesInCat.length
+        };
+
+        try {
+            await saveToStore('scenes', newScene);
+            // Reload all scenes from DB
+            scenesList = await getStoreData('scenes');
+            
+            closeAddSceneModal();
+
+            // Reset modal values
+            titleInput.value = '';
+            document.getElementById('sceneImgFile').value = '';
+            document.getElementById('sceneImgName').textContent = 'Tidak ada file';
+            tempSceneImgBase64 = null;
+
+            // Refresh Penampil
+            switchCategory(category);
+        } catch (e) {
+            console.error('Error saving scene:', e);
+        }
+    }
+
+    // ══════════════════════════════════════════
     //   KEYBOARD
     // ══════════════════════════════════════════
     function setupKeyboard() {
         document.addEventListener('keydown', (e) => {
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
             switch (e.key) {
                 case 'ArrowLeft':  case 'ArrowUp':    e.preventDefault(); navigate(-1); break;
                 case 'ArrowRight': case 'ArrowDown': case ' ': e.preventDefault(); navigate(+1); break;
@@ -674,13 +1320,16 @@
                 case 'f': case 'F': toggleFullscreen(); break;
                 case 'p': case 'P': toggleAutoplay();   break;
                 case 'Tab':         e.preventDefault(); toggleDrawer(); break;
-                case 'Escape':      if (drawerOpen) closeDrawer(); break;
+                case 'Escape':      
+                    if (document.querySelector('.modal-overlay.show')) {
+                        closeAddPlaceModal();
+                        closeAddSceneModal();
+                    } else if (activeView === 'viewer') {
+                        closePlaceViewer();
+                    }
+                    break;
                 case 'Home':        e.preventDefault(); goTo(0); break;
-                case 'End':         e.preventDefault(); goTo(SCENES.length - 1); break;
-                case '1': jumpToChapter('Pre-Highspire'); break;
-                case '2': jumpToChapter('Highspire'); break;
-                case '3': jumpToChapter('Breckenford'); break;
-                case '4': jumpToChapter('Old Battlefield'); break;
+                case 'End':         e.preventDefault(); goTo(filteredScenes.length - 1); break;
             }
         });
     }

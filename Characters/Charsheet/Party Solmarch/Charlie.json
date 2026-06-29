@@ -1,0 +1,41 @@
+{
+  "id": "charlie_001",
+  "name": "Charlie",
+  "alias": "",
+  "party": "Party Solmarch",
+  "race": "Elf",
+  "class": "Bard",
+  "subclass": "College of Lore",
+  "age": "TODO",
+  "gender": "TODO",
+  "alignment": "Neutral Good",
+  "height": "TODO",
+  "faith": "Atheist",
+  "skin": "Fair",
+  "eyes": "Emerald",
+  "hair": "Green",
+  "personality": "I like to read and memorize poetry. It keeps me calm and brings me fleeting moments of happiness.",
+  "ideals": "I refuse to become a victim.",
+  "bonds": "I keep my thoughts and discoveries in a journal. My journal is my legacy.",
+  "flaws": "I assume the worst in people.",
+  "backstory_summary": "Seorang Elf Bard bekas budak tambang Tartarus Pit yang meloloskan diri berkat persahabatannya dengan Kirk sang Orc. Setelah terdampar di dunia luar, Charlie direkrut ke dalam kelompok petualang yang menyelidiki Eldenfall. Misi tersebut menyeretnya ke Tokoshie no Kuni, di mana ia terjebak dalam time loop abadi dewa Kurumagatsu dan berasimilasi menjadi Anchor Hidup yang membawa ingatannya melewati setiap siklus pengulangan waktu.",
+  "lore_pointer": {
+    "origin": "Desa perbatasan Kerajaan Aurelion",
+    "important_people": [
+      "Kirk (Sahabat Orc pelindung dari Tartarus Pit)",
+      "Prosperina (Pahlawan Legendaris Eldenfall)",
+      "Rinne (Miko Suci Tokoshie no Kuni)",
+      "Belzareth (Iblis pengikat kontrak Prosperina)"
+    ],
+    "important_places": [
+      "Tartarus Pit (Tambang kristal & penjara perbudakan)",
+      "Eldenfall (Makam legendaris Prosperina)",
+      "Tokoshie no Kuni / Negara Keabadian (Negeri tempat time loop berada)",
+      "Aula Guild Highspire"
+    ],
+    "important_organizations": [
+      "Sindikat Pedagang Budak (Pihak yang menangkapnya)",
+      "Shrine of the Waning Bell (Kuil Utama dewa Kurumagatsu)"
+    ]
+  }
+}

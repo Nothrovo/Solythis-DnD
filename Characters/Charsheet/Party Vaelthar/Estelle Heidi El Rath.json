@@ -1,0 +1,38 @@
+{
+  "id": "estelle_001",
+  "name": "Estelle Heidi El Rath",
+  "alias": "The Fallen Saint",
+  "party": "Party Vaelthar",
+  "race": "Changeling",
+  "class": "Warlock",
+  "subclass": "Hexblade (Patron: Kurumagatsu no Mikoto)",
+  "age": "21",
+  "gender": "Androgini",
+  "alignment": "Chaotic Evil",
+  "height": "160 cm",
+  "appearance": "Rambut panjang pink, mata hijau, kulit putih",
+  "backstory_summary": "Lahir sebagai Dorian Karlstein, seorang Changeling yang melayani Estelle Heidi El Rath di katedral. Ketika Estelle menemukan rencana pengorbanan keluarganya dan melarikan diri, Dorian mengkhianati Teokrasi untuk mengikutinya. Chronos-Vael mengutuk Estelle dengan penuaan paksa; dalam keputusasaan Dorian membuat Pact dengan Kurumagatsu no Mikoto (Dewi Keabadian) untuk membekukan kutukan. Setelah Estelle selamat dan keduanya bertunangan, Dorian kembali ke Vaelthar menyamar sebagai 'The Fallen Saint' untuk menghancurkan Teokrasi dari dalam.",
+  "personality": "Di luar pertempuran tampil dingin dan arogan layaknya bangsawan (Chaotic Neutral). Saat bertarung berubah jadi sadis dan haus darah (Chaotic Evil). Memandang dunia hitam-putih ekstrim: Estelle = segalanya, semua yang menghalangi = sampah.",
+  "lore_pointer": {
+    "origin": "Kawasan Kumuh Kota Suci Kairon, Kerajaan Aurelia, Benua Vaelthar",
+    "important_people": [
+      "Estelle Heidi El Rath (Tunangan & jangkar eksistensi — kini dalam stasis di Tokoshie no Kuni)",
+      "Kurumagatsu no Mikoto (Patron Dewi Keabadian, menuntut pemusnahan agen Chronos-Vael)",
+      "Chronos-Vael (Dewa Waktu — musuh, pihak yang mengutuk Estelle)",
+      "Tetua House El Rath (Antagonis utama — keluarga yang merencanakan ritual pengorbanan)"
+    ],
+    "important_places": [
+      "Kota Suci Kairon (Tanah asal & target operasi)",
+      "Katedral Agung Roda Waktu (Pusat kekuasaan musuh)",
+      "Tokoshie no Kuni / Negara Keabadian (Tempat Estelle asli tersembunyi dalam stasis)",
+      "Benua Solmarch (Zona aman eksodus)",
+      "Arsip Rahasia Katedral (Tempat rencana pengorbanan ditemukan Estelle)"
+    ],
+    "important_organizations": [
+      "House El Rath (Musuh: Keluarga bangsawan agung pemegang monopoli keagamaan Kairon)",
+      "Ordo Agung Roda Temporal (Musuh: Lembaga keagamaan resmi House El Rath)",
+      "The Fallen Court (Didirikan sendiri: Sekte pemberontak bawah tanah untuk sabotase Teokrasi)",
+      "Church of the Eternal Silent (Didirikan sendiri: Organisasi kedok penyebaran ajaran stasis)"
+    ]
+  }
+}

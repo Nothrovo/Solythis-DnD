@@ -1,0 +1,37 @@
+{
+  "id": "victor_001",
+  "name": "Victor Han",
+  "alias": "",
+  "party": "Party Solmarch",
+  "race": "Human",
+  "class": "Wizard",
+  "subclass": "School of Evocation",
+  "age": "TODO",
+  "gender": "TODO",
+  "alignment": "Lawful Neutral",
+  "height": "TODO",
+  "faith": "White",
+  "skin": "White",
+  "eyes": "Grey",
+  "hair": "Grey",
+  "personality": "I am always calm, no matter what the situation. I never raise my voice or let my emotions control me. I always have a plan for what to do.",
+  "ideals": "People. I'm loyal to my friends, not to any ideals, and everyone else can take a trip down the Styx for all I care.",
+  "backstory_summary": "Di kehidupan sebelumnya, Victor adalah seorang detektif independen di Bumi yang bergerak di bayang-bayang menggunakan logika dan sains. Dikhianati dan dieksekusi oleh kepala kepolisian yang menjadi informannya, ia terbangun di hutan Solmarch. Setelah 24 hari bertahan hidup, ia bekerja di tavern sebagai analis strategis, dan membedah energi sihir secara ilmiah di bawah bimbingan Sorcerer veteran hingga menjadi Wizard.",
+  "lore_pointer": {
+    "origin": "Bumi (Kehidupan masa lalu sebagai detektif)",
+    "important_people": [
+      "Mantan Monk (Sahabat dekat & pembimbing awal di Solmarch)",
+      "Bard Pemilik Tavern (Atasan bisnis & sahabat dekat)",
+      "Sorcerer Veteran (Ayah si Bard, guru sihir yang mengajarinya selama 2 tahun)",
+      "Kepala Kepolisian Bumi (Masa lalu: informan sekutu yang mengkhianati & mengeksekusinya)"
+    ],
+    "important_places": [
+      "Hutan Pegunungan Solmarch (Tempat pertama ia terbangun di dunia baru)",
+      "Tavern Lokal Solmarch (Tempat ia bekerja sebagai analis bisnis)"
+    ],
+    "important_organizations": [
+      "Kepolisian Bumi (Institusi penegak hukum yang mengkhianatinya)",
+      "Tavern Lokal Solmarch (Pusat aktivitas bisnis & circle pertemanannya)"
+    ]
+  }
+}

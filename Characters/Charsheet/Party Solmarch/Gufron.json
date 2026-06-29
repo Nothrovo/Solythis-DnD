@@ -1,0 +1,35 @@
+{
+  "id": "gufron_001",
+  "name": "Gufron",
+  "alias": "",
+  "party": "Party Solmarch",
+  "race": "Human",
+  "class": "Warlock",
+  "subclass": "Fiend Patron",
+  "age": "21",
+  "gender": "Male",
+  "alignment": "Chaotic Neutral",
+  "height": "5'5\"",
+  "weight": "104 lbs",
+  "faith": "Morenoism",
+  "skin": "White",
+  "eyes": "Brown",
+  "hair": "Black",
+  "personality": "Kleptomaniac",
+  "ideals": "Faith",
+  "bonds": "Their God",
+  "backstory_summary": "Seorang pemuda berusia 21 tahun yang mengawali hidupnya sebagai Acolyte pelayan kuil suci. Setelah kehilangan keimanannya akibat kemunafikan kuil dan mengembangkan obsesi kleptomania, Gufron mencuri artefak batu hitam terlarang di bawah tanah kuil. Tindakan ini memicu kontrak Warlock dengan entitas iblis (Fiend Patron) yang memberinya kekuatan sihir api gelap, menuntunnya melarikan diri menuju pengembaraan di Solmarch.",
+  "lore_pointer": {
+    "origin": "Kuil Suci Terpencil (Kuil asalnya melayani altar)",
+    "important_people": [
+      "Para Pendeta Kuil (Saksi kemunafikan yang membuatnya kehilangan iman)"
+    ],
+    "important_places": [
+      "Ruang Bawah Tanah Terlarang (Tempat artefak batu hitam disimpan)",
+      "Wilayah Solmarch (Tujuan pengembaraannya)"
+    ],
+    "important_organizations": [
+      "Kuil Otoritas Suci (Masa lalu: tempat ia melayani sebagai Acolyte)"
+    ]
+  }
+}

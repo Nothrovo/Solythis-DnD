@@ -1,0 +1,36 @@
+{
+  "id": "kuro_001",
+  "name": "Kuro Vesryn",
+  "alias": "Kitsukage",
+  "party": "Party Solmarch",
+  "race": "Kuro-Gitsune",
+  "class": "Blood Hunter",
+  "subclass": "Order of the Ghostslayer",
+  "age": "TODO",
+  "gender": "TODO",
+  "alignment": "Chaotic Good",
+  "height": "TODO",
+  "personality": "I don’t run from evil. Evil runs from me.",
+  "ideals": "I have a dark calling that puts me above the law. (Chaotic)",
+  "bonds": "There’s evil in me, I can feel it. It must never be set free.",
+  "flaws": "I feel no compassion for the dead. They’re the lucky ones.",
+  "backstory_summary": "Lahir sebagai Kitsukage, seekor kitsune berbulu hitam langka yang dijadikan 'aset suci' kuil Shrine of Mirror, Yamashiro. Setelah melarikan diri, jiwanya terperangkap kutukan darah dan terlempar ke Abyss. Ia diselamatkan oleh Nyx'thara, dilatih bertahan hidup, dan dihadiahi sabit darah Crimson Reaver. Setelah bebas, ia terlempar ke Vaelthar, menetap di Hallowmere, dan menjalin hubungan tak terucap dengan Dewi Alam Selyndra sebelum melanjutkan pengembaraannya.",
+  "lore_pointer": {
+    "origin": "Shrine of Mirror, Yamashiro (Negeri tertutup di balik selat berkabut)",
+    "important_people": [
+      "Nyx'thara (Entitas Abyss yang membebaskan jiwanya & melatihnya selama 3 tahun)",
+      "Selyndra (Dewi Alam Vaelthar yang menghakimi & melindunginya di Hallowmere)",
+      "Para Pendeta Shrine of Mirror (Pihak yang membesarkannya sebagai aset suci)"
+    ],
+    "important_places": [
+      "Shrine of Mirror (Kuil tempat ia ditemukan & dibesarkan)",
+      "Yamashiro (Negeri kelahirannya yang melarang siapa pun pergi)",
+      "Land of the Abyss (Realm tempat jiwanya diselamatkan & dilatih)",
+      "Hallowmere (Dusun agraris tempat ia hidup damai sebagai petani)"
+    ],
+    "important_organizations": [
+      "Shrine of Mirror (Institusi keagamaan Yamashiro)",
+      "Order of the Ghostslayer (Sekte Blood Hunter pelindung roh)"
+    ]
+  }
+}

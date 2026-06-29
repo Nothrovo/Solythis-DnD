@@ -343,7 +343,7 @@
         }
 
         /* ── FOG OF WAR ── */
-        #fogCanvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 15; }
+        #fogCanvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 15; display: none; }
         .fog-erase-size { display: flex; align-items: center; gap: 0.4rem; }
 
         /* ── PING ── */
@@ -419,6 +419,7 @@
 
 <!-- ═══════════════ HEADER ═══════════════ -->
 <header>
+    <a href="../dashboard.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Dashboard</a>
     <div class="brand">D&amp;D <span>Aurelion</span></div>
 
     <div class="map-selector" id="mapSelector"></div>
@@ -470,7 +471,14 @@
             </label>
             <span class="toggle-label">Grid</span>
         </div>
-        <label>Cell:</label>
+        <div class="grid-toggle-wrap" style="margin-left: 0.5rem;">
+            <label class="toggle-switch">
+                <input type="checkbox" id="fogToggle" onchange="toggleFog()">
+                <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">Fog</span>
+        </div>
+        <label style="margin-left: 0.5rem;">Cell:</label>
         <input type="range" id="gridSizeSlider" min="20" max="120" value="40" oninput="onGridResize(this.value,'slider')">
         <input type="number" id="gridSizeNum" class="grid-num-input" min="20" max="120" value="40" oninput="onGridResize(this.value,'num')">
         <span class="grid-unit">px</span>
@@ -506,12 +514,13 @@
         <!-- Fog toolbar -->
         <div id="fogToolbar">
             <span class="aoe-label">🌫 Fog</span>
-            <button class="aoe-shape-btn active" id="fog-reveal" onclick="setFogMode('reveal')">Reveal</button>
-            <button class="aoe-shape-btn" id="fog-hide" onclick="setFogMode('hide')">Hide</button>
+            <button class="aoe-shape-btn" id="fog-reveal" onclick="setFogMode('reveal')">Reveal (Hapus Kabut)</button>
+            <button class="aoe-shape-btn active" id="fog-hide" onclick="setFogMode('hide')">Hide (Gambar Kabut)</button>
             <span style="color:var(--muted);font-size:0.7rem;margin:0 0.3rem;">|</span>
             <label style="font-size:0.75rem;color:var(--muted);font-weight:600;">Brush</label>
             <input type="range" id="fogBrushSize" min="15" max="150" value="55" oninput="fogBrushSize=parseInt(this.value)">
-            <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.8rem;margin-left:0.3rem;" onclick="resetFog()">↺ Reset Fog</button>
+            <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.8rem;margin-left:0.3rem;" onclick="resetFog()">🧹 Hapus Semua Kabut</button>
+            <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.8rem;margin-left:0.3rem;" onclick="fillFog()">🌫 Tutup Semua Peta</button>
         </div>
 
         <!-- AoE toolbar -->
@@ -638,9 +647,19 @@
 <div class="modal-overlay" id="enemyModal">
     <div class="enemy-modal-box">
         <div class="modal-title">☠ Tambah Bidak Lawan</div>
-        <div class="enemy-gallery-title">Pilih Gambar Musuh</div>
+        
+        <div class="enemy-gallery-title" style="margin-bottom:0.3rem;">Pilih Monster dari Database</div>
+        <div style="display:flex; gap:0.5rem; margin-bottom:0.8rem;">
+            <input type="text" id="enemyDbSearch" class="modal-input" placeholder="Cari monster di DB..." style="flex:1; margin-bottom:0;" oninput="filterEnemyDbSelect()">
+            <select id="enemyDbSelect" class="modal-input" style="flex:1.5; background:#0d0f1a; color:#fff; border:1px solid rgba(212,175,55,0.3); border-radius:6px; padding:0.35rem; margin-bottom:0;" onchange="onEnemyDbSelectChange()">
+                <option value="custom">-- Kustom / Musuh Baru --</option>
+            </select>
+        </div>
+        
+        <div class="enemy-gallery-title">Pilih Gambar Preset</div>
         <div class="enemy-gallery" id="enemyGallery"></div>
         <input type="file" id="customEnemyFile" accept="image/*" style="display:none;" onchange="handleCustomEnemyUpload(event)">
+        
         <div class="enemy-gallery-title">Ukuran Token</div>
         <div class="token-size-row" id="spawnSizeRow">
             <div class="token-size-opt active" data-size="medium" onclick="selectSpawnSize(this)">Medium (1×1)</div>
@@ -648,8 +667,10 @@
             <div class="token-size-opt" data-size="huge" onclick="selectSpawnSize(this)">Huge (3×3)</div>
             <div class="token-size-opt" data-size="garg" onclick="selectSpawnSize(this)">Gargantuan (4×4)</div>
         </div>
+        
         <div class="enemy-gallery-title">Nama Lawan</div>
         <input type="text" class="modal-input" id="enemyNameInput" placeholder="Cth: Skeleton A, Spectre..." maxlength="24" onkeydown="if(event.key==='Enter') confirmEnemySpawn()" style="margin-bottom:0.8rem;">
+        
         <div class="modal-actions">
             <button class="modal-ok" onclick="confirmEnemySpawn()">Spawn</button>
             <button class="modal-cancel" onclick="cancelEnemySpawn()">Batal</button>
@@ -661,20 +682,29 @@
 <div class="modal-overlay" id="allyModal">
     <div class="modal-box">
         <div class="modal-title">⚔ Tambah Bidak Kawan</div>
+        <div class="enemy-gallery-title" style="margin-bottom:0.3rem;">Pilih Karakter dari Database</div>
+        <select id="allyDbSelect" class="modal-input" style="margin-bottom:0.8rem; background:#0d0f1a; color:#fff; border:1px solid rgba(212,175,55,0.3); border-radius:6px; padding:0.35rem; width:100%;" onchange="onAllyDbSelectChange()">
+            <option value="custom">-- Kustom / Karakter Baru --</option>
+        </select>
+        
+        <div class="enemy-gallery-title" style="margin-bottom:0.3rem;">Nama Kawan</div>
         <input type="text" class="modal-input" id="allyNameInput" placeholder="Cth: Ser Aldric, Theron..." maxlength="24" onkeydown="if(event.key==='Enter') confirmAllySpawn()">
-        <div class="enemy-gallery-title" style="margin-bottom:0.5rem;">Ukuran Token</div>
+        
+        <div class="enemy-gallery-title" style="margin-bottom:0.3rem;">Ukuran Token</div>
         <div class="token-size-row" id="allySizeRow" style="margin-bottom:0.9rem;">
             <div class="token-size-opt active" data-size="medium" onclick="selectAllySize(this)">Medium</div>
             <div class="token-size-opt" data-size="large" onclick="selectAllySize(this)">Large</div>
             <div class="token-size-opt" data-size="huge" onclick="selectAllySize(this)">Huge</div>
             <div class="token-size-opt" data-size="garg" onclick="selectAllySize(this)">Garg</div>
         </div>
-        <div class="enemy-gallery-title" style="margin-bottom:0.5rem;">Gambar (opsional)</div>
+        
+        <div class="enemy-gallery-title" style="margin-bottom:0.3rem;">Gambar (opsional)</div>
         <div style="display:flex;gap:0.6rem;margin-bottom:0.9rem;align-items:center;">
             <button class="tool-btn" style="width:100%;justify-content:center;" onclick="document.getElementById('allyImgFile').click()">📁 Pilih Gambar</button>
             <span id="allyImgName" style="font-size:0.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;">Tidak ada</span>
         </div>
         <input type="file" id="allyImgFile" accept="image/*" style="display:none;" onchange="handleAllyImgUpload(event)">
+        
         <div class="modal-actions">
             <button class="modal-ok" onclick="confirmAllySpawn()">Spawn</button>
             <button class="modal-cancel" onclick="cancelAllySpawn()">Batal</button>
@@ -711,10 +741,7 @@ const MAPS = [
     { id: 'highspire',      label: 'Highspire',       src: 'Aurelion/Highspire.png' },
     { id: 'old-battlefield', label: 'Old Battlefield', src: 'Aurelion/Old Battlefield.jpeg' }
 ];
-const PRESET_ENEMIES = [
-    { name: 'Skeleton', src: '../Creatures or Monsters/Images/Skeleton.jpeg' },
-    { name: 'Spectre',  src: '../Creatures or Monsters/Images/Spectre.jpeg' }
-];
+const PRESET_ENEMIES = [];
 
 // Token size → grid cells multiplier
 const SIZE_MAP = { tiny: 0.5, small: 0.75, medium: 1, large: 2, huge: 3, garg: 4 };
@@ -766,6 +793,10 @@ window.addEventListener('DOMContentLoaded', () => {
     wrapper.addEventListener('mouseup',   onMapMouseUp);
     wrapper.addEventListener('mouseleave', onMapMouseLeave);
     wrapper.addEventListener('click', onMapClick);
+
+    // Load Character and Monster Databases
+    fetchCharactersDb();
+    fetchMonstersDb();
 });
 
 // ══════════════════════════════════════════
@@ -866,6 +897,14 @@ function drawLines(ctx) {
     for (let y = 0; y <= MAP_H; y += gridSize) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(MAP_W,y); ctx.stroke(); }
 }
 function toggleGrid() { showGrid = document.getElementById('gridToggle').checked; drawGrid(); }
+function toggleFog() {
+    const active = document.getElementById('fogToggle').checked;
+    const canvas = document.getElementById('fogCanvas');
+    if (canvas) {
+        canvas.style.display = active ? 'block' : 'none';
+    }
+    updateTokensVisibility();
+}
 function onGridResize(val, source) {
     let n = Math.max(20, Math.min(120, parseInt(val)||40));
     gridSize = n;
@@ -891,6 +930,13 @@ function setTool(tool) {
         document.getElementById(`btn-${tool}`).classList.add('active');
         document.getElementById('aoeToolbar').classList.toggle('show', tool === 'aoe');
         document.getElementById('fogToolbar').classList.toggle('show', tool === 'fog');
+        if (tool === 'fog') {
+            const fogToggle = document.getElementById('fogToggle');
+            if (fogToggle) {
+                fogToggle.checked = true;
+                toggleFog();
+            }
+        }
         if (tool !== 'ruler') document.getElementById('rulerDisplay').style.display = 'none';
         drawAllAoe();
     }
@@ -917,6 +963,12 @@ function onMapMouseDown(e) {
 function onMapMouseMove(e) {
     const pos = getMapPos(e);
     updateCoordTip(e, pos);
+    
+    // Draw fog brush preview if active
+    if (activeTool === 'fog') {
+        drawFogBrushPreview(pos);
+    }
+    
     if (!activeTool || e.buttons === 0) return;
     if (activeTool === 'ruler' && rulerStart) drawRuler(rulerStart, pos);
     if (activeTool === 'aoe' && aoeState.origin) { aoeState.dir = pos; drawAllAoe(); }
@@ -930,7 +982,10 @@ function onMapMouseUp(e) {
 function onMapMouseLeave(e) {
     document.getElementById('coordTip').style.opacity = '0';
     if (activeTool === 'ruler') { drawAllAoe(); document.getElementById('rulerDisplay').style.display = 'none'; rulerStart = null; }
-    if (activeTool === 'fog') { fogPainting = false; }
+    if (activeTool === 'fog') { 
+        fogPainting = false; 
+        drawAllAoe(); // Clear brush preview
+    }
 }
 function onMapClick(e) {
     if (e.target.classList.contains('token') || e.target.closest('.token')) return;
@@ -1146,8 +1201,10 @@ function pointInAoe(px, py, ox, oy, dx, dy, angle, radius, shape) {
 // ══════════════════════════════════════════
 function initFogCanvas() {
     const canvas = document.getElementById('fogCanvas');
+    if (!canvas) return;
     canvas.width = MAP_W; canvas.height = MAP_H;
     resetFog();
+    toggleFog();
 }
 function resetFog() {
     const canvas = document.getElementById('fogCanvas');
@@ -1155,8 +1212,16 @@ function resetFog() {
     const ctx = canvas.getContext('2d');
     ctx.globalCompositeOperation = 'source-over';
     ctx.clearRect(0,0,MAP_W,MAP_H);
+    updateTokensVisibility();
+}
+function fillFog() {
+    const canvas = document.getElementById('fogCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = 'rgba(5,7,15,0.88)';
     ctx.fillRect(0,0,MAP_W,MAP_H);
+    updateTokensVisibility();
 }
 function setFogMode(mode) {
     fogMode = mode;
@@ -1171,6 +1236,24 @@ function paintFog(pos) {
     ctx.fillStyle = 'rgba(5,7,15,0.88)';
     ctx.beginPath(); ctx.arc(pos.x, pos.y, fogBrushSize/2, 0, Math.PI*2); ctx.fill();
     ctx.globalCompositeOperation = 'source-over';
+    updateTokensVisibility();
+}
+function drawFogBrushPreview(pos) {
+    drawAllAoe(); // clear & redraw AoEs
+    const canvas = document.getElementById('overlayCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    ctx.strokeStyle = fogMode === 'reveal' ? 'rgba(239, 68, 68, 0.8)' : 'rgba(59, 130, 246, 0.8)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, fogBrushSize/2, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    ctx.fillStyle = fogMode === 'reveal' ? 'rgba(239, 68, 68, 0.12)' : 'rgba(59, 130, 246, 0.12)';
+    ctx.fill();
 }
 
 // ══════════════════════════════════════════
@@ -1321,10 +1404,12 @@ function onTokenMouseDown(e) {
     if (activeTool) return; // tools take priority
     const token = token0;
     if (!token) return;
-    const wrapper = document.getElementById('mapWrapper');
-    const cells = SIZE_MAP[token.size||'medium']||1;
-    const s = cells * gridSize - 6;
-    dragState = { token, startMouseX: e.clientX, startMouseY: e.clientY, startPx: token.gridX*gridSize+3, startPy: token.gridY*gridSize+3, hasMoved: false };
+    const pos = getMapPos(e);
+    const tokenPx = token.gridX * gridSize + 3;
+    const tokenPy = token.gridY * gridSize + 3;
+    const offsetX = pos.x - tokenPx;
+    const offsetY = pos.y - tokenPy;
+    dragState = { token, offsetX, offsetY, hasMoved: false };
     token.el.classList.add('dragging');
     window.addEventListener('mousemove', onDragMove);
     window.addEventListener('mouseup', onDragEnd);
@@ -1332,15 +1417,17 @@ function onTokenMouseDown(e) {
 
 function onDragMove(e) {
     if (!dragState) return;
-    const { token, startMouseX, startMouseY, startPx, startPy } = dragState;
+    const { token, offsetX, offsetY } = dragState;
     const cells = SIZE_MAP[token.size||'medium']||1;
     const cols = Math.floor(MAP_W/gridSize), rows = Math.floor(MAP_H/gridSize);
-    const dx = e.clientX-startMouseX, dy = e.clientY-startMouseY;
+    const pos = getMapPos(e);
+    const px = pos.x - offsetX;
+    const py = pos.y - offsetY;
     dragState.hasMoved = true;
-    const clampedPx = Math.max(3, Math.min((cols-cells)*gridSize+3, startPx+dx));
-    const clampedPy = Math.max(3, Math.min((rows-cells)*gridSize+3, startPy+dy));
+    const clampedPx = Math.max(3, Math.min((cols-cells)*gridSize+3, px));
+    const clampedPy = Math.max(3, Math.min((rows-cells)*gridSize+3, py));
     token.el.style.left = clampedPx+'px'; token.el.style.top = clampedPy+'px';
-    let gx = Math.round((startPx+dx-3)/gridSize), gy = Math.round((startPy+dy-3)/gridSize);
+    let gx = Math.round((clampedPx-3)/gridSize), gy = Math.round((clampedPy-3)/gridSize);
     gx = Math.max(0, Math.min(cols-Math.ceil(cells), gx)); gy = Math.max(0, Math.min(rows-Math.ceil(cells), gy));
     const tip = document.getElementById('coordTip');
     tip.textContent = `${gx},${gy}`; tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-24)+'px'; tip.style.opacity='1';
@@ -1348,17 +1435,22 @@ function onDragMove(e) {
 
 function onDragEnd(e) {
     if (!dragState) return;
-    const { token, startMouseX, startMouseY, startPx, startPy } = dragState;
+    const { token, offsetX, offsetY } = dragState;
     window.removeEventListener('mousemove', onDragMove);
     window.removeEventListener('mouseup', onDragEnd);
     token.el.classList.remove('dragging');
     const cells = SIZE_MAP[token.size||'medium']||1;
     const cols = Math.floor(MAP_W/gridSize), rows = Math.floor(MAP_H/gridSize);
-    const dx = e.clientX-startMouseX, dy = e.clientY-startMouseY;
-    let gx = Math.round((startPx+dx-3)/gridSize), gy = Math.round((startPy+dy-3)/gridSize);
+    const pos = getMapPos(e);
+    const px = pos.x - offsetX;
+    const py = pos.y - offsetY;
+    const clampedPx = Math.max(3, Math.min((cols-cells)*gridSize+3, px));
+    const clampedPy = Math.max(3, Math.min((rows-cells)*gridSize+3, py));
+    let gx = Math.round((clampedPx-3)/gridSize), gy = Math.round((clampedPy-3)/gridSize);
     gx = Math.max(0, Math.min(cols-Math.ceil(cells), gx)); gy = Math.max(0, Math.min(rows-Math.ceil(cells), gy));
-    const occ = tokens.find(t => t.id !== token.id && t.gridX === gx && t.gridY === gy);
-    if (!occ) { token.gridX = gx; token.gridY = gy; }
+    
+    // Drop the token directly to the cell without restricting it due to occupancy
+    token.gridX = gx; token.gridY = gy;
     renderTokenPosition(token);
     document.getElementById('coordTip').style.opacity = '0';
     dragState = null;
@@ -1530,6 +1622,7 @@ function renderInitiative() {
         token.initiativeEl = row;
         list.appendChild(row);
     });
+    updateTokensVisibility();
 }
 
 function updateInit(input) { const t = tokens.find(t=>t.id===input.dataset.tid); if(t) t.initScore=input.value; }
@@ -1592,6 +1685,7 @@ function togglePanel() { panelOpen=!panelOpen; document.getElementById('initiati
 // ══════════════════════════════════════════
 function openAllyModal(defaultName) {
     allyImgUrl = null; allySpawnSize = 'medium';
+    document.getElementById('allyDbSelect').value = 'custom';
     document.getElementById('allyNameInput').value = defaultName;
     document.getElementById('allyImgName').textContent = 'Tidak ada';
     document.querySelectorAll('#allySizeRow .token-size-opt').forEach(b => b.classList.toggle('active', b.dataset.size==='medium'));
@@ -1608,6 +1702,8 @@ function cancelAllySpawn() { document.getElementById('allyModal').classList.remo
 // ══════════════════════════════════════════
 function openEnemyModal(defaultName) {
     spawnSize = 'medium'; selectedEnemyImg = PRESET_ENEMIES.length ? PRESET_ENEMIES[0].src : '';
+    document.getElementById('enemyDbSearch').value = '';
+    document.getElementById('enemyDbSelect').value = 'custom';
     document.getElementById('enemyNameInput').value = PRESET_ENEMIES.length ? PRESET_ENEMIES[0].name : defaultName;
     document.querySelectorAll('#spawnSizeRow .token-size-opt').forEach(b=>b.classList.toggle('active',b.dataset.size==='medium'));
     document.getElementById('enemyModal').classList.add('show');
@@ -1637,6 +1733,184 @@ function handleCustomEnemyUpload(e) {
 }
 function confirmEnemySpawn() { const name=document.getElementById('enemyNameInput').value.trim()||`Lawan ${tokenCount.enemy}`; document.getElementById('enemyModal').classList.remove('show'); createAndSpawn(name,selectedEnemyImg,'enemy',spawnSize); }
 function cancelEnemySpawn() { document.getElementById('enemyModal').classList.remove('show'); }
+
+// ══════════════════════════════════════════
+//  DATABASE SYNC HELPERS
+// ══════════════════════════════════════════
+let dbCharacters = [];
+let dbMonsters = {};
+
+async function fetchCharactersDb() {
+    try {
+        const response = await fetch('../Characters/database.json');
+        if (response.ok) {
+            dbCharacters = await response.json();
+            populateAllyDbSelect();
+        }
+    } catch (e) {
+        console.error('Failed to load characters database:', e);
+    }
+}
+
+async function fetchMonstersDb() {
+    try {
+        const response = await fetch('../Creatures or Monsters/11_monsters.json');
+        if (response.ok) {
+            const data = await response.json();
+            dbMonsters = flattenMonstersJsonForTracker(data);
+            populateEnemyDbSelect();
+        }
+    } catch (e) {
+        console.error('Failed to load monsters database:', e);
+    }
+}
+
+function flattenMonstersJsonForTracker(data) {
+    const db = {};
+    const monstersRoot = data['Monsters'];
+    if (!monstersRoot) return db;
+
+    const imageMap = {
+        "skeleton": "Images/Skeleton.jpeg",
+        "specter": "Images/Spectre.jpeg",
+        "aboleth": "Images/Aboleth.png",
+        "air elemental": "Images/airelemental.jpeg",
+        "androsphinx": "Images/androsphinx.jpg",
+        "animated armor": "Images/animatedarmor.jpg",
+        "ankheg": "Images/ankheg.jpg",
+        "azer": "Images/azer.png"
+    };
+
+    function parseMonsterSize(contentArr) {
+        for (const entry of contentArr) {
+            if (typeof entry === 'string') {
+                const s = entry.trim();
+                if (s.startsWith('*') && !s.startsWith('**') && !s.startsWith('***')) {
+                    const text = s.replace(/\*/g, '').toLowerCase();
+                    if (text.includes('tiny')) return 'tiny';
+                    if (text.includes('small')) return 'small';
+                    if (text.includes('medium')) return 'medium';
+                    if (text.includes('large')) return 'large';
+                    if (text.includes('huge')) return 'huge';
+                    if (text.includes('gargantuan')) return 'garg';
+                }
+            }
+        }
+        return 'medium';
+    }
+
+    for (const sectionKey of Object.keys(monstersRoot)) {
+        if (!sectionKey.startsWith('Monsters (')) continue;
+        const section = monstersRoot[sectionKey];
+
+        for (const entryKey of Object.keys(section)) {
+            const entry = section[entryKey];
+            if (entry.content && Array.isArray(entry.content)) {
+                const size = parseMonsterSize(entry.content);
+                const name = entryKey;
+                const img = imageMap[name.toLowerCase()] || imageMap[name.toLowerCase().split(' ')[0]] || '';
+                const path = img ? `../Creatures or Monsters/${img}` : '';
+                db[name.toLowerCase()] = { name, size, imgUrl: path };
+            } else if (typeof entry === 'object') {
+                for (const subKey of Object.keys(entry)) {
+                    const sub = entry[subKey];
+                    if (sub && sub.content && Array.isArray(sub.content)) {
+                        const size = parseMonsterSize(sub.content);
+                        const name = subKey;
+                        const img = imageMap[name.toLowerCase()] || imageMap[name.toLowerCase().split(' ')[0]] || '';
+                        const path = img ? `../Creatures or Monsters/${img}` : '';
+                        db[name.toLowerCase()] = { name, size, imgUrl: path };
+                    }
+                }
+            }
+        }
+    }
+    return db;
+}
+
+function populateAllyDbSelect() {
+    const sel = document.getElementById('allyDbSelect');
+    if (!sel) return;
+    sel.innerHTML = '<option value="custom">-- Kustom / Karakter Baru --</option>';
+    dbCharacters.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} (${c.class})`;
+        sel.appendChild(opt);
+    });
+}
+
+function populateEnemyDbSelect() {
+    const sel = document.getElementById('enemyDbSelect');
+    if (!sel) return;
+    sel.innerHTML = '<option value="custom">-- Kustom / Musuh Baru --</option>';
+    const sortedKeys = Object.keys(dbMonsters).sort();
+    sortedKeys.forEach(k => {
+        const m = dbMonsters[k];
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = m.name;
+        sel.appendChild(opt);
+    });
+}
+
+function filterEnemyDbSelect() {
+    const query = document.getElementById('enemyDbSearch').value.toLowerCase().trim();
+    const sel = document.getElementById('enemyDbSelect');
+    if (!sel) return;
+    sel.innerHTML = '<option value="custom">-- Kustom / Musuh Baru --</option>';
+    const sortedKeys = Object.keys(dbMonsters).sort();
+    sortedKeys.forEach(k => {
+        const m = dbMonsters[k];
+        if (m.name.toLowerCase().includes(query)) {
+            const opt = document.createElement('option');
+            opt.value = k;
+            opt.textContent = m.name;
+            sel.appendChild(opt);
+        }
+    });
+}
+
+function onAllyDbSelectChange() {
+    const val = document.getElementById('allyDbSelect').value;
+    const nameInput = document.getElementById('allyNameInput');
+    if (val === 'custom') {
+        nameInput.value = `Kawan ${tokenCount.ally}`;
+        allyImgUrl = null;
+        document.getElementById('allyImgName').textContent = 'Tidak ada';
+        selectAllySize(document.querySelector('#allySizeRow [data-size="medium"]'));
+    } else {
+        const char = dbCharacters.find(c => c.id === val);
+        if (char) {
+            nameInput.value = char.name;
+            if (char.sprite_path) {
+                allyImgUrl = `../Characters/${char.sprite_path}`;
+                document.getElementById('allyImgName').textContent = char.sprite_path.split('/').pop();
+            } else {
+                allyImgUrl = null;
+                document.getElementById('allyImgName').textContent = 'Tidak ada (Gunakan Placeholder)';
+            }
+            selectAllySize(document.querySelector('#allySizeRow [data-size="medium"]'));
+        }
+    }
+}
+
+function onEnemyDbSelectChange() {
+    const val = document.getElementById('enemyDbSelect').value;
+    const nameInput = document.getElementById('enemyNameInput');
+    if (val === 'custom') {
+        nameInput.value = `Lawan ${tokenCount.enemy}`;
+        selectedEnemyImg = '';
+        selectSpawnSize(document.querySelector('#spawnSizeRow [data-size="medium"]'));
+    } else {
+        const monster = dbMonsters[val];
+        if (monster) {
+            nameInput.value = monster.name;
+            selectedEnemyImg = monster.imgUrl || '';
+            selectSpawnSize(document.querySelector(`#spawnSizeRow [data-size="${monster.size}"]`) || document.querySelector('#spawnSizeRow [data-size="medium"]'));
+        }
+    }
+}
 
 // ══════════════════════════════════════════
 //  DICE ROLLER
@@ -1699,6 +1973,52 @@ function addDiceResult(formula, val, sides) {
     if (hist.children.length>6) hist.removeChild(hist.lastChild);
 }
 function toggleDicePanel() { document.getElementById('dicePanel').classList.toggle('show'); document.getElementById('btn-dice').classList.toggle('active', document.getElementById('dicePanel').classList.contains('show')); }
+
+// ══════════════════════════════════════════
+//  FOG OF WAR TOKEN HIDING
+// ══════════════════════════════════════════
+function updateTokensVisibility() {
+    const fogToggle = document.getElementById('fogToggle');
+    const fogActive = fogToggle ? fogToggle.checked : false;
+    const canvas = document.getElementById('fogCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    tokens.forEach(token => {
+        if (!token.el) return;
+        
+        if (!fogActive) {
+            token.el.style.display = 'flex';
+            if (token.initiativeEl) token.initiativeEl.style.opacity = '1';
+            return;
+        }
+
+        const cells = SIZE_MAP[token.size || 'medium'] || 1;
+        const cx = token.gridX * gridSize + (cells * gridSize) / 2;
+        const cy = token.gridY * gridSize + (cells * gridSize) / 2;
+
+        if (cx >= 0 && cx < MAP_W && cy >= 0 && cy < MAP_H) {
+            try {
+                const imgData = ctx.getImageData(Math.floor(cx), Math.floor(cy), 1, 1).data;
+                const alpha = imgData[3];
+                // If alpha is > 100, the token is in hidden fog
+                if (alpha > 100) {
+                    token.el.style.display = 'none';
+                    if (token.initiativeEl) token.initiativeEl.style.opacity = '0.4';
+                } else {
+                    token.el.style.display = 'flex';
+                    if (token.initiativeEl) token.initiativeEl.style.opacity = '1';
+                }
+            } catch (e) {
+                token.el.style.display = 'flex';
+                if (token.initiativeEl) token.initiativeEl.style.opacity = '1';
+            }
+        } else {
+            token.el.style.display = 'flex';
+            if (token.initiativeEl) token.initiativeEl.style.opacity = '1';
+        }
+    });
+}
 
 // ══════════════════════════════════════════
 //  BATTLEFIELD hover tip

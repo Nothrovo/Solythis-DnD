@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Lembar Lore Karakter Solythis Chronicles" />
+  <title>Codex Karakter — Solythis Chronicles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="detail-page-body">
+
+  <!-- Animated Star Background -->
+  <canvas id="star-canvas" aria-hidden="true"></canvas>
+
+  <!-- Decorative Gradient Orbs -->
+  <div class="orb orb--gold" aria-hidden="true"></div>
+  <div class="orb orb--purple" aria-hidden="true"></div>
+
+  <header class="detail-header">
+    <div class="detail-header-inner">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <a href="../dashboard.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Dashboard</a>
+        <a href="index.html" class="btn-back">
+          <span class="btn-back-icon">←</span> Kembali ke Galeri
+        </a>
+      </div>
+      <div class="detail-brand">
+        <span class="brand-sub">CODEX CHARACTERIS</span>
+        <span class="brand-main">SOLYTHIS</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="detail-container-page">
+
+    <!-- Loading State -->
+    <div class="state-loading" id="state-loading" role="status" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring spinner-ring--2"></div>
+        <div class="spinner-ring spinner-ring--3"></div>
+      </div>
+      <p>Membuka lembar codex...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="state-error hidden" id="state-error" role="alert">
+      <div class="state-icon">📜</div>
+      <h2>Karakter Tidak Ditemukan</h2>
+      <p id="error-message">Lembar codex ini tidak terdaftar dalam database.</p>
+      <a href="index.html" class="btn-retry" style="text-decoration: none; display: inline-block; margin-top: 10px;">Kembali ke Galeri</a>
+    </div>
+
+    <!-- Content Layout (Hidden while loading) -->
+    <div class="detail-grid hidden" id="detail-grid">
+      
+      <!-- LEFT SIDEBAR: Hero Image & Basic Stats -->
+      <aside class="detail-sidebar">
+        <div class="detail-sprite-card">
+          <div class="detail-sprite-wrap">
+            <img class="detail-sprite" id="detail-sprite" src="" alt="" />
+            <div class="detail-sprite-glow" aria-hidden="true"></div>
+          </div>
+          <div class="detail-name-block">
+            <span class="detail-party-badge" id="detail-party-badge"></span>
+            <h1 class="detail-char-name" id="detail-char-name"></h1>
+            <p class="detail-char-alias" id="detail-char-alias"></p>
+          </div>
+        </div>
+
+        <div class="detail-stats-card">
+          <h3 class="detail-sidebar-title">Spesifikasi Karakter</h3>
+          <dl class="detail-stats-list" id="detail-stats-list">
+            <!-- Filled dynamically -->
+          </dl>
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN CONTENT: Backstory & Lore Pointers -->
+      <section class="detail-main-content">
+        
+        <!-- SECTION 1: RINGKASAN & BACKSTORY -->
+        <article class="detail-section-card">
+          <h2 class="detail-section-title">
+            <span class="title-icon">📖</span> Biografi & Backstory
+          </h2>
+          
+          <div class="detail-summary-box">
+            <h3 class="summary-title">Ringkasan Karakter</h3>
+            <p class="backstory-summary-text" id="backstory-summary-text"></p>
+          </div>
+
+          <div class="detail-deep-backstory" id="detail-deep-backstory">
+            <!-- Deep backstory markdown content goes here -->
+          </div>
+        </article>
+
+        <!-- SECTION 2: LORE POINTERS GRID -->
+        <div class="detail-lore-grid">
+          
+          <!-- Origin -->
+          <div class="detail-lore-card" id="card-origin">
+            <h3 class="lore-card-title"><span class="lore-icon">🌍</span> Faksi Asal / Origin</h3>
+            <div class="lore-card-body" id="lore-origin-val"></div>
+          </div>
+
+          <!-- Important People -->
+          <div class="detail-lore-card" id="card-people">
+            <h3 class="lore-card-title"><span class="lore-icon">👥</span> Tokoh Krusial</h3>
+            <div class="lore-card-body">
+              <ul class="lore-card-list" id="lore-people-list"></ul>
+            </div>
+          </div>
+
+          <!-- Important Places -->
+          <div class="detail-lore-card" id="card-places">
+            <h3 class="lore-card-title"><span class="lore-icon">🗺</span> Lokasi Penting</h3>
+            <div class="lore-card-body">
+              <ul class="lore-card-list" id="lore-places-list"></ul>
+            </div>
+          </div>
+
+          <!-- Important Organizations -->
+          <div class="detail-lore-card" id="card-orgs">
+            <h3 class="lore-card-title"><span class="lore-icon">⚜</span> Organisasi & Faksi</h3>
+            <div class="lore-card-body">
+              <ul class="lore-card-list" id="lore-orgs-list"></ul>
+            </div>
+          </div>
+
+        </div><!-- /detail-lore-grid -->
+
+      </section>
+
+    </div><!-- /detail-grid -->
+
+  </main>
+
+  <script src="detail.js"></script>
+</body>
+</html>

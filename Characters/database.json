@@ -1,0 +1,235 @@
+[
+  {
+    "id": "charlie_001",
+    "name": "Charlie",
+    "alias": "",
+    "party": "Party Solmarch",
+    "race": "Elf",
+    "class": "Bard",
+    "subclass": "College of Lore",
+    "age": "TODO",
+    "gender": "TODO",
+    "alignment": "Neutral Good",
+    "height": "TODO",
+    "faith": "Atheist",
+    "skin": "Fair",
+    "eyes": "Emerald",
+    "hair": "Green",
+    "personality": "I like to read and memorize poetry. It keeps me calm and brings me fleeting moments of happiness.",
+    "ideals": "I refuse to become a victim.",
+    "bonds": "I keep my thoughts and discoveries in a journal. My journal is my legacy.",
+    "flaws": "I assume the worst in people.",
+    "backstory_summary": "Seorang Elf Bard bekas budak tambang Tartarus Pit yang meloloskan diri berkat persahabatannya dengan Kirk sang Orc. Setelah terdampar di dunia luar, Charlie direkrut ke dalam kelompok petualang yang menyelidiki Eldenfall. Misi tersebut menyeretnya ke Tokoshie no Kuni, di mana ia terjebak dalam time loop abadi dewa Kurumagatsu dan berasimilasi menjadi Anchor Hidup yang membawa ingatannya melewati setiap siklus pengulangan waktu.",
+    "lore_pointer": {
+      "origin": "Desa perbatasan Kerajaan Aurelion",
+      "important_people": [
+        "Kirk (Sahabat Orc pelindung dari Tartarus Pit)",
+        "Prosperina (Pahlawan Legendaris Eldenfall)",
+        "Rinne (Miko Suci Tokoshie no Kuni)",
+        "Belzareth (Iblis pengikat kontrak Prosperina)"
+      ],
+      "important_places": [
+        "Tartarus Pit (Tambang kristal & penjara perbudakan)",
+        "Eldenfall (Makam legendaris Prosperina)",
+        "Tokoshie no Kuni / Negara Keabadian (Negeri tempat time loop berada)",
+        "Aula Guild Highspire"
+      ],
+      "important_organizations": [
+        "Sindikat Pedagang Budak (Pihak yang menangkapnya)",
+        "Shrine of the Waning Bell (Kuil Utama dewa Kurumagatsu)"
+      ]
+    },
+    "sprite_path": null,
+    "has_deep_backstory": true,
+    "backstory_path": "Charbackstory/Charlie.md"
+  },
+  {
+    "id": "gufron_001",
+    "name": "Gufron",
+    "alias": "",
+    "party": "Party Solmarch",
+    "race": "Human",
+    "class": "Warlock",
+    "subclass": "Fiend Patron",
+    "age": "21",
+    "gender": "Male",
+    "alignment": "Chaotic Neutral",
+    "height": "5'5\"",
+    "weight": "104 lbs",
+    "faith": "Morenoism",
+    "skin": "White",
+    "eyes": "Brown",
+    "hair": "Black",
+    "personality": "Kleptomaniac",
+    "ideals": "Faith",
+    "bonds": "Their God",
+    "backstory_summary": "Seorang pemuda berusia 21 tahun yang mengawali hidupnya sebagai Acolyte pelayan kuil suci. Setelah kehilangan keimanannya akibat kemunafikan kuil dan mengembangkan obsesi kleptomania, Gufron mencuri artefak batu hitam terlarang di bawah tanah kuil. Tindakan ini memicu kontrak Warlock dengan entitas iblis (Fiend Patron) yang memberinya kekuatan sihir api gelap, menuntunnya melarikan diri menuju pengembaraan di Solmarch.",
+    "lore_pointer": {
+      "origin": "Kuil Suci Terpencil (Kuil asalnya melayani altar)",
+      "important_people": [
+        "Para Pendeta Kuil (Saksi kemunafikan yang membuatnya kehilangan iman)"
+      ],
+      "important_places": [
+        "Ruang Bawah Tanah Terlarang (Tempat artefak batu hitam disimpan)",
+        "Wilayah Solmarch (Tujuan pengembaraannya)"
+      ],
+      "important_organizations": [
+        "Kuil Otoritas Suci (Masa lalu: tempat ia melayani sebagai Acolyte)"
+      ]
+    },
+    "sprite_path": "CharSprite/Party Solmarch/Gufron.png",
+    "has_deep_backstory": true,
+    "backstory_path": "Charbackstory/Gufron.md"
+  },
+  {
+    "id": "kuro_001",
+    "name": "Kuro Vesryn",
+    "alias": "Kitsukage",
+    "party": "Party Solmarch",
+    "race": "Kuro-Gitsune",
+    "class": "Blood Hunter",
+    "subclass": "Order of the Ghostslayer",
+    "age": "TODO",
+    "gender": "TODO",
+    "alignment": "Chaotic Good",
+    "height": "TODO",
+    "personality": "I don’t run from evil. Evil runs from me.",
+    "ideals": "I have a dark calling that puts me above the law. (Chaotic)",
+    "bonds": "There’s evil in me, I can feel it. It must never be set free.",
+    "flaws": "I feel no compassion for the dead. They’re the lucky ones.",
+    "backstory_summary": "Lahir sebagai Kitsukage, seekor kitsune berbulu hitam langka yang dijadikan 'aset suci' kuil Shrine of Mirror, Yamashiro. Setelah melarikan diri, jiwanya terperangkap kutukan darah dan terlempar ke Abyss. Ia diselamatkan oleh Nyx'thara, dilatih bertahan hidup, dan dihadiahi sabit darah Crimson Reaver. Setelah bebas, ia terlempar ke Vaelthar, menetap di Hallowmere, dan menjalin hubungan tak terucap dengan Dewi Alam Selyndra sebelum melanjutkan pengembaraannya.",
+    "lore_pointer": {
+      "origin": "Shrine of Mirror, Yamashiro (Negeri tertutup di balik selat berkabut)",
+      "important_people": [
+        "Nyx'thara (Entitas Abyss yang membebaskan jiwanya & melatihnya selama 3 tahun)",
+        "Selyndra (Dewi Alam Vaelthar yang menghakimi & melindunginya di Hallowmere)",
+        "Para Pendeta Shrine of Mirror (Pihak yang membesarkannya sebagai aset suci)"
+      ],
+      "important_places": [
+        "Shrine of Mirror (Kuil tempat ia ditemukan & dibesarkan)",
+        "Yamashiro (Negeri kelahirannya yang melarang siapa pun pergi)",
+        "Land of the Abyss (Realm tempat jiwanya diselamatkan & dilatih)",
+        "Hallowmere (Dusun agraris tempat ia hidup damai sebagai petani)"
+      ],
+      "important_organizations": [
+        "Shrine of Mirror (Institusi keagamaan Yamashiro)",
+        "Order of the Ghostslayer (Sekte Blood Hunter pelindung roh)"
+      ]
+    },
+    "sprite_path": "CharSprite/Party Solmarch/Kuro.jpg",
+    "has_deep_backstory": true,
+    "backstory_path": "Charbackstory/Kuro Vesryn.md"
+  },
+  {
+    "id": "libris_001",
+    "name": "Libris",
+    "alias": "Sang Ksatria Ordo Keemasan",
+    "party": "Party Solmarch",
+    "race": "Orc",
+    "class": "Paladin",
+    "subclass": "Oath of Devotion",
+    "age": "TODO",
+    "gender": "TODO",
+    "alignment": "TODO",
+    "height": "TODO",
+    "backstory_summary": "Seorang Orc prajurit veteran dari perang parit era mesiu yang mengikrarkan Sumpah Pengabdian (Oath of Devotion) kepada 'Sang Keemasan' — sebuah makanan Tahu Isi hangat yang ia temukan di reruntuhan desa bersalju yang kelaparan. Setelah gugur sebagai martir dalam pertempuran menahan serbuan ribuan mayat hidup di lembah gelap sendirian, jiwanya terlempar lintas dimensi ke dunia baru akibat anomali spasial Divine Smite.",
+    "lore_pointer": {
+      "origin": "Benua tak dikenal, garis depan perang parit militeristik — Era Mesiu",
+      "important_people": [
+        "TODO: Nama Orang 1 (hubungan)"
+      ],
+      "important_places": [
+        "Reruntuhan Desa Kelaparan (Tempat ia menemukan 'Sang Keemasan' / Tahu Isi)",
+        "Lembah Gelap (Tempat ia menahan mayat hidup & gugur sebagai martir)"
+      ],
+      "important_organizations": [
+        "Unit Militer Parit (Masa lalu: pasukan tempat ia bertugas sebagai penembak)",
+        "Ordo Keemasan (Didirikan sendiri: sekte pengabdi Tahu Isi)"
+      ]
+    },
+    "sprite_path": null,
+    "has_deep_backstory": true,
+    "backstory_path": "Charbackstory/Libris.md"
+  },
+  {
+    "id": "victor_001",
+    "name": "Victor Han",
+    "alias": "",
+    "party": "Party Solmarch",
+    "race": "Human",
+    "class": "Wizard",
+    "subclass": "School of Evocation",
+    "age": "TODO",
+    "gender": "TODO",
+    "alignment": "Lawful Neutral",
+    "height": "TODO",
+    "faith": "White",
+    "skin": "White",
+    "eyes": "Grey",
+    "hair": "Grey",
+    "personality": "I am always calm, no matter what the situation. I never raise my voice or let my emotions control me. I always have a plan for what to do.",
+    "ideals": "People. I'm loyal to my friends, not to any ideals, and everyone else can take a trip down the Styx for all I care.",
+    "backstory_summary": "Di kehidupan sebelumnya, Victor adalah seorang detektif independen di Bumi yang bergerak di bayang-bayang menggunakan logika dan sains. Dikhianati dan dieksekusi oleh kepala kepolisian yang menjadi informannya, ia terbangun di hutan Solmarch. Setelah 24 hari bertahan hidup, ia bekerja di tavern sebagai analis strategis, dan membedah energi sihir secara ilmiah di bawah bimbingan Sorcerer veteran hingga menjadi Wizard.",
+    "lore_pointer": {
+      "origin": "Bumi (Kehidupan masa lalu sebagai detektif)",
+      "important_people": [
+        "Mantan Monk (Sahabat dekat & pembimbing awal di Solmarch)",
+        "Bard Pemilik Tavern (Atasan bisnis & sahabat dekat)",
+        "Sorcerer Veteran (Ayah si Bard, guru sihir yang mengajarinya selama 2 tahun)",
+        "Kepala Kepolisian Bumi (Masa lalu: informan sekutu yang mengkhianati & mengeksekusinya)"
+      ],
+      "important_places": [
+        "Hutan Pegunungan Solmarch (Tempat pertama ia terbangun di dunia baru)",
+        "Tavern Lokal Solmarch (Tempat ia bekerja sebagai analis bisnis)"
+      ],
+      "important_organizations": [
+        "Kepolisian Bumi (Institusi penegak hukum yang mengkhianatinya)",
+        "Tavern Lokal Solmarch (Pusat aktivitas bisnis & circle pertemanannya)"
+      ]
+    },
+    "sprite_path": null,
+    "has_deep_backstory": true,
+    "backstory_path": "Charbackstory/Victor Han.md"
+  },
+  {
+    "id": "estelle_001",
+    "name": "Estelle Heidi El Rath",
+    "alias": "The Fallen Saint",
+    "party": "Party Vaelthar",
+    "race": "Changeling",
+    "class": "Warlock",
+    "subclass": "Hexblade (Patron: Kurumagatsu no Mikoto)",
+    "age": "21",
+    "gender": "Androgini",
+    "alignment": "Chaotic Evil",
+    "height": "160 cm",
+    "appearance": "Rambut panjang pink, mata hijau, kulit putih",
+    "backstory_summary": "Lahir sebagai Dorian Karlstein, seorang Changeling yang melayani Estelle Heidi El Rath di katedral. Ketika Estelle menemukan rencana pengorbanan keluarganya dan melarikan diri, Dorian mengkhianati Teokrasi untuk mengikutinya. Chronos-Vael mengutuk Estelle dengan penuaan paksa; dalam keputusasaan Dorian membuat Pact dengan Kurumagatsu no Mikoto (Dewi Keabadian) untuk membekukan kutukan. Setelah Estelle selamat dan keduanya bertunangan, Dorian kembali ke Vaelthar menyamar sebagai 'The Fallen Saint' untuk menghancurkan Teokrasi dari dalam.",
+    "personality": "Di luar pertempuran tampil dingin dan arogan layaknya bangsawan (Chaotic Neutral). Saat bertarung berubah jadi sadis dan haus darah (Chaotic Evil). Memandang dunia hitam-putih ekstrim: Estelle = segalanya, semua yang menghalangi = sampah.",
+    "lore_pointer": {
+      "origin": "Kawasan Kumuh Kota Suci Kairon, Kerajaan Aurelia, Benua Vaelthar",
+      "important_people": [
+        "Estelle Heidi El Rath (Tunangan & jangkar eksistensi — kini dalam stasis di Tokoshie no Kuni)",
+        "Kurumagatsu no Mikoto (Patron Dewi Keabadian, menuntut pemusnahan agen Chronos-Vael)",
+        "Chronos-Vael (Dewa Waktu — musuh, pihak yang mengutuk Estelle)",
+        "Tetua House El Rath (Antagonis utama — keluarga yang merencanakan ritual pengorbanan)"
+      ],
+      "important_places": [
+        "Kota Suci Kairon (Tanah asal & target operasi)",
+        "Katedral Agung Roda Waktu (Pusat kekuasaan musuh)",
+        "Tokoshie no Kuni / Negara Keabadian (Tempat Estelle asli tersembunyi dalam stasis)",
+        "Benua Solmarch (Zona aman eksodus)",
+        "Arsip Rahasia Katedral (Tempat rencana pengorbanan ditemukan Estelle)"
+      ],
+      "important_organizations": [
+        "House El Rath (Musuh: Keluarga bangsawan agung pemegang monopoli keagamaan Kairon)",
+        "Ordo Agung Roda Temporal (Musuh: Lembaga keagamaan resmi House El Rath)",
+        "The Fallen Court (Didirikan sendiri: Sekte pemberontak bawah tanah untuk sabotase Teokrasi)",
+        "Church of the Eternal Silent (Didirikan sendiri: Organisasi kedok penyebaran ajaran stasis)"
+      ]
+    },
+    "sprite_path": "CharSprite/Party Vaelthar/Estella.png",
+    "has_deep_backstory": true,
+    "backstory_path": "Charbackstory/Estelle Heidi El Rath.md"
+  }
+]

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Galeri karakter dan lore interaktif dari dunia Solythis — sebuah proyek D&D homemade dengan lore mendalam." />
+  <title>Solythis Chronicles — Galeri Karakter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Animated Star Background ────────────────────────── -->
+  <canvas id="star-canvas" aria-hidden="true"></canvas>
+
+  <!-- ── Decorative Gradient Orbs ────────────────────────── -->
+  <div class="orb orb--gold" aria-hidden="true"></div>
+  <div class="orb orb--purple" aria-hidden="true"></div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!--   HEADER                                              -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <div style="display:flex;align-items:center;gap:1.5rem;">
+        <a href="../dashboard.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Dashboard</a>
+        <div class="header-title-group">
+          <p class="header-eyebrow">Codex of the World</p>
+          <h1 class="header-title">
+            <span class="title-main">SOLYTHIS</span>
+            <span class="title-sub">CHRONICLES</span>
+          </h1>
+          <p class="header-tagline">Galeri Karakter &amp; Lore</p>
+        </div>
+      </div>
+
+      <!-- Party Filter Navigation -->
+      <nav class="party-filter" id="party-filter" aria-label="Filter party karakter">
+        <button class="filter-btn active" id="filter-all" data-party="all" aria-pressed="true">
+          <span class="filter-btn__icon">⚔</span>
+          <span>Semua</span>
+        </button>
+        <button class="filter-btn" id="filter-solmarch" data-party="Party Solmarch" aria-pressed="false">
+          <span class="filter-btn__icon">🏔</span>
+          <span>Solmarch</span>
+        </button>
+        <button class="filter-btn" id="filter-vaelthar" data-party="Party Vaelthar" aria-pressed="false">
+          <span class="filter-btn__icon">⌛</span>
+          <span>Vaelthar</span>
+        </button>
+        <div class="filter-indicator" id="filter-indicator" aria-hidden="true"></div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!--   MAIN GALLERY                                        -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <main class="gallery-main" id="gallery-main" aria-label="Galeri karakter">
+
+    <!-- Loading State -->
+    <div class="state-loading" id="state-loading" role="status" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring spinner-ring--2"></div>
+        <div class="spinner-ring spinner-ring--3"></div>
+      </div>
+      <p>Memuat data karakter...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="state-error hidden" id="state-error" role="alert">
+      <div class="state-icon">⚠</div>
+      <h2>Gagal Memuat Database</h2>
+      <p id="error-message">Pastikan <code>sync.py</code> sudah dijalankan dan server lokal aktif.</p>
+      <button class="btn-retry" id="btn-retry" onclick="initApp()">Coba Lagi</button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="state-empty hidden" id="state-empty">
+      <div class="state-icon">📜</div>
+      <h2>Tidak Ada Karakter</h2>
+      <p>Tidak ada karakter yang cocok dengan filter ini.</p>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="character-grid" id="character-grid" role="list"></div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!--   CHARACTER DETAIL MODAL                              -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="modal-overlay hidden" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-char-name">
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+
+    <div class="modal-container" id="modal-container">
+
+      <!-- Close Button -->
+      <button class="modal-close" id="modal-close" aria-label="Tutup detail karakter">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <!-- ── LEFT PANEL ─────────────────────────────────── -->
+      <aside class="modal-left" id="modal-left">
+        <div class="modal-sprite-wrap">
+          <img class="modal-sprite" id="modal-sprite" src="" alt="" />
+          <div class="modal-sprite-glow" aria-hidden="true"></div>
+        </div>
+
+        <div class="modal-basic-info" id="modal-basic-info">
+          <div class="modal-party-badge" id="modal-party-badge"></div>
+          <h2 class="modal-char-name" id="modal-char-name"></h2>
+          <p class="modal-char-alias" id="modal-char-alias"></p>
+
+          <dl class="modal-stats" id="modal-stats">
+            <!-- Filled dynamically -->
+          </dl>
+        </div>
+      </aside>
+
+      <!-- ── RIGHT PANEL ────────────────────────────────── -->
+      <section class="modal-right" id="modal-right">
+
+        <!-- Tab Navigation -->
+        <nav class="lore-tabs" id="lore-tabs" aria-label="Navigasi lore karakter" role="tablist">
+          <button class="lore-tab active" id="tab-btn-profile" data-tab="profile" role="tab" aria-selected="true" aria-controls="pane-profile">
+            <span class="tab-icon">📖</span> Profil
+          </button>
+          <button class="lore-tab" id="tab-btn-origin" data-tab="origin" role="tab" aria-selected="false" aria-controls="pane-origin">
+            <span class="tab-icon">🌍</span> Origin
+          </button>
+          <button class="lore-tab" id="tab-btn-people" data-tab="people" role="tab" aria-selected="false" aria-controls="pane-people">
+            <span class="tab-icon">👥</span> Orang Penting
+          </button>
+          <button class="lore-tab" id="tab-btn-places" data-tab="places" role="tab" aria-selected="false" aria-controls="pane-places">
+            <span class="tab-icon">🗺</span> Tempat
+          </button>
+          <button class="lore-tab" id="tab-btn-orgs" data-tab="orgs" role="tab" aria-selected="false" aria-controls="pane-orgs">
+            <span class="tab-icon">⚜</span> Organisasi
+          </button>
+          <div class="tabs-slider" id="tabs-slider" aria-hidden="true"></div>
+        </nav>
+
+        <!-- Tab Panes -->
+        <div class="lore-panes" id="lore-panes">
+
+          <!-- Profile / Backstory -->
+          <div class="lore-pane active" id="pane-profile" role="tabpanel" aria-labelledby="tab-btn-profile">
+            <div class="backstory-content" id="backstory-content">
+              <!-- Filled dynamically -->
+            </div>
+            <button class="btn-read-more hidden" id="btn-read-more">
+              <span class="btn-read-more__icon">📜</span>
+              Baca Backstory Lengkap
+            </button>
+            <div class="full-backstory hidden" id="full-backstory">
+              <!-- Filled dynamically -->
+            </div>
+          </div>
+
+          <!-- Origin -->
+          <div class="lore-pane" id="pane-origin" role="tabpanel" aria-labelledby="tab-btn-origin">
+            <div class="lore-section-header">
+              <h3 class="lore-section-title">Asal-Usul</h3>
+              <p class="lore-section-desc">Wilayah kelahiran dan latar belakang faksi asal karakter ini.</p>
+            </div>
+            <div class="lore-origin-card" id="lore-origin-card">
+              <!-- Filled dynamically -->
+            </div>
+          </div>
+
+          <!-- Important People -->
+          <div class="lore-pane" id="pane-people" role="tabpanel" aria-labelledby="tab-btn-people">
+            <div class="lore-section-header">
+              <h3 class="lore-section-title">Orang-Orang Penting</h3>
+              <p class="lore-section-desc">Individu yang memiliki hubungan krusial dengan karakter ini.</p>
+            </div>
+            <ul class="lore-list" id="lore-people-list">
+              <!-- Filled dynamically -->
+            </ul>
+          </div>
+
+          <!-- Important Places -->
+          <div class="lore-pane" id="pane-places" role="tabpanel" aria-labelledby="tab-btn-places">
+            <div class="lore-section-header">
+              <h3 class="lore-section-title">Tempat-Tempat Penting</h3>
+              <p class="lore-section-desc">Lokasi atau wilayah yang berkaitan dengan sejarah hidup karakter ini.</p>
+            </div>
+            <ul class="lore-list" id="lore-places-list">
+              <!-- Filled dynamically -->
+            </ul>
+          </div>
+
+          <!-- Important Organizations -->
+          <div class="lore-pane" id="pane-orgs" role="tabpanel" aria-labelledby="tab-btn-orgs">
+            <div class="lore-section-header">
+              <h3 class="lore-section-title">Organisasi Penting</h3>
+              <p class="lore-section-desc">Fraksi, guild, atau sekte yang berkaitan dengan karakter ini.</p>
+            </div>
+            <ul class="lore-list" id="lore-orgs-list">
+              <!-- Filled dynamically -->
+            </ul>
+          </div>
+
+        </div><!-- /lore-panes -->
+      </section><!-- /modal-right -->
+
+    </div><!-- /modal-container -->
+  </div><!-- /modal-overlay -->
+
+  <!-- ── Tooltip for placeholder chars ──────────────────── -->
+  <div class="tooltip" id="tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

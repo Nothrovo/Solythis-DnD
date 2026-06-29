@@ -1,0 +1,251 @@
+/**
+ * Solythis D&D — Unified Theme CSS
+ * =================================
+ * Import this file into any page via:
+ *   <link rel="stylesheet" href="theme.css">
+ *   (adjust path prefix for subfolders: ../theme.css)
+ *
+ * This file provides the canonical design tokens and
+ * global resets shared across all Solythis HTML modules.
+ */
+
+/* ─────────────────────────────────────────────────────
+   1. GOOGLE FONTS IMPORT
+───────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+/* ─────────────────────────────────────────────────────
+   2. DESIGN TOKENS  (override locally if needed)
+───────────────────────────────────────────────────── */
+:root {
+  /* Background scale */
+  --sol-bg:           #07090e;
+  --sol-bg-1:         #0d0f1a;
+  --sol-bg-2:         rgba(15, 18, 32, 0.95);
+  --sol-bg-card:      rgba(17, 22, 38, 0.80);
+  --sol-bg-input:     rgba(0, 0, 0, 0.35);
+
+  /* Gold palette */
+  --sol-gold:         #d4af37;
+  --sol-gold-light:   #f3e5ab;
+  --sol-gold-dim:     rgba(212, 175, 55, 0.18);
+  --sol-gold-glow:    rgba(212, 175, 55, 0.28);
+  --sol-gold-border:  rgba(212, 175, 55, 0.25);
+  --sol-gold-border-bright: rgba(212, 175, 55, 0.65);
+
+  /* Purple accent */
+  --sol-purple:       #7c3aed;
+  --sol-purple-light: #a78bfa;
+  --sol-purple-glow:  rgba(124, 58, 237, 0.22);
+
+  /* Semantic colours */
+  --sol-ally:         #22d3ee;
+  --sol-enemy:        #f87171;
+  --sol-success:      #10b981;
+  --sol-danger:       #ef4444;
+  --sol-warning:      #f59e0b;
+
+  /* Text scale */
+  --sol-text:         #e2e8f0;
+  --sol-text-dim:     #94a3b8;
+  --sol-text-faint:   #64748b;
+
+  /* Border */
+  --sol-border:       rgba(212, 175, 55, 0.18);
+  --sol-border-sub:   rgba(255, 255, 255, 0.05);
+
+  /* Radius */
+  --sol-r-sm:   6px;
+  --sol-r-md:   10px;
+  --sol-r-lg:   16px;
+  --sol-r-xl:   22px;
+  --sol-r-full: 9999px;
+
+  /* Spacing (match existing conventions) */
+  --sol-gap-xs:  4px;
+  --sol-gap-sm:  8px;
+  --sol-gap-md:  16px;
+  --sol-gap-lg:  24px;
+  --sol-gap-xl:  40px;
+
+  /* Typography */
+  --sol-font-display: 'Cinzel', serif;
+  --sol-font-deco:    'Cinzel Decorative', serif;
+  --sol-font-body:    'Plus Jakarta Sans', sans-serif;
+
+  /* Motion */
+  --sol-ease:     cubic-bezier(0.4, 0, 0.2, 1);
+  --sol-t-fast:   0.18s;
+  --sol-t:        0.28s;
+  --sol-t-slow:   0.42s;
+
+  /* Shadows */
+  --sol-shadow-sm:  0 4px 20px rgba(0,0,0,0.4);
+  --sol-shadow-md:  0 12px 40px rgba(0,0,0,0.5);
+  --sol-shadow-lg:  0 24px 80px rgba(0,0,0,0.65);
+  --sol-shadow-gold: 0 0 30px rgba(212, 175, 55, 0.12);
+}
+
+/* ─────────────────────────────────────────────────────
+   3. GLOBAL RESET
+───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--sol-font-body);
+  background-color: var(--sol-bg);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(124, 58, 237, 0.06) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.06) 0%, transparent 45%);
+  background-attachment: fixed;
+  color: var(--sol-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─────────────────────────────────────────────────────
+   4. SCROLLBAR
+───────────────────────────────────────────────────── */
+::-webkit-scrollbar              { width: 6px; height: 6px; }
+::-webkit-scrollbar-track        { background: var(--sol-bg-1); }
+::-webkit-scrollbar-thumb        { background: var(--sol-gold-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover  { background: var(--sol-gold); }
+* { scrollbar-width: thin; scrollbar-color: var(--sol-gold-border) var(--sol-bg-1); }
+
+/* ─────────────────────────────────────────────────────
+   5. FOCUS
+───────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--sol-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────────────────────────
+   6. TYPOGRAPHY UTILITIES
+───────────────────────────────────────────────────── */
+.sol-display { font-family: var(--sol-font-display); }
+.sol-deco    { font-family: var(--sol-font-deco); }
+.sol-gold    { color: var(--sol-gold); }
+.sol-dim     { color: var(--sol-text-dim); }
+.sol-faint   { color: var(--sol-text-faint); }
+.sol-hidden  { display: none !important; }
+
+/* ─────────────────────────────────────────────────────
+   7. SHARED HEADER BAR  (.sol-topbar)
+   Used consistently across all modules
+───────────────────────────────────────────────────── */
+.sol-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1.5rem;
+  background: linear-gradient(135deg, rgba(7,9,14,0.98), rgba(13,15,26,0.98));
+  border-bottom: 1px solid var(--sol-border);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  gap: 1rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.sol-topbar-brand {
+  font-family: var(--sol-font-display);
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: #fff;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.sol-topbar-brand span { color: var(--sol-gold); }
+
+.sol-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--sol-gold-light);
+  text-decoration: none;
+  padding: 6px 14px;
+  border: 1px solid var(--sol-border);
+  border-radius: var(--sol-r-full);
+  background: var(--sol-gold-dim);
+  transition: all var(--sol-t) var(--sol-ease);
+}
+.sol-back-btn:hover {
+  background: var(--sol-gold);
+  border-color: var(--sol-gold);
+  color: var(--sol-bg);
+  box-shadow: 0 0 18px var(--sol-gold-glow);
+  transform: translateX(-2px);
+}
+
+/* ─────────────────────────────────────────────────────
+   8. SHARED CARD COMPONENT  (.sol-card)
+───────────────────────────────────────────────────── */
+.sol-card {
+  background: var(--sol-bg-card);
+  border: 1px solid var(--sol-border);
+  border-radius: var(--sol-r-lg);
+  padding: var(--sol-gap-lg);
+  box-shadow: var(--sol-shadow-sm);
+  transition: border-color var(--sol-t) var(--sol-ease),
+              box-shadow var(--sol-t) var(--sol-ease),
+              transform var(--sol-t) var(--sol-ease);
+}
+.sol-card:hover {
+  border-color: var(--sol-gold);
+  box-shadow: var(--sol-shadow-md), var(--sol-shadow-gold);
+  transform: translateY(-3px);
+}
+
+/* ─────────────────────────────────────────────────────
+   9. BUTTON SYSTEM
+───────────────────────────────────────────────────── */
+.sol-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  font-family: var(--sol-font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: var(--sol-r-full);
+  border: 1px solid var(--sol-border);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--sol-t) var(--sol-ease);
+  white-space: nowrap;
+}
+.sol-btn-primary {
+  background: linear-gradient(135deg, var(--sol-gold), #b8912e);
+  border-color: var(--sol-gold);
+  color: var(--sol-bg);
+}
+.sol-btn-primary:hover {
+  box-shadow: 0 0 24px var(--sol-gold-glow);
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+.sol-btn-ghost {
+  background: var(--sol-gold-dim);
+  color: var(--sol-gold-light);
+}
+.sol-btn-ghost:hover {
+  background: var(--sol-gold);
+  color: var(--sol-bg);
+  box-shadow: 0 0 18px var(--sol-gold-glow);
+  transform: translateY(-2px);
+}
