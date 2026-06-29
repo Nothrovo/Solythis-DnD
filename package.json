@@ -1,5 +1,14 @@
 {
+  "name": "solythis-dnd",
+  "version": "1.0.0",
+  "description": "Solythis D&D Campaign Tools — Real-Time Multiplayer via LAN",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "jsdom": "^29.1.1"
+    "jsdom": "^29.1.1",
+    "express": "^5.1.0",
+    "socket.io": "^4.8.0"
   }
 }

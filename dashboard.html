@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="theme.css" />
+  <script src="/socket.io/socket.io.js" onerror="window.io=undefined"></script>
+  <script src="sync-client.js"></script>
 
   <style>
     /* ── PAGE-SPECIFIC OVERRIDES ─────────────────── */
@@ -121,6 +123,69 @@
       animation: blink 1.8s ease-in-out infinite;
     }
     @keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0.2 } }
+
+    /* ── ONLINE PLAYERS PANEL ── */
+    .db-players-panel {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(13, 15, 26, 0.6);
+      border: 1px solid var(--sol-border);
+      border-radius: var(--sol-r-md);
+      max-width: 450px;
+      width: calc(100% - 40px);
+      box-shadow: var(--sol-shadow-sm);
+    }
+    .players-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--sol-gold-light);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .players-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+    .player-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--sol-r-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--sol-text-dim);
+    }
+    .player-chip--dm {
+      background: rgba(212,175,55,0.12);
+      border-color: rgba(212,175,55,0.4);
+      color: var(--sol-gold);
+    }
+    .player-chip--player {
+      background: rgba(124,58,237,0.1);
+      border-color: rgba(124,58,237,0.3);
+      color: var(--sol-purple-light);
+    }
+    .player-chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .session-url-info {
+      font-size: 0.7rem;
+      color: var(--sol-text-faint);
+      margin-top: 4px;
+      font-family: monospace;
+    }
 
     /* Editable location */
     #editable-location {
@@ -408,6 +473,13 @@
         ✦ Session #<span id="session-number" contenteditable="true" spellcheck="false">1</span>
       </div>
     </div>
+
+    <!-- Connected Players Panel -->
+    <div class="db-players-panel" id="playersPanel" style="display: none;">
+      <div class="players-title">🟢 Pemain Terhubung</div>
+      <div class="players-list" id="playersList"></div>
+      <div class="session-url-info" id="sessionUrlInfo"></div>
+    </div>
   </header>
 
   <!-- ── MAIN GRID ──────────────────────────────── -->
@@ -672,6 +744,34 @@
         setTimeout(() => { btn.textContent = 'Salin'; }, 1800);
       });
     });
+
+    /* ── REAL-TIME MULTIPLAYER STATE ON DASHBOARD ── */
+    (function initDashboardSync() {
+      if (typeof SolSync === 'undefined' || !SolSync.isOnline) return;
+
+      const panel = document.getElementById('playersPanel');
+      const list = document.getElementById('playersList');
+      const urlInfo = document.getElementById('sessionUrlInfo');
+      
+      if (!panel || !list) return;
+      panel.style.display = 'flex';
+
+      // Display connection details
+      if (urlInfo) {
+        urlInfo.textContent = `Sesi LAN: ${window.location.origin}`;
+      }
+
+      window._onPlayerListUpdate = function (players) {
+        list.innerHTML = '';
+        Object.values(players).forEach(p => {
+          const chip = document.createElement('div');
+          const isDm = p.role === 'dm';
+          chip.className = `player-chip ${isDm ? 'player-chip--dm' : 'player-chip--player'}`;
+          chip.innerHTML = `<span class="player-chip-dot"></span>${p.name} ${isDm ? '(DM)' : ''}`;
+          list.appendChild(chip);
+        });
+      };
+    })();
   </script>
 </body>
 </html>

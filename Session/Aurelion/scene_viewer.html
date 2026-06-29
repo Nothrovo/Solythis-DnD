@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cinzel+Decorative:wght@700&family=Lora:ital,wght@0,500;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="/socket.io/socket.io.js" onerror="window.io=undefined"></script>
+    <script src="../../sync-client.js"></script>
     <style>
         :root {
             --gold: #d4af37;
@@ -780,6 +782,7 @@
     window.addEventListener('DOMContentLoaded', () => {
         loadData();
         setupKeyboard();
+        initSceneSync();
     });
 
     // ══════════════════════════════════════════
@@ -1138,6 +1141,16 @@
         // Progress bar
         document.getElementById('progressBar').style.width =
             filteredScenes.length > 1 ? ((idx / (filteredScenes.length - 1)) * 100) + '%' : '100%';
+
+        // Broadcast scene change if we are DM and not currently applying an incoming sync
+        if (typeof SolSync !== 'undefined' && SolSync.isOnline && SolSync.getPlayerRole() === 'dm' && !_syncReceivingScene) {
+            SolSync.emit('scene:change', {
+                place: activePlace,
+                category: activeCategory,
+                idx: idx,
+                sceneTitle: scene.sceneTitle
+            });
+        }
     }
 
     function navigate(delta) { goTo(currentIdx + delta); }
@@ -1313,6 +1326,15 @@
     function setupKeyboard() {
         document.addEventListener('keydown', (e) => {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+            // Disable player keyboard controls if they are supposed to follow the DM
+            if (typeof SolSync !== 'undefined' && SolSync.isOnline && SolSync.getPlayerRole() !== 'dm') {
+                if (activeView === 'viewer') {
+                    // Players can toggle fullscreen/HUD, but not navigate slides
+                    if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+                    if (e.key === 'h' || e.key === 'H') toggleHUD();
+                    return;
+                }
+            }
             switch (e.key) {
                 case 'ArrowLeft':  case 'ArrowUp':    e.preventDefault(); navigate(-1); break;
                 case 'ArrowRight': case 'ArrowDown': case ' ': e.preventDefault(); navigate(+1); break;
@@ -1332,6 +1354,60 @@
                 case 'End':         e.preventDefault(); goTo(filteredScenes.length - 1); break;
             }
         });
+    }
+
+    // ── SCENE VIEWER SYNC ──
+    let _syncReceivingScene = false;
+    function initSceneSync() {
+        if (typeof SolSync === 'undefined' || !SolSync.isOnline) return;
+
+        // If player is not DM, hide controls (prev/next arrows, drawer, autoplay) to make it pure projector/view-only
+        if (SolSync.getPlayerRole() !== 'dm') {
+            document.getElementById('prevArrow')?.style.setProperty('display', 'none', 'important');
+            document.getElementById('nextArrow')?.style.setProperty('display', 'none', 'important');
+            document.getElementById('tabBar')?.style.setProperty('display', 'none', 'important');
+            
+            // Also register to follow scene changes
+            SolSync.on('scene:changed', (data) => {
+                applySceneSync(data);
+            });
+        }
+
+        // Apply state when syncing initial load
+        SolSync.on('state:sync', (state) => {
+            if (state && state.scene && SolSync.getPlayerRole() !== 'dm') {
+                applySceneSync(state.scene);
+            }
+        });
+
+        // If lastSceneState was cached in combat sync
+        if (window._lastSceneState && SolSync.getPlayerRole() !== 'dm') {
+            applySceneSync(window._lastSceneState);
+        }
+    }
+
+    async function applySceneSync(data) {
+        if (!data || !data.place) return;
+        _syncReceivingScene = true;
+
+        // Ensure database/places are loaded
+        if (placesList.length === 0) {
+            await loadData();
+        }
+
+        if (activePlace !== data.place || activeView !== 'viewer') {
+            openPlaceViewer(data.place);
+        }
+
+        if (activeCategory !== data.category) {
+            switchCategory(data.category);
+        }
+
+        if (currentIdx !== data.idx) {
+            goTo(data.idx, true);
+        }
+
+        _syncReceivingScene = false;
     }
     </script>
 </body>

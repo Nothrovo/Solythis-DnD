@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/socket.io/socket.io.js" onerror="window.io=undefined"></script>
+    <script src="../sync-client.js"></script>
     <style>
         :root {
             --bg: #0d0f1a;
@@ -304,6 +306,27 @@
         .dice-result-val.nat20 { color: #4ade80; text-shadow: 0 0 8px rgba(74,222,128,0.5); }
         .dice-result-val.nat1 { color: var(--danger); text-shadow: 0 0 8px rgba(239,68,68,0.5); }
 
+        /* ── MODIFIER PANEL ── */
+        .mod-separator { height: 1px; background: var(--border); margin: 0.6rem 0; }
+        .mod-title { font-family: 'Cinzel', serif; font-size: 0.68rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; margin-bottom: 0.5rem; opacity: 0.85; }
+        .mod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.3rem; margin-bottom: 0.5rem; }
+        .mod-item { display: flex; align-items: center; gap: 4px; }
+        .mod-label { font-size: 0.68rem; font-weight: 700; color: var(--muted); min-width: 28px; font-family: 'Cinzel', serif; }
+        .mod-input {
+            width: 40px; background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+            color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.8rem; font-weight: 700;
+            text-align: center; border-radius: 5px; padding: 3px 2px; outline: none;
+        }
+        .mod-input:focus { border-color: var(--gold); }
+        .mod-quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.25rem; }
+        .mod-quick-btn {
+            background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.2);
+            color: var(--gold); border-radius: 5px; padding: 4px 6px; cursor: pointer;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.66rem; font-weight: 700;
+            transition: all 0.15s; text-align: center; white-space: nowrap;
+        }
+        .mod-quick-btn:hover { background: rgba(212,175,55,0.15); border-color: var(--gold); transform: translateY(-1px); }
+
         /* ── AoE PANEL (floating toolbar) ── */
         #aoeToolbar {
             position: absolute; top: 0.7rem; left: 50%; transform: translateX(-50%);
@@ -550,6 +573,10 @@
                 <button class="dice-roll-btn" onclick="rollFormula()">Roll</button>
             </div>
             <div class="dice-history" id="diceHistory"></div>
+            <div class="mod-separator"></div>
+            <div class="mod-title">⚙ MODIFIER CEPAT</div>
+            <div class="mod-grid" id="modGrid"></div>
+            <div class="mod-quick-grid" id="modQuickGrid"></div>
         </div>
     </div>
 
@@ -775,6 +802,7 @@ let aoeList     = []; // placed AoE shapes: {id, shape, color, size, origin, dir
 let fogBrushSize = 55;
 let fogMode      = 'reveal'; // 'reveal' | 'hide'
 let fogPainting  = false;
+let _syncReceiving = false; // Guard flag to prevent emit loops during sync
 
 // ══════════════════════════════════════════
 //  INIT
@@ -782,6 +810,7 @@ let fogPainting  = false;
 window.addEventListener('DOMContentLoaded', () => {
     buildMapSelector();
     buildDiceGrid();
+    buildModPanel();
     document.addEventListener('click', hideContextMenu);
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.getElementById('mapImg').addEventListener('load', onMapLoaded);
@@ -797,6 +826,9 @@ window.addEventListener('DOMContentLoaded', () => {
     // Load Character and Monster Databases
     fetchCharactersDb();
     fetchMonstersDb();
+
+    // ── SOCKET.IO SYNC LISTENERS ──
+    initCombatSync();
 });
 
 // ══════════════════════════════════════════
@@ -820,6 +852,7 @@ function selectMap(map) {
     document.querySelectorAll('.map-btn').forEach(b => b.classList.toggle('active', b.dataset.id === map.id));
     document.getElementById('mapImg').src = map.src;
     document.getElementById('noMapMsg').style.display = 'none';
+    if (!_syncReceiving) SolSync.emit('map:select', { mapId: map.id, mapSrc: map.src, mapLabel: map.label });
 }
 
 function onMapLoaded() {
@@ -977,7 +1010,14 @@ function onMapMouseMove(e) {
 function onMapMouseUp(e) {
     if (activeTool === 'ruler') { rulerStart = null; }
     if (activeTool === 'aoe' && aoeState.origin) { finalizeAoe(); }
-    if (activeTool === 'fog') { fogPainting = false; }
+    if (activeTool === 'fog') {
+        fogPainting = false;
+        // Broadcast fog state after painting stroke
+        const fogCanvas = document.getElementById('fogCanvas');
+        if (fogCanvas) {
+            SolSync.emit('fog:update', { imageData: fogCanvas.toDataURL('image/png') });
+        }
+    }
 }
 function onMapMouseLeave(e) {
     document.getElementById('coordTip').style.opacity = '0';
@@ -990,7 +1030,10 @@ function onMapMouseLeave(e) {
 function onMapClick(e) {
     if (e.target.classList.contains('token') || e.target.closest('.token')) return;
     const pos = getMapPos(e);
-    if (activeTool === 'ping') spawnPing(pos);
+    if (activeTool === 'ping') {
+        spawnPing(pos);
+        SolSync.emit('ping:spawn', { x: pos.x, y: pos.y });
+    }
 }
 
 function updateCoordTip(e, pos) {
@@ -1293,18 +1336,21 @@ function spawnToken(type) {
     else openEnemyModal(defaultName);
 }
 
-function createAndSpawn(name, imgUrl, type, size) {
+function createAndSpawn(name, imgUrl, type, size, explicitId) {
     const sz = size || 'medium';
     const cells = SIZE_MAP[sz] || 1;
     const cols = Math.floor(MAP_W/gridSize), rows = Math.floor(MAP_H/gridSize);
     const startC = Math.floor(cols/2), startR = Math.floor(rows/2);
     const { gx, gy } = findFreeCell(startC, startR, cols, rows, cells);
-    const id = `tok-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+    const id = explicitId || `tok-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
     const token = { id, type, name, imgUrl, gridX: gx, gridY: gy, el: null, conditions: [], condTimers: {}, initScore: '', hp: '', maxHp: '', initiativeEl: null, size: sz, note: '' };
     createTokenElement(token);
     tokens.push(token);
     renderInitiative();
     renderTokenPosition(token);
+    if (!_syncReceiving) SolSync.emit('token:spawn', {
+        id, type, name, imgUrl, gridX: gx, gridY: gy, size: sz
+    });
 }
 
 function findFreeCell(startCol, startRow, cols, rows, cells) {
@@ -1452,6 +1498,7 @@ function onDragEnd(e) {
     // Drop the token directly to the cell without restricting it due to occupancy
     token.gridX = gx; token.gridY = gy;
     renderTokenPosition(token);
+    if (!_syncReceiving) SolSync.emit('token:move', { id: token.id, gridX: gx, gridY: gy });
     document.getElementById('coordTip').style.opacity = '0';
     dragState = null;
 }
@@ -1477,10 +1524,12 @@ function removeToken() {
     if (!selectedTokenId) return;
     const idx = tokens.findIndex(t => t.id === selectedTokenId);
     if (idx === -1) return;
+    const removedId = selectedTokenId;
     tokens[idx].el?.remove(); tokens[idx].initiativeEl?.remove();
     tokens.splice(idx, 1);
-    if (activeTurnId === selectedTokenId) activeTurnId = null;
+    if (activeTurnId === removedId) activeTurnId = null;
     selectedTokenId = null; renderInitiative();
+    if (!_syncReceiving) SolSync.emit('token:remove', { id: removedId });
 }
 
 function renameToken() {
@@ -1545,6 +1594,11 @@ function toggleCondition(cond) {
     }
     renderInitiative();
     if (token.el) { token.el.style.outline = '2px solid white'; setTimeout(()=>{ if(token.el) token.el.style.outline=''; },300); }
+    if (!_syncReceiving) SolSync.emit('condition:toggle', {
+        id: selectedTokenId,
+        conditions: [...token.conditions],
+        condTimers: {...token.condTimers}
+    });
 }
 
 function removeCond(tokenId, cond) {
@@ -1625,7 +1679,7 @@ function renderInitiative() {
     updateTokensVisibility();
 }
 
-function updateInit(input) { const t = tokens.find(t=>t.id===input.dataset.tid); if(t) t.initScore=input.value; }
+function updateInit(input) { const t = tokens.find(t=>t.id===input.dataset.tid); if(t) { t.initScore=input.value; if (!_syncReceiving) SolSync.emit('init:update', { id: t.id, initScore: t.initScore }); } }
 function updateHP(input) {
     const t = tokens.find(t=>t.id===input.dataset.tid); if(!t) return;
     t.hp = input.value; updateTokenHpBar(t);
@@ -1635,6 +1689,7 @@ function updateHP(input) {
     const hpColor = hpPct>60?'#10b981':hpPct>25?'#f59e0b':'#ef4444';
     const bar = row?.querySelector('.init-hp-bar');
     if (bar) { bar.style.width = hpPct+'%'; bar.style.background = hpColor; }
+    if (!_syncReceiving) SolSync.emit('hp:update', { id: t.id, hp: t.hp, maxHp: t.maxHp });
 }
 function updateMaxHP(input) {
     const t = tokens.find(t=>t.id===input.dataset.tid); if(!t) return;
@@ -1662,11 +1717,13 @@ function nextTurn() {
     activeTurnId = alive[nextIdx].id;
     updateActiveTurnVisuals();
     document.getElementById(`init-${activeTurnId}`)?.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    if (!_syncReceiving) SolSync.emit('turn:next', { activeTurnId, round });
 }
 
 function sortInitiative() {
     tokens.sort((a,b) => (parseFloat(b.initScore)||-Infinity) - (parseFloat(a.initScore)||-Infinity));
     renderInitiative(); updateActiveTurnVisuals();
+    if (!_syncReceiving) SolSync.emit('init:sort', {});
 }
 
 function clearAll() {
@@ -1675,6 +1732,7 @@ function clearAll() {
     activeTurnId=null; round=1;
     document.getElementById('roundNum').textContent='1';
     clearAllEffects(); resetFog(); renderInitiative();
+    SolSync.emit('combat:reset', {});
 }
 
 function changeRound(delta) { round = Math.max(1,round+delta); document.getElementById('roundNum').textContent=round; }
@@ -1934,17 +1992,63 @@ function buildDiceGrid() {
         grid.appendChild(btn);
     });
 }
-function rollDie(sides) {
-    const result = Math.floor(Math.random()*sides)+1;
-    addDiceResult(`d${sides}`, result, sides);
-    document.getElementById('diceFormula').value = `d${sides}`;
+function rollDie(sides, modName, modVal) {
+    const raw = Math.floor(Math.random()*sides)+1;
+    const modifier = parseInt(modVal) || 0;
+    const total = raw + modifier;
+    const label = modName ? `d${sides} + ${modifier} (${modName})` : `d${sides}`;
+    addDiceResult(label, total, sides, raw);
+    document.getElementById('diceFormula').value = modName ? `d${sides}+${modifier}` : `d${sides}`;
+
+    // Broadcast ke semua player
+    SolSync.emit('dice:roll', {
+        player: SolSync.getPlayerName() || 'DM',
+        formula: label,
+        rawRoll: raw,
+        modifier: modifier,
+        modName: modName || null,
+        total: total,
+        sides: sides
+    });
+
+    // Show local animation too
+    showDiceAnimation({
+        player: SolSync.getPlayerName() || 'You',
+        formula: label,
+        rawRoll: raw,
+        modifier: modifier,
+        modName: modName || null,
+        total: total,
+        sides: sides
+    });
 }
 function rollFormula() {
     const formula = document.getElementById('diceFormula').value.trim(); if(!formula) return;
     try {
         const result = evalDiceFormula(formula);
-        addDiceResult(formula, result, null);
-    } catch(e) { addDiceResult(formula, '?', null); }
+        addDiceResult(formula, result, null, null);
+
+        SolSync.emit('dice:roll', {
+            player: SolSync.getPlayerName() || 'DM',
+            formula: formula,
+            rawRoll: result,
+            modifier: 0,
+            modName: null,
+            total: result,
+            sides: null
+        });
+
+        if (typeof showDiceAnimation === 'function') {
+            showDiceAnimation({
+                player: SolSync.getPlayerName() || 'You',
+                formula: formula,
+                rawRoll: result,
+                modifier: 0,
+                total: result,
+                sides: null
+            });
+        }
+    } catch(e) { addDiceResult(formula, '?', null, null); }
 }
 function evalDiceFormula(formula) {
     const f = formula.toLowerCase().replace(/\s/g,'');
@@ -1962,17 +2066,59 @@ function evalDiceFormula(formula) {
     });
     return total;
 }
-function addDiceResult(formula, val, sides) {
+function addDiceResult(formula, val, sides, rawRoll) {
     const hist = document.getElementById('diceHistory');
     const el = document.createElement('div'); el.className='dice-result';
     let valClass = '';
-    if (sides===20&&val===20) valClass='nat20';
-    else if (sides===20&&val===1) valClass='nat1';
+    if (sides===20&&rawRoll===20) valClass='nat20';
+    else if (sides===20&&rawRoll===1) valClass='nat1';
     el.innerHTML=`<span class="dice-result-formula">${formula}</span><span class="dice-result-val ${valClass}">${val}${valClass==='nat20'?' ✨':valClass==='nat1'?' 💀':''}</span>`;
     hist.insertBefore(el, hist.firstChild);
     if (hist.children.length>6) hist.removeChild(hist.lastChild);
 }
 function toggleDicePanel() { document.getElementById('dicePanel').classList.toggle('show'); document.getElementById('btn-dice').classList.toggle('active', document.getElementById('dicePanel').classList.contains('show')); }
+
+// ══════════════════════════════════════════
+//  MODIFIER PANEL BUILDER
+// ══════════════════════════════════════════
+const MOD_ATTRS = ['STR','DEX','CON','INT','WIS','CHA'];
+function buildModPanel() {
+    const grid = document.getElementById('modGrid');
+    const quickGrid = document.getElementById('modQuickGrid');
+    if (!grid || !quickGrid) return;
+    const mods = (typeof SolSync !== 'undefined') ? SolSync.getModifiers() : {STR:0,DEX:0,CON:0,INT:0,WIS:0,CHA:0};
+    grid.innerHTML = '';
+    quickGrid.innerHTML = '';
+    MOD_ATTRS.forEach(attr => {
+        // Input
+        const item = document.createElement('div'); item.className = 'mod-item';
+        item.innerHTML = `<span class="mod-label">${attr}</span><input type="number" class="mod-input" id="mod-${attr}" value="${mods[attr]||0}" data-attr="${attr}">`;
+        item.querySelector('input').addEventListener('change', onModChange);
+        grid.appendChild(item);
+        // Quick button
+        const btn = document.createElement('button'); btn.className = 'mod-quick-btn';
+        const val = mods[attr] || 0;
+        btn.textContent = `d20 ${val >= 0 ? '+' : ''}${val} ${attr}`;
+        btn.dataset.attr = attr;
+        btn.onclick = () => rollDie(20, attr, document.getElementById(`mod-${attr}`).value);
+        quickGrid.appendChild(btn);
+    });
+}
+function onModChange(e) {
+    const mods = {};
+    MOD_ATTRS.forEach(a => {
+        mods[a] = parseInt(document.getElementById(`mod-${a}`)?.value) || 0;
+    });
+    if (typeof SolSync !== 'undefined') SolSync.setModifiers(mods);
+    // Update quick buttons text
+    MOD_ATTRS.forEach(a => {
+        const btn = document.querySelector(`.mod-quick-btn[data-attr="${a}"]`);
+        if (btn) {
+            const v = mods[a];
+            btn.textContent = `d20 ${v >= 0 ? '+' : ''}${v} ${a}`;
+        }
+    });
+}
 
 // ══════════════════════════════════════════
 //  FOG OF WAR TOKEN HIDING
@@ -2026,6 +2172,239 @@ function updateTokensVisibility() {
 document.getElementById('battlefieldArea').addEventListener('mouseleave', () => {
     document.getElementById('coordTip').style.opacity='0';
 });
+
+// ══════════════════════════════════════════
+//  REAL-TIME SYNC INITIALIZATION
+// ══════════════════════════════════════════
+function initCombatSync() {
+    if (typeof SolSync === 'undefined' || !SolSync.isOnline) return;
+
+    // ── Token Movement ──
+    SolSync.on('token:moved', (data) => {
+        const token = tokens.find(t => t.id === data.id);
+        if (token) {
+            token.gridX = data.gridX;
+            token.gridY = data.gridY;
+            renderTokenPosition(token);
+            drawAllAoe(); // Recalc AoE anchored to moved token
+        }
+    });
+
+    // ── Token Spawn ──
+    SolSync.on('token:spawned', (data) => {
+        // Don't re-spawn if token already exists
+        if (tokens.find(t => t.id === data.id)) return;
+        _syncReceiving = true;
+        createAndSpawn(data.name, data.imgUrl, data.type, data.size, data.id);
+        const lastToken = tokens[tokens.length - 1];
+        if (lastToken) {
+            lastToken.gridX = data.gridX;
+            lastToken.gridY = data.gridY;
+            renderTokenPosition(lastToken);
+            renderInitiative();
+        }
+        _syncReceiving = false;
+    });
+
+    // ── Token Remove ──
+    SolSync.on('token:removed', (data) => {
+        _syncReceiving = true;
+        const idx = tokens.findIndex(t => t.id === data.id);
+        if (idx !== -1) {
+            tokens[idx].el?.remove();
+            tokens[idx].initiativeEl?.remove();
+            tokens.splice(idx, 1);
+            if (activeTurnId === data.id) activeTurnId = null;
+            renderInitiative();
+        }
+        _syncReceiving = false;
+    });
+
+    // ── HP Update ──
+    SolSync.on('hp:updated', (data) => {
+        const token = tokens.find(t => t.id === data.id);
+        if (token) {
+            _syncReceiving = true;
+            token.hp = data.hp;
+            token.maxHp = data.maxHp;
+            updateTokenHpBar(token);
+            renderInitiative();
+            _syncReceiving = false;
+        }
+    });
+
+    // ── Initiative Update ──
+    SolSync.on('init:updated', (data) => {
+        const token = tokens.find(t => t.id === data.id);
+        if (token) {
+            token.initScore = data.initScore;
+            renderInitiative();
+        }
+    });
+
+    // ── Initiative Sort ──
+    SolSync.on('init:sorted', (data) => {
+        _syncReceiving = true;
+        tokens.sort((a, b) => (parseFloat(b.initScore)||-Infinity) - (parseFloat(a.initScore)||-Infinity));
+        renderInitiative();
+        updateActiveTurnVisuals();
+        _syncReceiving = false;
+    });
+
+    // ── Turn Change ──
+    SolSync.on('turn:changed', (data) => {
+        _syncReceiving = true;
+        activeTurnId = data.activeTurnId;
+        round = data.round;
+        document.getElementById('roundNum').textContent = round;
+        updateActiveTurnVisuals();
+        document.getElementById(`init-${activeTurnId}`)?.scrollIntoView({ behavior:'smooth', block:'nearest' });
+        _syncReceiving = false;
+    });
+
+    // ── Condition Toggle ──
+    SolSync.on('condition:toggled', (data) => {
+        const token = tokens.find(t => t.id === data.id);
+        if (token) {
+            token.conditions = data.conditions;
+            token.condTimers = data.condTimers;
+            renderInitiative();
+        }
+    });
+
+    // ── Map Select ──
+    SolSync.on('map:selected', (data) => {
+        _syncReceiving = true;
+        // Try to find existing map, or create temp one
+        let map = MAPS.find(m => m.id === data.mapId);
+        if (!map && data.mapSrc) {
+            map = { id: data.mapId, label: data.mapLabel || 'Synced Map', src: data.mapSrc };
+            MAPS.push(map);
+            addMapButton(map);
+        }
+        if (map) selectMap(map);
+        _syncReceiving = false;
+    });
+
+    // ── Fog of War ──
+    SolSync.on('fog:updated', (data) => {
+        const canvas = document.getElementById('fogCanvas');
+        if (!canvas || !data.imageData) return;
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = () => {
+            ctx.clearRect(0, 0, MAP_W, MAP_H);
+            ctx.drawImage(img, 0, 0);
+            // Enable fog display
+            const fogToggle = document.getElementById('fogToggle');
+            if (fogToggle && !fogToggle.checked) {
+                fogToggle.checked = true;
+                toggleFog();
+            }
+            updateTokensVisibility();
+        };
+        img.src = data.imageData;
+    });
+
+    SolSync.on('fog:resetted', () => {
+        resetFog();
+    });
+
+    // ── Ping ──
+    SolSync.on('ping:spawned', (data) => {
+        spawnPing({ x: data.x, y: data.y });
+    });
+
+    // ── Combat Reset ──
+    SolSync.on('combat:resetted', () => {
+        _syncReceiving = true;
+        tokens.forEach(t => t.el?.remove());
+        tokens = [];
+        tokenCount = { ally: 0, enemy: 0 };
+        activeTurnId = null;
+        round = 1;
+        document.getElementById('roundNum').textContent = '1';
+        clearAllEffects();
+        resetFog();
+        renderInitiative();
+        _syncReceiving = false;
+    });
+
+    // ── Token Rename ──
+    SolSync.on('token:renamed', (data) => {
+        const token = tokens.find(t => t.id === data.id);
+        if (token) {
+            token.name = data.name;
+            const lbl = token.el?.querySelector('.token-label');
+            if (lbl) lbl.textContent = getAbbrev(data.name);
+            const tag = token.el?.querySelector('.token-name-tag');
+            if (tag) tag.textContent = data.name;
+            renderInitiative();
+        }
+    });
+
+    // ── Full State Sync (for late joiners) ──
+    SolSync.on('state:sync', (state) => {
+        if (!state || !state.combat) return;
+        _syncReceiving = true;
+
+        // Rebuild tokens
+        const combatState = state.combat;
+        tokens.forEach(t => t.el?.remove());
+        tokens = [];
+        tokenCount = { ally: 0, enemy: 0 };
+
+        if (combatState.tokens && combatState.tokens.length > 0) {
+            combatState.tokens.forEach(td => {
+                const token = {
+                    id: td.id, type: td.type, name: td.name, imgUrl: td.imgUrl,
+                    gridX: td.gridX, gridY: td.gridY, el: null,
+                    conditions: td.conditions || [], condTimers: td.condTimers || {},
+                    initScore: td.initScore || '', hp: td.hp || '', maxHp: td.maxHp || '',
+                    initiativeEl: null, size: td.size || 'medium', note: td.note || ''
+                };
+                createTokenElement(token);
+                tokens.push(token);
+                renderTokenPosition(token);
+                if (td.type === 'ally') tokenCount.ally++;
+                else tokenCount.enemy++;
+            });
+        }
+
+        round = combatState.round || 1;
+        activeTurnId = combatState.activeTurnId || null;
+        document.getElementById('roundNum').textContent = round;
+        renderInitiative();
+        updateActiveTurnVisuals();
+
+        // Restore fog
+        if (combatState.fogData) {
+            const canvas = document.getElementById('fogCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, MAP_W, MAP_H);
+                    ctx.drawImage(img, 0, 0);
+                    const fogToggle = document.getElementById('fogToggle');
+                    if (fogToggle && !fogToggle.checked) {
+                        fogToggle.checked = true;
+                        toggleFog();
+                    }
+                    updateTokensVisibility();
+                };
+                img.src = combatState.fogData;
+            }
+        }
+
+        // Restore scene state for scene viewer sync
+        if (state.scene) {
+            window._lastSceneState = state.scene;
+        }
+
+        _syncReceiving = false;
+    });
+}
 </script>
 </body>
 </html>
