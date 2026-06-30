@@ -545,3 +545,291 @@ Bau daging panggang dan arak manis menggantikan bau anyir darah. Di Graymere, du
 * **Senjata Reinkarnasi (Party B) (Loot Spesifik)**
   * **Wujud Temuan:** Senjata lama (pedang, tongkat, aksesoris) milik tubuh asli karakter Penumpang (Party B) di Loop 2.
   * **Penjelasan Lore:** Validasi fisik mutlak. Menyentuh item ini memicu ingatan traumatis bahwa kematian mereka di Loop 2 benar-benar nyata terjadi.
+
+---
+
+# 🏰 Skenario Greymere: Sangkar Asap & Kebohongan
+
+## 🌟 Kondisi Awal
+Setelah menembus kabut mengerikan Old Battlefield, kalian bersiap menghadapi kota militer yang tegang. Namun, pemandangan di horizon sama sekali memutarbalikkan ekspektasi kalian. Greymere tidak membisu, melainkan terang benderang oleh ribuan cahaya lampion. Sayup-sayup, alunan musik yang ceria, suara denting gelas, dan tawa bersahutan menyambut kedatangan kalian. Warga dan para pendatang tumpah ruah di jalanan, merayakan **Aurelion Harvest Festival** dengan penuh kedamaian.
+
+Namun, di balik kemeriahan ini terdapat kebobrokan moral fana. Udara kota dipenuhi asap manis beraroma ungu yang aneh dari obat terlarang bernama **"Loop"**. Sensasi "high" obat ini sebenarnya adalah kristalisasi memori dari timeline lama yang terhapus yang dianggap warga sebagai mimpi indah.
+
+---
+
+## 🎬 Alur Cerita Greymere (Naratif)
+
+### Fase I: Masalah Administrasi di Gerbang Kota
+* **Lokasi:** Gerbang Utama Greymere
+* **Hambatan:** Penjagaan Birokratis
+
+Party C tiba di depan dinding megah Greymere. Penjagaan sangat ketat dan birokratis pasca-insiden lockdown di Highspire dan Brackenford. Prajurit Aurelion meminta surat jalan/kredensial resmi. Karena menyusup keluar secara ilegal dari Brackenford setelah mencuri kunci gerbang, Party harus mencari taktik penyusupan atau pemalsuan dokumen untuk bisa masuk.
+
+### Fase II: Kemeriahan yang Palsu & Pip sang Tour Guide
+* **Lokasi:** Jalanan & Pasar Festival
+* **NPC:** Pip (10 tahun)
+
+Begitu masuk, lampion pesta tampak gemerlap. Tapi udara berbau manis dan pekat oleh asap candu "Loop" yang diisap warga dari pipa kecil. Seorang anak jalanan bernama **Pip** menawarkan jasanya sebagai penunjuk jalan demi koin untuk merawat adiknya, **Lily**. Pip menunjukkan poin penting di kota dan membisikkan bahwa "Loop" dikendalikan secara rahasia oleh keluarga bangsawan atas.
+
+### Fase III: Dilema Moral & Konspirasi Bawah Tanah
+* **Lokasi:** Gang Kumuh & Gedung Arsip
+* **Kejadian:** Konflik Preman Mafia
+
+Party C memergoki preman mafia bangsawan menyeret paksa **Irelia**, pengasuh panti asuhan tempat Pip and Lily tinggal, karena utang operasional panti asuhan yang menumpuk akibat pajak sewenang-wenang. Kejadian ini memicu percabangan cerita: menolong atau mengabaikan demi rute tercepat ke Gedung Arsip Kerajaan (*Graymere Royal Annex Archive*). Sungguh ironis, gudang obat candu dan markas mafia ini bertempat tepat di bawah ruang arsip negara, memisahkan keagungan literatur tinggi di atas dengan perbudakan rakyat jelata di bawah tanah.
+
+---
+
+## 🎬 SCENE SESI 2 — GREYMERE: SANGKAR ASAP & KEBOHONGAN
+
+> [!IMPORTANT]
+> **Fokus Utama Sesi 2**
+> Investigasi jalanan kota, dilema moral (side-quest), pembobolan markas mafia/ruang arsip, serta transisi akhir menuju reruntuhan Eldenfall.
+
+### Scene I: Halangan Pertama: Kredensial Palsu
+* **Lokasi:** Gerbang Utama Greymere
+* **Fokus:** Penjagaan Administrasi
+* **Tensi:** Sedang (Deception / Persuasi)
+
+**Kejadian:** Party C tiba di depan dinding Greymere setelah menembus Old Battlefield. Prajurit penjaga menghentikan mereka dan meminta Surat Jalan/Kredensial Resmi. Karena menyusup keluar secara ilegal dari Brackenford, Party harus memutar otak: Victor (Wizard) dapat memalsukan dokumen, Bard menggunakan pesonanya, atau Bloodhunter/Paladin mencari celah penyelundupan di dinding samping.
+
+**Output Scene:** Party berhasil masuk dan menyadari ketatnya birokrasi pertahanan yang ternyata bisa diakali.
+
+### Scene II: Bocil Tour Guide & Asap "Loop" (Free Roam)
+* **Lokasi:** Jalanan Festival Greymere
+* **Fokus:** Atmosphere & Lore Drop Awal
+* **Tensi:** Santai tapi Janggal
+
+**Kejadian:** Di dalam kota, festival sangat meriah. Namun, udara dipenuhi asap ungu berbau manis yang janggal. Banyak warga teler dan tersenyum kosong. Pip (bocah jalanan 10 tahun) menawarkan jasa Tour Guide seharga beberapa koin emas demi membelikan obat/makanan untuk adiknya, Lily.
+
+Pip menjelaskan point of interest kota: kedai makan, Gedung Arsip (Royal Annex Archive), dan memperingatkan soal asap "Loop". *"Orang yang mengisapnya bilang mereka bisa merasakan hidup di dunia lain,"* jelas Pip. (Party A & B yang mengingat timeline asli akan merinding mendengar ini).
+
+### Scene III: Konflik Jalanan (Event Pilihan Moral)
+* **Lokasi:** Gang / Pinggiran Pasar Festival
+* **Fokus:** Pilihan Branching Story
+* **Tensi:** Tegang
+
+**Kejadian:** Party melihat 3-4 preman mafia (anak buah Lord Campbell) menarik paksa Irelia, pemilik panti asuhan kumuh (tempat tinggal Pip dan Lily) berambut hitam pixie cut yang menangis karena tidak sanggup melunasi utang operasional panti asuhan yang menumpuk. Preman berniat membawanya pergi sebagai jaminan. Pip ketakutan dan membisikkan: *"Jangan ikut campur, mereka anjing bangsawan atas."*
+
+**Pilihan Pemain Dimulai di Sini:** Keputusan pemain menentukan alur penyelidikan berikutnya.
+
+### Scene IV (Cabang A): Jalur Pembelaan (Side Quest Mafia)
+* **Lokasi:** Gang Kumuh → Bawah Tanah Arsip
+* **Fokus:** Penyelamatan Lily, Infiltrasi Gudang Obat
+* **Tensi:** Sangat Tinggi (Combat)
+
+**Kejadian:** Party menghajar preman untuk menyelamatkan Irelia. Sebagai aksi balasan karena kehilangan target jaminan utang, mafia menculik Lily (salah satu anak yatim piatu terdekat Pip) sebagai sandera pengganti. Party harus menyerbu markas mereka yang ternyata bertempat di ruang bawah tanah Gedung Arsip Kerajaan (Graymere Royal Annex Archive), yang disalahgunakan oleh bangsawan korup.
+
+**Output:** Menggerebek bawah tanah, membebaskan Lily, menumpas sindikat, dan sekaligus membuka brankas rahasia tempat dokumen sejarah disembunyikan.
+
+### Scene IV (Cabang B): Jalur Pengabaian (Jalur Cepat / Stealth)
+* **Lokasi:** Lantai Atas Gedung Arsip Kerajaan
+* **Fokus:** Murni Penyusupan (Stealth)
+* **Tensi:** Sedang (Stealth & Heist)
+
+**Kejadian:** Demi efisiensi misi, Party memilih diam membiarkan Irelia dibawa pergi. Pip sangat kecewa namun tetap memandu Party. Di malam hari, Party langsung menyelinap murni ke Gedung Arsip Kerajaan lantai atas yang dikhususkan bagi kaum bangsawan murni untuk mencari dokumen.
+
+**Output:** Party masuk tanpa perlu berurusan dengan penculikan Lily atau pertempuran bawah tanah, murni mengandalkan kepintaran taktis/penyamaran.
+
+### Scene V: Lore Drop: Menggali Kebenaran Aurelion
+* **Lokasi:** Ruang Arsip / Bawah Tanah Gedung Arsip
+* **Fokus:** Dokumen Klasifikasi Rahasia
+* **Tensi:** Rendah (Pencarian Dokumen)
+
+**Kejadian:** Baik lewat jalur mafia (bawah tanah) maupun penyusupan murni (lantai atas), Party C akhirnya menemukan berkas usang bersegel kerajaan: **Dokumen I — The Ashveil Correspondence**, **Dokumen II — Royal Decree 1300-A**, dan **Dokumen III — Proposal Kerjasama Membangun Greymere**.
+
+Dokumen-dokumen ini membuktikan bahwa pembunuhan Prosperina didasari fitnah adu domba dari propaganda Varkath (Surat Ashveil) dan perintah eksekusi tergesa-gesa raja, serta surat proposal resmi pembangunan Greymere dari Varkath yang setelah diterjemahkan menyembunyikan memo intelijen bersandi: *"Bibit telah ditanam. Bibit telah disebar. Kini hanya tinggal menuai."*
+
+### Scene VI: Meninggalkan Sangkar Asap
+* **Lokasi:** Gerbang Belakang Greymere
+* **Fokus:** Transisi Menuju Eldenfall
+* **Tensi:** Tenang → Mencekam
+
+**Kejadian:** Setelah mengamankan lore utama (dan menyelamatkan sandera), Party C menyelinap keluar melalui gerbang belakang kota. Mereka meninggalkan riuh kota yang teler di bawah selimut candu "Loop" dan melangkah ke jalanan sunyi yang gelap. Di ujung jalan tersebut, kabut dingin Eldenfall dan makam Prosperina telah menanti mereka.
+
+---
+
+## 📍 POINTER SESI 2 (GREYMERE)
+
+### 🗺️ Lokasi & Bangunan Penting
+* **Gerbang Utama & Karantina:** Pintu masuk kota yang dijaga ketat oleh birokrasi pertahanan Aurelion. Prajurit memeriksa surat jalan secara ketat menyusul insiden di wilayah sebelumnya.
+* **Jalanan & Pasar Festival:** Dipenuhi gemerlap lampion namun diselimuti aroma manis candu "Loop". Tempat di mana preman mafia bangsawan mengawasi dan menjerat rakyat kecil.
+* **Royal Annex Archive:** Gedung arsip resmi kerajaan. Lantai atas berisi data literatur bangsawan, sedangkan bawah tanahnya disalahgunakan sebagai pabrik candu dan markas rahasia mafia.
+* **Tavern "The Gilded Keg":** Kedai mewah di distrik bangsawan yang dijaga ketat preman. Tempat para petinggi, militer korup, dan bangsawan menikmati candu "Loop" kualitas terbaik.
+* **Distrik Slum & Panti Asuhan:** Daerah kumuh reyot di barat kota yang tidak tersentuh lampion. Tempat berdirinya panti asuhan tempat tinggal Pip, Lily, dan anak-anak telantar lainnya di bawah asuhan Irelia.
+
+### 👥 NPC Penting di Greymere
+* **Pip (Bocah Penunjuk Jalan - Slum Kid):**
+  * **Lokasi:** Jalanan pasar festival / Panti Asuhan Slum.
+  * **Kepribadian:** Cerdik, ulet, sangat menyayangi adiknya Lily, bersikap defensif namun sangat membantu jika disuap emas.
+  * **Fungsi:** Menunjukkan lokasi free roam di kota, memperkenalkan lore candu "Loop", dan memohon bantuan jika Irelia atau Lily ditangkap oleh mafia.
+  * **Kutipan:** *"Tuan-tuan butuh penunjuk arah? Cukup beberapa koin emas, saya tahu tempat terbaik untuk makan... dan tempat terburuk untuk didekati."*
+* **Lily (Adik Perempuan Pip - Anak Panti):**
+  * **Lokasi:** Panti Asuhan Slum / Sel tahanan bawah tanah mafia.
+  * **Kepribadian:** Lemah, sakit-sakitan, penakut namun percaya penuh pada kakaknya Pip dan pengasuhnya Irelia.
+  * **Fungsi:** Menjadi target penyelamatan (sandera) di markas mafia jika Party menghalangi penahanan Irelia di jalanan.
+* **Irelia (Pemilik Panti Asuhan Slum):**
+  * **Lokasi:** Panti Asuhan Slum / Sel tahanan mafia.
+  * **Kepribadian:** Welas asih, tangguh di bawah tekanan, protektif terhadap anak-anak asuhnya (termasuk Pip dan Lily).
+  * **Fungsi:** Trigger moral di jalanan. Wanita berambut hitam pixie cut yang diseret preman bukan karena candu, melainkan utang panti asuhan yang menumpuk akibat pajak sewenang-wenang.
+* **Lord Campbell the Corrupt (Bangsawan Lokal / Kartel Loop):**
+  * **Lokasi:** Gedung Arsip Atas / Tavern The Gilded Keg.
+  * **Kepribadian:** Serakah, licik, berlindung di balik status aristokrat kerajaan dan perlindungan politik suap.
+  * **Fungsi:** Bos operasional lapangan sindikat obat candu "Loop" yang menjadi target interogasi atau pembubaran mafia.
+
+### 📜 Lore Drop & Dokumen Temuan
+
+* **Obat Candu "Loop" (Narkotika Kosmik):**
+  * **Efek Halusinasi:** Pengisap merasakan sensasi "terbang" dan melihat sekilas memori kehidupan lain yang indah.
+  * **Asal Lore (Meta):** Bahan baku obat ini merembes dari energi residu garis waktu (timeline lama) yang terhapus pasca-reset kosmik, menyusup ke tanaman lokal.
+* **Dokumen I — The Ashveil Correspondence (Propaganda Varkath):**
+  * **Isi Dokumen:** Surat-surat anonim yang menyebutkan bahwa Prosperina ingin "mengganti raja" dan party Prosperina "terlalu berpengaruh".
+  * **📌 Petunjuk (Clue):** Ditulis menggunakan bahasa diplomatik khas Varkath.
+* **Dokumen II — Royal Decree 1300-A (Perintah Darurat Raja):**
+  * **Isi Dokumen:** Surat perintah penangkapan seluruh party Prosperina secara langsung tanpa menyebutkan bukti-bukti konkret.
+  * **📌 Petunjuk (Clue):** Ditandatangani di bawah tekanan waktu yang sempit dengan stempel tergesa-gesa yang tidak biasa.
+* **Dokumen III — Proposal Kerjasama Membangun Greymere (Memo Intelijen Bersandi):**
+  * **Isi Dokumen:** Proposal pembangunan Greymere dari Varkath yang di baliknya menyembunyikan memo intelijen rahasia Varkath berbunyi: *"Bibit telah ditanam. Bibit telah disebar. Kini hanya tinggal menuai."* (Rencana adu domba Varkath).
+  * **📌 Petunjuk (Clue):** Memo intelijen rahasia yang tersembunyi dalam bahasa sandi di balik proposal kerjasama pembangunan resmi.
+
+### 🏛️ Peta Infiltrasi Gedung: Royal Annex Archive
+* **Lantai Atas: The Noble's Grand Archive:** Rak kayu jati menjulang tinggi, sepi, dihiasi lampu kristal. Dijaga prajurit elit. Hanya diakses oleh perwira tinggi dan bangsawan bersertifikat khusus. Menyimpan surat menyurat diplomatik Benua Solmarch, memo intrik Varkath, dan dekrit pembantaian Prosperina di brankas kaca berkunci.
+* **Jalur Rahasia: Pintu di Balik Pengetahuan:** Di lorong paling belakang lantai arsip, tersembunyi di balik rak teologi kuno berdebu yang jarang dibaca. Pencarian Investigation/Perception memperlihatkan goresan lantai kayu rak geser. Menarik buku teologi tertentu menggeser rak raksasa membuka tangga batu gelap ke bawah tanah.
+* **Ruang Bawah Tanah: The Loop Syndicate Hideout (Combat & Side-Quest):** Bawah tanah luas berbau kimia pekat dengan genangan asap ungu di lantai. Mafia melinting zirah candu, menghitung emas, dan berjudi. Sel & Kantor Bos berupa kerangkeng besi tempat menahan sandera (Lily dan warga lain). Ruang teralis kecil tempat pimpinan syndikasi merencanakan penyelundupan lewat dokumen palsu.
+
+---
+
+# 🏰 Skenario Eldenfall: Ziarah Semu & Sangkar Kosmik
+
+## 🌟 Kondisi Awal
+Party C tiba di Eldenfall yang dipenuhi peziarah dan warga merayakan **Aurelion Harvest Festival**. Tidak ada kekacauan di permukaan — kota ini damai dan festive. Namun di bawah kaki mereka, di bawah patung Prosperina yang megah, sebuah mesin kosmik raksasa berdenyut perlahan... dan Dewi Keabadian sedang menunggu.
+
+Fokus Utama Sesi: Eksplorasi dungeon klasik, puzzle, pengungkapan kebohongan Kerajaan Aurelion secara utuh (sesuai lore lama), dan Boss Battle klimaks penutup arc.
+
+---
+
+## 🎬 Alur Cerita Eldenfall (Naratif)
+
+### Scene 1: Ziarah di Atas Kebohongan
+* **Lokasi:** Jalanan Kota Eldenfall & Alun-Alun Utama.
+* **Fokus:** Atmosfer kontras dan titik masuk dungeon.
+* **Tensi:** Damai tapi ganjil.
+
+Party C tiba di Eldenfall. Tidak ada mayat hidup, tidak ada kekacauan. Kota ini dipenuhi peziarah dan warga yang merayakan Aurelion Harvest Festival. Di ujung kota berdiri megah Patung Prosperina di depan makam Prosperina. Peziarah meletakkan bunga dan menyalakan lilin.
+
+Namun, bagi Party C (terutama Jangkar dan Penumpang), mereka bisa melihat/merasakan aura kosmik ungu keemasan yang berdenyut lambat dari celah tanah di bawah patung tersebut, seolah ada "mesin raksasa" yang hidup di bawah sana, kompas yang mereka bawa pun berkedip dan memanas menunjuk ke makam.
+
+Malam harinya, Party menyelinap saat alun-alun sepi dan turun melalui celah tangga rahasia di bawah patung menuju Sepulcher of the Savior (Makam Prosperina).
+
+**Output Scene:** Transisi mulus dari kedamaian kota menuju kengerian di bawah tanah.
+
+### Scene 2: Lore Drop 1: Sejarah yang Dihapus (Eksplorasi)
+* **Lokasi:** Vestibule of Remembrance & Hall of Silenced Truths.
+* **Fokus:** Membongkar propaganda Aurelion.
+* **Tensi:** Investigasi.
+
+Di lorong pertama (Vestibule), relief di dinding memuja Prosperina sebagai pahlawan agung yang mengalahkan Varkath. Sangat cocok dengan cerita festival di atas.
+
+Namun saat mereka masuk ke lorong kedua (Hall of Silenced Truths), reliefnya berubah drastis. Prosperina digambarkan berdiri sendirian, sementara gambar anggota party-nya telah dihancurkan/dihapus paksa dari batu oleh pahatan kasar.
+
+**Output Scene:** Bukti pertama di dalam makam bahwa Kerajaan Aurelion sengaja melenyapkan eksistensi kawan-kawan Prosperina dari sejarah.
+
+### Scene 3: Lore Drop 2: Rantai Iblis & Jurnal Keputusasaan
+* **Lokasi:** Chamber of Chains & Archive of Ash.
+* **Fokus:** Validasi lore lama (Kontrak Belzareth & Pengkhianatan Raja).
+* **Tensi:** Menegangkan (Ada elemen Trap).
+
+Di Chamber of Chains: Party masuk ke ruangan berlantai retak dengan rantai-rantai neraka (infernal) tertanam di batunya. Mereka yang gagal Wisdom Save akan mendengar bisikan iblis Belzareth: *"Janji tidak dibayar, seseorang harus membayar"* Ini membuktikan pahlawan suci mereka yang seharusnya terikat kontrak iblis tidak membayar / kontrak tersebut telah diputus.
+
+Di Archive of Ash: Ruangan kecil seperti kapel dengan lantai tertutup abu. Di atas meja batu, mereka menemukan Sisa Pecahan Jurnal Prosperina. Di sana tertulis rasa putus asanya: Raja Aurelion yang paranoid menangkap party-nya. Diakhiri kalimat pilu: *"Aku hanya ingin ini berhenti."*
+
+**Output Scene:** Terungkap bahwa Prosperina membuat kontrak iblis murni karena keputusasaan setelah dikhianati rajanya sendiri.
+
+### Scene 4: Ambang Batas Sang Penyelamat (Puzzle)
+* **Lokasi:** Threshold of the Savior (Lorong terakhir sebelum Inner Sanctum).
+* **Fokus:** Pengorbanan berdarah, callback ke kebohongan sejarah, dan ikatan emosional antar party.
+* **Tensi:** Emosional, sunyi, dan sakral.
+
+Party C tiba di depan sebuah gerbang batu raksasa yang tertutup rapat, tanpa lubang kunci maupun gagang pintu. Di depan gerbang tersebut, tidak ada patung raja atau dewa, melainkan sebuah altar batu yang permukaannya dipenuhi noda hitam kecokelatan (bekas darah purba).
+
+Di atas altar itu, berjejer beberapa cawan perak yang kosong. Jika Victor (Wizard) atau karakter lain menghitungnya, jumlah cawan tersebut sama persis dengan jumlah siluet anggota party Prosperina yang dipahat hancur/dihapus paksa di dinding Hall of Silenced Truths pada ruangan sebelumnya.
+
+Tepat di atas deretan cawan itu, terpahat sebuah inskripsi kuno yang berbunyi dengan nada yang sangat dingin dan epik:
+
+*"Batu dapat dipahat untuk berdusta, dan nama dapat dilenyapkan oleh kuasa. Namun sumpah yang terikat nyawa hanya bisa ditebus oleh nyawa. Keadilan tidak meminta emas, ia meminta ingatan...
+Bagi kalian yang datang untuk membongkar takdir, tumpahkanlah darah kalian hari ini, untuk menggantikan mereka yang dikorbankan di masa lalu."*
+
+**Mekanik Puzzle (Cara Menyelesaikan):**
+* **Syarat:** Ini bukan puzzle logika tebak-tebakan, melainkan puzzle dedikasi. Pintu tidak akan terbuka dengan mantra sihir pendorong atau kuncian.
+* **Aksi Pemain:** Anggota Party C harus mengambil senjata mereka (atau belati kecil di atas altar), mengiris telapak tangan mereka sendiri, dan meneteskan darah segar ke dalam cawan-cawan kosong tersebut hingga terisi.
+* **Sistem D&D (Mekanik Darah):** Pemain yang meneteskan darah harus mengorbankan sejumlah Hit Points murni (misal: 1d6 atau 1d8 Slashing/Necrotic Damage) yang tidak bisa di-heal sampai Boss Battle selesai. Ini menyimbolkan bahwa mereka benar-benar memikul sebagian "beban" penderitaan party lama.
+
+**Konsekuensi & Transisi (The Reward):**
+Saat tetesan darah terakhir dari Party C menyentuh dasar cawan, darah tersebut tidak menggenang biasa. Darah itu mendidih dan seketika menyala dengan pendar ungu dan emas kosmik.
+Dari dalam bayang-bayang ruangan, Party C akan mendengar bisikan gema suara banyak orang (suara roh rekan-rekan Prosperina yang tenang) berkata pelan: *"Terima kasih... bebaskan dia."*
+Cawan-cawan itu terserap masuk ke dalam meja altar. Debu tebal berjatuhan dari langit-langit, dan pintu batu raksasa di depan mereka bergetar pelan. Perlahan, pintu itu terbelah dan bergeser terbuka tanpa suara mekanis, melepaskan hawa sedingin es dari Inner Sanctum.
+Di dalam sana, dalam kegelapan yang diterangi benang-benang cahaya kosmik, sang pahlawan yang dijadikan boneka telah menunggu kedatangan mereka.
+
+### Scene 5: Percakapan Terakhir (Roleplay)
+* **Lokasi:** Inner Sanctum (Ruang Inti Makam).
+* **Fokus:** Lore reveal pamungkas dan dialog tragis.
+* **Tensi:** Emosional tinggi.
+
+Di tengah ruangan, arwah Prosperina berdiri. Namun, tubuhnya diikat oleh benang-benang cahaya kosmik (ungu dan emas) yang menjuntai dari langit-langit.
+Sebelum Dewi Keabadian mengambil alih sepenuhnya, kesadaran asli Prosperina masih bisa merespons Party C.
+
+**Dialog & Reveal:** Prosperina membeberkan kebenaran utuh sesuai lore lama: Varkath menanam fitnah, Raja Aurelion yang paranoid langsung mengeksekusi rekan-rekannya, dan karena keputusasaan ia mengikat kontrak dengan Iblis Belzareth.
+Namun ia menambahkan (New Lore): *"Aku menanti iblis itu menagih janjinya... tapi entitas lain (Dewi) datang lebih dulu. Jiwaku dirantai, makam ini dijadikan sangkar ujian. Lari... dia sedang 'mengevaluasi' kalian."*
+
+### Scene 6: Boneka Sang Dewi (Boss Battle)
+* **Lokasi:** Inner Sanctum.
+* **Fokus:** Klimaks pertempuran Arc Pertama.
+* **Tensi:** COMBAT (Hard).
+
+Tiba-tiba, mata Prosperina menyala ungu terang. Suaranya berubah menjadi dua lapis (bergema dengan otoritas kosmik Kurumagatsu).
+Sang Dewi melalui tubuh Prosperina berkata: *"Ujian kelayakan dimulai."*
+Pertarungan Boss pecah. Prosperina menggunakan kombinasi kekuatan sihir apinya ditambah serangan resonansi waktu/kosmik dari sang Dewi.
+
+**Objektif Battle:** Party C tidak hanya menyerang tubuhnya, tapi harus memutus **Benang-benang Kosmik** yang mengendalikan jiwa Prosperina di setiap sudut ruangan.
+
+### Scene 7: Keluar dari Sangkar
+* **Lokasi:** Jalan keluar Makam & Pagi di Eldenfall.
+* **Fokus:** Closure Sesi.
+
+Saat benang terakhir diputus dan HP Boss habis, pengaruh Kurumagatsu hancur dari ruangan itu. Jiwa asli Prosperina tersenyum lega, memudar menjadi abu cahaya yang damai.
+Ledakan energi dari lepasnya jiwa Prosperina menciptakan resonansi. Sang Jangkar (Party A) mungkin sekilas melihat undangan gaib atau merasakan tarikan dari negeri jauh (menuju Tokoshie).
+Party C berjalan keluar dari makam, menaiki tangga rahasia kembali ke alun-alun Eldenfall.
+Pagi telah tiba. Festival di atas masih berlanjut, peziarah tidak sadar akan kengerian yang baru saja diselesaikan di bawah kaki mereka. Party C saling bertatapan—menyadari misi mereka di benua Solmarch baru saja selesai, namun krisis kosmik dari Sang Dewi baru saja dimulai.
+
+---
+
+## 🎬 SCENE SESI — ELDENFALL: ZIARAH SEMU & SANGKAR KOSMIK
+
+> [!IMPORTANT]
+> **Fokus Utama Sesi — Eldenfall**
+> Eksplorasi dungeon klasik, puzzle pengorbanan darah, pengungkapan kebohongan Kerajaan Aurelion secara utuh, dan Boss Battle klimaks penutup arc pertama.
+
+*(Rincian alur scene dan area dungeon selengkapnya dapat dilihat pada bagian Naratif di atas).*
+
+---
+
+## 📍 POINTER KOTA ELDENFALL & MAKAM PROSPERINA
+
+### 🏚️ Bangunan & Lokasi Penting
+1. **Eldenfall Grand Plaza (Permukaan):** Pusat festival dan "Ziarah Suci". Dipenuhi tenda peziarah, wangi dupa, dan keamanan militer Aurelion yang mengawal jalannya festival.
+2. **Monumen Prosperina (Permukaan):** Patung raksasa di tengah alun-alun. Di sekeliling bawah patung inilah hawa dan pendar ungu kosmik merembes pelan.
+3. **The Sepulcher of the Savior (Makam Bawah Tanah):** Dungeon utama yang tersembunyi tepat di bawah patung. Merupakan makam yang telah dirusak nilai sejarahnya oleh kerajaan, dan baru-baru ini dibajak tata ruang jiwanya oleh Dewi Keabadian. Area kuncinya:
+   * **Vestibule of Remembrance (Ruang Masuk Dalam):** Lorong batu persegi panjang dengan langit-langit yang tinggi. Lantainya utuh dan bersih, seolah terus dirawat oleh sihir. Relief dinding memuja kemenangan Prosperina.
+   * **Hall of Silenced Truths (Lorong Kebenaran yang Dibungkam):** Lorong memanjang dan bercabang dua, diterangi cahaya redup kemerahan dari celah lantai. Relief di dinding menunjukkan Prosperina berdiri sendirian, sedangkan anggota party-nya dihapus paksa.
+   * **Chamber of Chains (Ruang Rantai Kontrak):** Ruangan bundar dengan lantai retak. Rantai infernal tertanam kuat ke bawah bumi. Trap menjerat pemain lalai → Wisdom Save atau mendengar bisikan Belzareth.
+   * **Archive of Ash (Ruang Catatan Terakhir):** Ruangan kecil seperti kapel bersuhu tinggi. Lantai abu hangat berfungsi sebagai jebakan pasir hisap (Trap: Lantai Abu / Ash Sinkhole) yang membuat pemain tersungkur dan menerima fire/necrotic damage. Di atas meja batu terdapat sisa pecahan jurnal pribadi Prosperina.
+   * **Threshold of the Savior (Gerbang Ruang Inti):** Pintu batu raksasa dengan altar darah purba dan cawan-cawan perak. Puzzle pengorbanan darah untuk membuka pintu.
+   * **Inner Sanctum (Ruang Inti & Final Battle):** Ruang altar terdalam yang dingin dan gelap, diterangi pendaran benang-benang kosmik ungu-emas menjuntai dari langit-langit.
+
+### 👥 NPC Penting
+1. **Para Peziarah & Warga Eldenfall:** Sebagai penguat ilusi. Mereka merayakan pengorbanan Prosperina yang penuh kebohongan.
+2. **Arwah Prosperina:** NPC utama lore-dump dan Boss di sesi ini. Ia memberi tahu konspirasi masa lalu (Raja dan Varkath) sekaligus memberikan foreshadowing bahwa makamnya dibajak oleh Dewi Keabadian sebagai saringan Jangkar.
+
+### 📜 Lore Drop & Event Kunci
+1. **Relief Pahlawan yang Dihapus (Event Eksplorasi):** Di Hall of Silenced Truths, pemain menemukan sejarah manipulatif Kerajaan Aurelion yang menghapus eksistensi party masa lalu Prosperina dari pahatan batu.
+2. **Rantai Iblis Belzareth & Pecahan Jurnal (Investigasi):** Ditemukan di dalam Chamber of Chains dan Archive of Ash. Validasi bahwa pahlawan agung tersebut membuat kontrak gelap murni karena keputusasaan.
+3. **Dialog Intervensi Kurumagatsu (Event Boss):** Mengonfirmasi ke pemain bahwa ancaman terbesar saat ini bukan lagi sekadar intrik politik kerajaan atau iblis, melainkan entitas kosmik dari Tokoshie yang memonopoli jiwa untuk eksperimen time-loop.

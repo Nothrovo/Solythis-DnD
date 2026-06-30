@@ -552,6 +552,7 @@
             <div class="top-scene-label" id="topSceneLabel"></div>
             <div style="display:flex; align-items:center; gap:1rem; pointer-events:all;">
                 <button class="gold-action-btn-sm" onclick="openAddSceneModal()">+ Tambah Gambar</button>
+                <button class="gold-action-btn-sm" id="presentBtn" onclick="openScenePresentation()" title="Buka jendela presentasi player">⬡ Presentasi</button>
                 <div class="top-counter" id="topCounter"></div>
             </div>
         </div>
@@ -618,6 +619,7 @@
                 <option value="scene">Scene (Umum / Lanskap)</option>
                 <option value="bangunan">Bangunan (Lokasi / Ruangan)</option>
                 <option value="orang">Orang (NPC / Tokoh)</option>
+                <option value="map">Map (Peta / Denah)</option>
             </select>
 
             <div class="modal-label">Judul Gambar / Scene</div>
@@ -669,13 +671,14 @@
     const CATEGORY_COLORS = {
         'scene':    '#d4af37', // Gold
         'bangunan': '#8fba6e', // Green
-        'orang':    '#9b7de8'  // Violet
+        'orang':    '#9b7de8', // Violet
+        'map':      '#38bdf8'  // Sky Blue
     };
 
     // State
     let activeView      = 'gallery'; // 'gallery' | 'viewer'
     let activePlace     = null;      // name of active place
-    let activeCategory  = 'scene';   // 'scene' | 'bangunan' | 'orang'
+    let activeCategory  = 'scene';   // 'scene' | 'bangunan' | 'orang' | 'map'
     let placesList      = [];
     let scenesList      = [];        // all scenes from DB
     let filteredScenes  = [];        // scenes filtered by activePlace & activeCategory
@@ -885,7 +888,8 @@
         const categories = [
             { id: 'scene',    label: '🌅 Scene',    color: CATEGORY_COLORS.scene },
             { id: 'bangunan', label: '🏛 Bangunan', color: CATEGORY_COLORS.bangunan },
-            { id: 'orang',    label: '👥 Orang',    color: CATEGORY_COLORS.orang }
+            { id: 'orang',    label: '👥 Orang',    color: CATEGORY_COLORS.orang },
+            { id: 'map',      label: '🗺 Map',       color: CATEGORY_COLORS.map }
         ];
 
         categories.forEach(cat => {
@@ -1408,6 +1412,47 @@
         }
 
         _syncReceivingScene = false;
+    }
+    // ══════════════════════════════════════════
+    //   PRESENTATION STATE BRIDGE
+    //   Exposes live scene state to scene_presentation.html
+    //   (top-level let are not on window — use explicit getter)
+    // ══════════════════════════════════════════
+    const CATEGORY_COLORS_FOR_PRES = {
+        'scene':    '#d4af37',
+        'bangunan': '#8fba6e',
+        'orang':    '#9b7de8',
+        'map':      '#38bdf8'
+    };
+
+    window.getScenePresentationState = function() {
+        if (activeView !== 'viewer' || filteredScenes.length === 0) return null;
+        const scene = filteredScenes[currentIdx];
+        if (!scene) return null;
+        // Resolve image source — may be a relative file path or a base64 data URL
+        const imgSrc = scene.imgData || scene.file || '';
+        return {
+            place:      scene.place      || '',
+            category:   scene.category   || 'scene',
+            color:      CATEGORY_COLORS_FOR_PRES[scene.category] || '#d4af37',
+            sceneTitle: scene.sceneTitle || '',
+            idx:        currentIdx,
+            total:      filteredScenes.length,
+            imgSrc:     imgSrc
+        };
+    };
+
+    let scenePresentationWindow = null;
+    function openScenePresentation() {
+        if (scenePresentationWindow && !scenePresentationWindow.closed) {
+            scenePresentationWindow.focus();
+            return;
+        }
+        scenePresentationWindow = window.open(
+            'scene_presentation.html',
+            'SolythisScenePresentation',
+            'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no'
+        );
     }
     </script>
 </body>

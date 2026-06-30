@@ -132,6 +132,8 @@
             width: 1280px; height: 720px;
             overflow: hidden; user-select: none;
             flex-shrink: 0;
+            transform-origin: 0 0;
+            transition: transform 0.1s ease;
         }
         /* Cursor per tool */
         #mapWrapper.tool-none    { cursor: default; }
@@ -442,75 +444,85 @@
 
 <!-- ═══════════════ HEADER ═══════════════ -->
 <header>
-    <a href="../dashboard.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Dashboard</a>
-    <div class="brand">D&amp;D <span>Aurelion</span></div>
-
-    <div class="map-selector" id="mapSelector"></div>
-    <button class="map-btn" id="addMapBtn" onclick="openMapModal()" title="Tambah Battle Map Baru" style="border-style:dashed;">+ Map</button>
-
-    <div class="header-group">
-        <button class="add-btn add-ally" onclick="spawnToken('ally')">
-            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-            Kawan
-        </button>
-        <button class="add-btn add-enemy" onclick="spawnToken('enemy')">
-            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-            Lawan
-        </button>
+    <!-- Left Section: Nav & Title -->
+    <div style="display: flex; align-items: center; gap: 0.8rem;">
+        <a href="../dashboard.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Dashboard</a>
+        <a href="index.html" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">← Galeri Arena</a>
+        <button onclick="openPresentationWindow()" style="font-family:inherit;font-size:0.78rem;font-weight:600;color:#f3e5ab;text-decoration:none;padding:5px 14px;border:1px solid rgba(212,175,55,0.25);border-radius:999px;background:rgba(212,175,55,0.1);display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;white-space:nowrap;cursor:pointer;" onmouseover="this.style.background='#d4af37';this.style.color='#07090e';this.style.borderColor='#d4af37'" onmouseout="this.style.background='rgba(212,175,55,0.1)';this.style.color='#f3e5ab';this.style.borderColor='rgba(212,175,55,0.25)'">🖥 Presentasi</button>
+        <div class="brand" style="margin-left: 0.4rem;">D&amp;D <span>Aurelion</span></div>
     </div>
 
-    <!-- Tool buttons -->
-    <div class="tool-group">
-        <button class="tool-btn" id="btn-ruler" onclick="setTool('ruler')" title="Ruler — ukur jarak (ft)">
-            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M21.71 3.29a1 1 0 00-1.42 0L2.29 21.29a1 1 0 000 1.42A1 1 0 003 23a1 1 0 00.71-.29L4 22.41l1.29 1.3 1.42-1.42-1.3-1.29 1.79-1.79 1.29 1.3 1.42-1.42-1.3-1.29 1.79-1.79 1.29 1.3 1.42-1.42-1.3-1.29 1.79-1.79 1.29 1.3 1.42-1.42-1.3-1.29L21.71 4.71a1 1 0 000-1.42z"/></svg>
-            Ruler
-        </button>
-        <button class="tool-btn" id="btn-aoe" onclick="setTool('aoe')" title="Area of Effect overlay">
-            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm0-14c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6z"/></svg>
-            AoE
-        </button>
-        <button class="tool-btn" id="btn-fog" onclick="setTool('fog')" title="Fog of War — klik cell untuk toggle reveal">
-            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4C7 4 2.7 7.1 1 11.5 2.7 15.9 7 19 12 19s9.3-3.1 11-7.5C21.3 7.1 17 4 12 4zm0 12.5c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm0-8c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z"/></svg>
-            Fog
-        </button>
-        <button class="tool-btn" id="btn-ping" onclick="setTool('ping')" title="Ping — tandai lokasi di map">
-            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
-            Ping
-        </button>
-        <button class="tool-btn" id="btn-dice" onclick="toggleDicePanel()" title="Dice Roller">
-            🎲 Dice
-        </button>
-        <button class="tool-btn" onclick="clearAllEffects()" title="Hapus semua efek (AoE, ping, ruler) dari battlefield">
-            🧹 Clear FX
-        </button>
-    </div>
-
-    <!-- Grid controls -->
-    <div class="grid-controls">
-        <div class="grid-toggle-wrap">
-            <label class="toggle-switch">
-                <input type="checkbox" id="gridToggle" checked onchange="toggleGrid()">
-                <span class="toggle-slider"></span>
-            </label>
-            <span class="toggle-label">Grid</span>
+    <!-- Center Section: Add Tokens & Tools -->
+    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+        <div class="header-group">
+            <button class="add-btn add-ally" onclick="spawnToken('ally')">
+                <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                Kawan
+            </button>
+            <button class="add-btn add-enemy" onclick="spawnToken('enemy')">
+                <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                Lawan
+            </button>
         </div>
-        <div class="grid-toggle-wrap" style="margin-left: 0.5rem;">
-            <label class="toggle-switch">
-                <input type="checkbox" id="fogToggle" onchange="toggleFog()">
-                <span class="toggle-slider"></span>
-            </label>
-            <span class="toggle-label">Fog</span>
+
+        <div style="width: 1px; height: 20px; background: var(--border); margin: 0 0.2rem;"></div>
+
+        <div class="tool-group">
+            <button class="tool-btn" id="btn-ruler" onclick="setTool('ruler')" title="Ruler — ukur jarak (ft)">
+                <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M21.71 3.29a1 1 0 00-1.42 0L2.29 21.29a1 1 0 000 1.42A1 1 0 003 23a1 1 0 00.71-.29L4 22.41l1.29 1.3 1.42-1.42-1.3-1.29 1.79-1.79 1.29 1.3 1.42-1.42-1.3-1.29 1.79-1.79 1.29 1.3 1.42-1.42-1.3-1.29 1.79-1.79 1.29 1.3 1.42-1.42-1.3-1.29L21.71 4.71a1 1 0 000-1.42z"/></svg>
+                Ruler
+            </button>
+            <button class="tool-btn" id="btn-aoe" onclick="setTool('aoe')" title="Area of Effect overlay">
+                <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm0-14c-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6z"/></svg>
+                AoE
+            </button>
+            <button class="tool-btn" id="btn-fog" onclick="setTool('fog')" title="Fog of War — klik cell untuk toggle reveal">
+                <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4C7 4 2.7 7.1 1 11.5 2.7 15.9 7 19 12 19s9.3-3.1 11-7.5C21.3 7.1 17 4 12 4zm0 12.5c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm0-8c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z"/></svg>
+                Fog
+            </button>
+            <button class="tool-btn" id="btn-ping" onclick="setTool('ping')" title="Ping — tandai lokasi di map">
+                <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+                Ping
+            </button>
+            <button class="tool-btn" id="btn-dice" onclick="toggleDicePanel()" title="Dice Roller">
+                🎲 Dice
+            </button>
+            <button class="tool-btn" onclick="clearAllEffects()" title="Hapus semua efek (AoE, ping, ruler) dari battlefield">
+                🧹 Clear FX
+            </button>
         </div>
-        <label style="margin-left: 0.5rem;">Cell:</label>
-        <input type="range" id="gridSizeSlider" min="20" max="120" value="40" oninput="onGridResize(this.value,'slider')">
-        <input type="number" id="gridSizeNum" class="grid-num-input" min="20" max="120" value="40" oninput="onGridResize(this.value,'num')">
-        <span class="grid-unit">px</span>
     </div>
 
-    <button class="toggle-panel-btn active" id="panelToggleBtn" onclick="togglePanel()">
-        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
-        Inisiatif
-    </button>
+    <!-- Right Section: Grid & Initiative Controls -->
+    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+        <div class="grid-controls">
+            <div class="grid-toggle-wrap">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="gridToggle" checked onchange="toggleGrid()">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Grid</span>
+            </div>
+            <div class="grid-toggle-wrap" style="margin-left: 0.3rem;">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="fogToggle" onchange="toggleFog()">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Fog</span>
+            </div>
+            <label style="margin-left: 0.3rem;">Cell:</label>
+            <input type="range" id="gridSizeSlider" min="20" max="120" value="40" oninput="onGridResize(this.value,'slider')">
+            <input type="number" id="gridSizeNum" class="grid-num-input" min="20" max="120" value="40" oninput="onGridResize(this.value,'num')">
+            <span class="grid-unit">px</span>
+        </div>
+
+        <div style="width: 1px; height: 20px; background: var(--border); margin: 0 0.2rem;"></div>
+
+        <button class="toggle-panel-btn active" id="panelToggleBtn" onclick="togglePanel()">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+            Inisiatif
+        </button>
+    </div>
 </header>
 
 <!-- ═══════════════ WORKSPACE ═══════════════ -->
@@ -520,15 +532,25 @@
             <svg width="56" height="56" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
                 <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 16l4.553 2.276A1 1 0 0021 24.382V8.618a1 1 0 00-.553-.894L15 5m0 18V5M9 7l6-2"/>
             </svg>
-            Pilih peta lokasi pertarungan di atas untuk memulai sesi combat.
+            Pilih peta lokasi pertarungan di galeri untuk memulai sesi combat.
         </div>
 
-        <div id="mapWrapper">
-            <img id="mapImg" src="" alt="Battle Map" draggable="false">
-            <canvas id="gridCanvas"></canvas>
-            <canvas id="fogCanvas"></canvas>
-            <canvas id="overlayCanvas"></canvas>
-            <div id="tokenLayer"></div>
+        <div id="zoomContainer" style="position:relative; width:1280px; height:720px; display: none;">
+            <div id="mapWrapper">
+                <img id="mapImg" src="" alt="Battle Map" draggable="false">
+                <canvas id="gridCanvas"></canvas>
+                <canvas id="fogCanvas"></canvas>
+                <canvas id="overlayCanvas"></canvas>
+                <div id="tokenLayer"></div>
+            </div>
+        </div>
+
+        <!-- Zoom controls floating panel -->
+        <div id="zoomControlsPanel" style="position: absolute; bottom: 20px; right: 20px; display: none; align-items: center; gap: 8px; background: rgba(13, 15, 26, 0.9); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            <button onclick="setZoom(zoomFactor - 0.1)" class="tool-btn" style="padding: 4px 8px; min-width: 28px; font-weight: bold;">-</button>
+            <span id="zoomDisplay" style="font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 700; color: var(--gold); min-width: 48px; text-align: center;">100%</span>
+            <button onclick="setZoom(zoomFactor + 0.1)" class="tool-btn" style="padding: 4px 8px; min-width: 28px; font-weight: bold;">+</button>
+            <button onclick="setZoom(1.0)" class="tool-btn" style="padding: 4px 8px; font-size: 0.72rem;">Reset</button>
         </div>
 
         <!-- Ruler readout -->
@@ -764,11 +786,66 @@
 // ══════════════════════════════════════════
 //  CONFIG
 // ══════════════════════════════════════════
-const MAPS = [
-    { id: 'highspire',      label: 'Highspire',       src: 'Aurelion/Highspire.png' },
-    { id: 'old-battlefield', label: 'Old Battlefield', src: 'Aurelion/Old Battlefield.jpeg' }
+let MAPS = [];
+const DEFAULT_MAPS = [
+    { id: 'highspire',      label: 'Highspire',       src: 'Aurelion/Highspire.png', isCustom: false },
+    { id: 'old-battlefield', label: 'Old Battlefield', src: 'Aurelion/Old Battlefield.jpeg', isCustom: false }
 ];
 const PRESET_ENEMIES = [];
+
+// ══════════════════════════════════════════
+//  INDEXEDDB ARENAS PERSISTENCE
+// ══════════════════════════════════════════
+const DB_NAME = 'dnd_combat_maps_db';
+const DB_VERSION = 1;
+const STORE_NAME = 'maps';
+let dbMapsInstance = null;
+
+function initDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            }
+        };
+        request.onsuccess = (e) => resolve(e.target.result);
+        request.onerror = (e) => reject(e.target.error);
+    });
+}
+
+function getStoreData(db, storeName) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readonly');
+        const store = transaction.objectStore(storeName);
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+function saveToStore(db, storeName, item) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.put(item);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function initMapsDb() {
+    dbMapsInstance = await initDB();
+    let dbMaps = await getStoreData(dbMapsInstance, STORE_NAME);
+    if (dbMaps.length === 0) {
+        for (const m of DEFAULT_MAPS) {
+            await saveToStore(dbMapsInstance, STORE_NAME, m);
+        }
+        dbMaps = await getStoreData(dbMapsInstance, STORE_NAME);
+    }
+    MAPS = dbMaps;
+}
 
 // Token size → grid cells multiplier
 const SIZE_MAP = { tiny: 0.5, small: 0.75, medium: 1, large: 2, huge: 3, garg: 4 };
@@ -792,7 +869,7 @@ let allyImgUrl  = null;
 let round       = 1;
 let panelOpen   = true;
 let dragState   = null;
-let pendingMapImgUrl = null;
+let pendingMapImgBase64 = null;
 
 // Tool state
 let activeTool  = null;  // 'ruler' | 'aoe' | 'fog' | 'ping'
@@ -807,7 +884,12 @@ let _syncReceiving = false; // Guard flag to prevent emit loops during sync
 // ══════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await initMapsDb();
+    } catch (e) {
+        console.error('Failed to load maps database:', e);
+    }
     buildMapSelector();
     buildDiceGrid();
     buildModPanel();
@@ -829,6 +911,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // ── SOCKET.IO SYNC LISTENERS ──
     initCombatSync();
+
+    // Select map from query parameter if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const mapId = urlParams.get('map');
+    if (mapId) {
+        const selectedMap = MAPS.find(m => m.id === mapId);
+        if (selectedMap) {
+            selectMap(selectedMap);
+        }
+    }
+
+    // Ctrl/Alt + Scroll wheel zoom on battlefield
+    document.getElementById('battlefieldArea').addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey || e.altKey) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                setZoom(zoomFactor + 0.05);
+            } else {
+                setZoom(zoomFactor - 0.05);
+            }
+        }
+    }, { passive: false });
 });
 
 // ══════════════════════════════════════════
@@ -838,6 +942,7 @@ const MAP_W = 1280, MAP_H = 720;
 
 function buildMapSelector() {
     const sel = document.getElementById('mapSelector');
+    if (!sel) return;
     MAPS.forEach(m => {
         const btn = document.createElement('button');
         btn.className = 'map-btn';
@@ -858,14 +963,44 @@ function selectMap(map) {
 function onMapLoaded() {
     const wrapper = document.getElementById('mapWrapper');
     wrapper.style.display = 'block';
+    const container = document.getElementById('zoomContainer');
+    if (container) container.style.display = 'block';
+    const zoomPanel = document.getElementById('zoomControlsPanel');
+    if (zoomPanel) zoomPanel.style.display = 'flex';
     drawGrid();
     initFogCanvas();
     tokens.forEach(t => renderTokenPosition(t));
 }
 
+let zoomFactor = 1.0;
+function setZoom(factor) {
+    zoomFactor = Math.max(0.25, Math.min(3.0, factor));
+    const wrapper = document.getElementById('mapWrapper');
+    const container = document.getElementById('zoomContainer');
+    if (wrapper) {
+        wrapper.style.transform = `scale(${zoomFactor})`;
+    }
+    if (container) {
+        container.style.width = (1280 * zoomFactor) + 'px';
+        container.style.height = (720 * zoomFactor) + 'px';
+    }
+    const display = document.getElementById('zoomDisplay');
+    if (display) display.textContent = Math.round(zoomFactor * 100) + '%';
+}
+
+let presentationWindow = null;
+function openPresentationWindow() {
+    if (presentationWindow && !presentationWindow.closed) {
+        presentationWindow.focus();
+        return;
+    }
+    presentationWindow = window.open('presentation.html', 'SolythisPresentation',
+        'width=1280,height=720,menubar=no,toolbar=no,location=no,status=no');
+}
+
 // ── ADD NEW MAP ──
 function openMapModal() {
-    pendingMapImgUrl = null;
+    pendingMapImgBase64 = null;
     document.getElementById('mapNameInput').value = '';
     document.getElementById('mapFileName').textContent = 'Belum ada file dipilih.';
     document.getElementById('mapModal').classList.add('show');
@@ -873,24 +1008,35 @@ function openMapModal() {
 }
 function handleMapFileUpload(e) {
     const f = e.target.files[0]; if (!f) return;
-    pendingMapImgUrl = URL.createObjectURL(f);
     document.getElementById('mapFileName').textContent = f.name;
     if (!document.getElementById('mapNameInput').value.trim()) {
         document.getElementById('mapNameInput').value = f.name.substring(0, f.name.lastIndexOf('.')) || f.name;
     }
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+        pendingMapImgBase64 = evt.target.result;
+    };
+    reader.readAsDataURL(f);
 }
-function confirmMapAdd() {
+async function confirmMapAdd() {
     const name = document.getElementById('mapNameInput').value.trim();
-    if (!name || !pendingMapImgUrl) { alert('Isi nama map dan pilih gambar terlebih dahulu!'); return; }
-    const map = { id: `map-${Date.now()}`, label: name, src: pendingMapImgUrl };
-    MAPS.push(map);
-    addMapButton(map);
-    document.getElementById('mapModal').classList.remove('show');
-    selectMap(map);
+    if (!name || !pendingMapImgBase64) { alert('Isi nama map dan pilih gambar terlebih dahulu!'); return; }
+    const map = { id: `map-${Date.now()}`, label: name, src: pendingMapImgBase64, isCustom: true };
+    try {
+        await saveToStore(dbMapsInstance, STORE_NAME, map);
+        MAPS.push(map);
+        addMapButton(map);
+        document.getElementById('mapModal').classList.remove('show');
+        selectMap(map);
+    } catch (err) {
+        console.error('Failed to save map:', err);
+        alert('Gagal menyimpan map secara lokal!');
+    }
 }
 function cancelMapAdd() { document.getElementById('mapModal').classList.remove('show'); }
 function addMapButton(m) {
     const sel = document.getElementById('mapSelector');
+    if (!sel) return;
     const btn = document.createElement('button');
     btn.className = 'map-btn';
     btn.textContent = m.label;
@@ -980,7 +1126,10 @@ function setTool(tool) {
 // ── MAP CANVAS EVENTS ──
 function getMapPos(e) {
     const r = document.getElementById('mapWrapper').getBoundingClientRect();
-    return { x: e.clientX - r.left, y: e.clientY - r.top };
+    return { 
+        x: (e.clientX - r.left) / zoomFactor, 
+        y: (e.clientY - r.top) / zoomFactor 
+    };
 }
 function posToGrid(x, y) { return { gx: Math.floor(x/gridSize), gy: Math.floor(y/gridSize) }; }
 function gridToCenter(gx, gy) { return { x: gx*gridSize + gridSize/2, y: gy*gridSize + gridSize/2 }; }
@@ -1382,10 +1531,6 @@ function createTokenElement(token) {
     el.id = token.id;
     if (token.imgUrl) { el.style.backgroundImage = `url('${token.imgUrl}')`; }
     else { el.innerHTML = `<span class="token-label">${getAbbrev(token.name)}</span>`; }
-    // HP bar
-    const hpBarWrap = document.createElement('div'); hpBarWrap.className = 'token-hp-bar-wrap';
-    const hpBar = document.createElement('div'); hpBar.className = 'token-hp-bar'; hpBar.style.width = '100%'; hpBar.style.background = '#10b981';
-    hpBarWrap.appendChild(hpBar); el.appendChild(hpBarWrap);
     // Name tag
     const nameTag = document.createElement('div'); nameTag.className = 'token-name-tag'; nameTag.textContent = token.name;
     el.appendChild(nameTag);
@@ -1393,7 +1538,6 @@ function createTokenElement(token) {
     el.addEventListener('contextmenu', (e) => { e.preventDefault(); e.stopPropagation(); openContextMenu(e, token.id); });
     layer.appendChild(el);
     token.el = el;
-    updateTokenHpBar(token);
 }
 
 function getAbbrev(name) {
@@ -1411,17 +1555,6 @@ function renderTokenPosition(token) {
     token.el.style.left = px+'px'; token.el.style.top = py+'px';
     token.el.style.width = s+'px'; token.el.style.height = s+'px';
     token.el.style.fontSize = Math.max(10, gridSize * cells * 0.28) + 'px';
-}
-
-function updateTokenHpBar(token) {
-    if (!token.el) return;
-    const bar = token.el.querySelector('.token-hp-bar');
-    if (!bar) return;
-    const hp = parseInt(token.hp)||0, max = parseInt(token.maxHp)||0;
-    if (!max) { bar.style.width = '0%'; return; }
-    const pct = Math.max(0, Math.min(100, (hp/max)*100));
-    bar.style.width = pct+'%';
-    bar.style.background = pct > 60 ? '#10b981' : pct > 25 ? '#f59e0b' : '#ef4444';
 }
 
 // ══════════════════════════════════════════
@@ -1643,9 +1776,6 @@ function renderInitiative() {
             const timerHtml = timer ? `<span class="cond-timer-num">${timer}</span>` : '';
             return `<span class="cond-badge cond-${c}" onclick="removeCond('${token.id}','${c}')">${labels[c]||c}${timerHtml}</span>`;
         }).join('');
-        const hp = parseInt(token.hp)||0, max = parseInt(token.maxHp)||0;
-        const hpPct = max ? Math.max(0,Math.min(100,(hp/max)*100)) : 0;
-        const hpColor = hpPct>60?'#10b981':hpPct>25?'#f59e0b':'#ef4444';
         row.innerHTML = `
             <div class="init-color-dot ${token.type}">
                 ${token.imgUrl ? `<img src="${token.imgUrl}" style="width:100%;height:100%;object-fit:cover;">` : getAbbrev(token.name)}
@@ -1655,16 +1785,8 @@ function renderInitiative() {
                 <div class="init-type ${token.type}">${token.type==='ally'?'⚔ Kawan':'☠ Lawan'} · ${(token.size||'medium')}</div>
                 ${condBadges ? `<div class="cond-wrap">${condBadges}</div>` : ''}
                 ${token.note ? `<div class="init-note">📝 ${token.note}</div>` : ''}
-                ${max ? `<div class="init-hp-bar-wrap"><div class="init-hp-bar" style="width:${hpPct}%;background:${hpColor}"></div></div>` : ''}
             </div>
-            <div class="hp-wrap">
-                <span class="hp-label">HP</span>
-                <div class="hp-inputs">
-                    <input type="number" class="hp-input" value="${token.hp}" placeholder="—" min="0" data-tid="${token.id}" oninput="updateHP(this)">
-                    <input type="number" class="hp-max-input" value="${token.maxHp}" placeholder="max" min="0" data-tid="${token.id}" oninput="updateMaxHP(this)">
-                </div>
-            </div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:0.1rem;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0.1rem;margin-left:auto;">
                 <div class="init-label-sm">INIT</div>
                 <input type="number" class="init-score" value="${token.initScore}" placeholder="—" data-tid="${token.id}" oninput="updateInit(this)">
             </div>`;
@@ -1680,23 +1802,7 @@ function renderInitiative() {
 }
 
 function updateInit(input) { const t = tokens.find(t=>t.id===input.dataset.tid); if(t) { t.initScore=input.value; if (!_syncReceiving) SolSync.emit('init:update', { id: t.id, initScore: t.initScore }); } }
-function updateHP(input) {
-    const t = tokens.find(t=>t.id===input.dataset.tid); if(!t) return;
-    t.hp = input.value; updateTokenHpBar(t);
-    const row = document.getElementById(`init-${t.id}`);
-    const max = parseInt(t.maxHp)||0, hp = parseInt(t.hp)||0;
-    const hpPct = max ? Math.max(0,Math.min(100,(hp/max)*100)) : 0;
-    const hpColor = hpPct>60?'#10b981':hpPct>25?'#f59e0b':'#ef4444';
-    const bar = row?.querySelector('.init-hp-bar');
-    if (bar) { bar.style.width = hpPct+'%'; bar.style.background = hpColor; }
-    if (!_syncReceiving) SolSync.emit('hp:update', { id: t.id, hp: t.hp, maxHp: t.maxHp });
-}
-function updateMaxHP(input) {
-    const t = tokens.find(t=>t.id===input.dataset.tid); if(!t) return;
-    t.maxHp = input.value; updateTokenHpBar(t);
-    if (!t.hp) { t.hp = input.value; const hpEl = input.closest('.hp-inputs')?.querySelector('.hp-input'); if(hpEl) hpEl.value=t.hp; }
-    updateHP({ value: t.hp, dataset: { tid: t.id } });
-}
+// HP fields removed globally
 
 function updateActiveTurnVisuals() {
     document.querySelectorAll('.init-row').forEach(r=>r.classList.remove('active-turn'));
@@ -1803,6 +1909,12 @@ async function fetchCharactersDb() {
         const response = await fetch('../Characters/database.json');
         if (response.ok) {
             dbCharacters = await response.json();
+            dbCharacters = dbCharacters.map(c => {
+                if (c.id === 'estelle_001' || c.name === 'Estelle Heidi El Rath') {
+                    return { ...c, class: 'Cleric' };
+                }
+                return c;
+            });
             populateAllyDbSelect();
         }
     } catch (e) {
@@ -2227,7 +2339,6 @@ function initCombatSync() {
             _syncReceiving = true;
             token.hp = data.hp;
             token.maxHp = data.maxHp;
-            updateTokenHpBar(token);
             renderInitiative();
             _syncReceiving = false;
         }
@@ -2405,6 +2516,30 @@ function initCombatSync() {
         _syncReceiving = false;
     });
 }
+
+// ══════════════════════════════════════════
+//  PRESENTATION STATE BRIDGE
+//  Exposes live state to presentation.html via window.opener
+//  (top-level let/const are NOT on window, so we use an explicit getter)
+// ══════════════════════════════════════════
+window.getPresentationState = function() {
+    return {
+        activeTurnId: activeTurnId,
+        round: round,
+        tokens: tokens.map(t => ({
+            id:         t.id,
+            type:       t.type,
+            name:       t.name,
+            imgUrl:     t.imgUrl || '',
+            initScore:  t.initScore,
+            conditions: t.conditions.slice(),
+            condTimers: Object.assign({}, t.condTimers),
+            note:       t.note || '',
+            size:       t.size || 'medium'
+        }))
+    };
+};
 </script>
 </body>
 </html>
+

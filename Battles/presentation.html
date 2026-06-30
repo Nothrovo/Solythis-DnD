@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Solythis D&D — Tampilan Pemain</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sol-bg: #07090e;
+            --sol-gold: #d4af37;
+            --sol-border: rgba(212, 175, 55, 0.18);
+            --sol-text-dim: #94a3b8;
+            --sidebar-w: 300px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--sol-bg); color: #fff;
+            display: flex; height: 100vh; width: 100vw; overflow: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .layout { display: flex; width: 100%; height: 100%; overflow: hidden; position: relative; }
+
+        /* ── MAP AREA ── */
+        .map-area {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            overflow: auto; background: var(--sol-bg); position: relative;
+        }
+        #zoomContainer { position: relative; flex-shrink: 0; }
+        #mapWrapper {
+            position: relative; width: 1280px; height: 720px;
+            overflow: hidden; transform-origin: 0 0;
+            transition: transform 0.1s ease;
+        }
+        #mapImg { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+        #gridCanvas, #overlayCanvas, #fogCanvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+        }
+        #tokenLayer { position: absolute; inset: 0; pointer-events: none; }
+
+        /* ── TOKENS (mirrored, read-only) ── */
+        .token {
+            position: absolute; border-radius: 50%;
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(255,255,255,0.25);
+        }
+        .token.ally   { box-shadow: 0 0 15px rgba(34,211,238,0.4),  inset 0 0 0 2px rgba(34,211,238,0.7); }
+        .token.enemy  { box-shadow: 0 0 15px rgba(248,113,113,0.4), inset 0 0 0 2px rgba(248,113,113,0.7); }
+        .token.active-turn { box-shadow: 0 0 22px rgba(212,175,55,0.75), inset 0 0 0 3px #d4af37; }
+        .token-label { font-family: 'Cinzel', serif; font-weight: 900; color: #fff; text-shadow: 0 2px 5px #000; }
+        .token-name-tag {
+            position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+            background: rgba(7,9,14,0.85); color: #fff;
+            font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px;
+            border: 1px solid rgba(212,175,55,0.25); white-space: nowrap;
+        }
+
+        /* ── PING (mirrored from tokenLayer innerHTML) ── */
+        .ping-marker {
+            position: absolute; pointer-events: none; z-index: 100;
+            width: 30px; height: 30px; border-radius: 50%;
+            border: 3px solid #facc15; background: rgba(250,204,21,0.25);
+            transform: translate(-50%, -50%);
+            animation: pingPulse 1.8s ease-out forwards;
+        }
+        @keyframes pingPulse {
+            0%   { transform: translate(-50%,-50%) scale(0.4); opacity: 1; }
+            60%  { transform: translate(-50%,-50%) scale(1.6); opacity: 0.7; }
+            100% { transform: translate(-50%,-50%) scale(2.5); opacity: 0; }
+        }
+
+        /* ── SIDEBAR WRAPPER (slides in/out) ── */
+        .sidebar-wrapper {
+            position: absolute; top: 0; right: 0; bottom: 0;
+            display: flex; align-items: stretch; z-index: 100;
+            transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+        }
+        .sidebar-wrapper.hidden { transform: translateX(var(--sidebar-w)); }
+
+        /* Toggle tab */
+        .sidebar-toggle {
+            align-self: center;
+            background: rgba(10,12,22,0.95); border: 1px solid var(--sol-border);
+            border-right: none; border-radius: 8px 0 0 8px;
+            padding: 14px 7px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            color: var(--sol-gold); font-family: 'Cinzel', serif; font-size: 0.6rem;
+            font-weight: 700; letter-spacing: 0.06em; writing-mode: vertical-rl;
+            user-select: none; transition: background 0.2s, color 0.2s;
+            box-shadow: -4px 0 18px rgba(0,0,0,0.5);
+        }
+        .sidebar-toggle:hover { background: rgba(212,175,55,0.12); color: #fff; }
+        .sidebar-toggle .arrow { font-size: 0.9rem; writing-mode: horizontal-tb; transition: transform 0.35s; }
+        .sidebar-wrapper.hidden .sidebar-toggle .arrow { transform: rotate(180deg); }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: var(--sidebar-w); border-left: 1px solid var(--sol-border);
+            background: rgba(10,12,22,0.98); display: flex; flex-direction: column;
+            flex-shrink: 0; box-shadow: -6px 0 32px rgba(0,0,0,0.7);
+        }
+        .sidebar-header {
+            padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--sol-border);
+            font-family: 'Cinzel', serif; font-weight: 700; font-size: 0.88rem;
+            color: var(--sol-gold); letter-spacing: 0.06em;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        #roundDisplay { font-size: 0.7rem; color: var(--sol-text-dim); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; }
+        .sidebar-list {
+            flex: 1; overflow-y: auto; padding: 0.7rem; display: flex; flex-direction: column; gap: 0.45rem;
+        }
+        .sidebar-list::-webkit-scrollbar { width: 4px; }
+        .sidebar-list::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-list::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.22); border-radius: 4px; }
+
+        /* ── INIT ROWS ── */
+        .init-row {
+            display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 0.7rem;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px; transition: all 0.28s;
+        }
+        .init-row.ally-row  { border-left: 3px solid #22d3ee; }
+        .init-row.enemy-row { border-left: 3px solid #f87171; }
+        .init-row.dead      { opacity: 0.38; }
+        .init-row.active-turn {
+            background: rgba(212,175,55,0.09); border-color: rgba(212,175,55,0.6);
+            box-shadow: 0 0 14px rgba(212,175,55,0.2);
+        }
+        .init-dot {
+            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Cinzel', serif; font-size: 0.68rem; font-weight: 900;
+            color: #fff; overflow: hidden; border: 1px solid rgba(255,255,255,0.12);
+        }
+        .init-dot.ally  { background: #0c2a38; border-color: #22d3ee; }
+        .init-dot.enemy { background: #38100e; border-color: #f87171; }
+        .init-dot img   { width: 100%; height: 100%; object-fit: cover; }
+        .init-info { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+        .init-name { font-size: 0.78rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .init-type { font-size: 0.59rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+        .init-type.ally  { color: #22d3ee; }
+        .init-type.enemy { color: #f87171; }
+        .init-note { font-size: 0.67rem; color: var(--sol-text-dim); font-style: italic; }
+
+        /* Conditions */
+        .cond-wrap { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
+        .cond-badge { font-size: 0.56rem; font-weight: 700; padding: 1px 5px; border-radius: 3px; text-transform: uppercase; color: #fff; }
+        .cond-poisoned { background: #10b981; } .cond-stunned { background: #f59e0b; }
+        .cond-blinded  { background: #6366f1; } .cond-prone   { background: #6b7280; }
+        .cond-dead     { background: #ef4444; } .cond-conc    { background: #8b5cf6; }
+
+        /* Initiative score badge */
+        .init-score {
+            background: rgba(0,0,0,0.35); border: 1px solid rgba(212,175,55,0.3);
+            color: var(--sol-gold); font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 900;
+            width: 34px; height: 34px; border-radius: 7px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+
+        /* ── ZOOM CONTROLS (floating, bottom-left) ── */
+        #zoomPanel {
+            position: fixed; bottom: 18px; left: 18px; z-index: 200;
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(10,12,22,0.92); border: 1px solid var(--sol-border);
+            padding: 5px 10px; border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+        }
+        .zoom-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: #fff; font-size: 0.9rem; font-weight: 700; width: 28px; height: 28px;
+            border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.18s; font-family: inherit;
+        }
+        .zoom-btn:hover { background: rgba(212,175,55,0.18); border-color: rgba(212,175,55,0.5); color: var(--sol-gold); }
+        #zoomLabel {
+            font-family: 'Cinzel', serif; font-size: 0.78rem; font-weight: 700;
+            color: var(--sol-gold); min-width: 44px; text-align: center;
+        }
+
+        /* No source message */
+        .no-source {
+            color: var(--sol-text-dim); font-size: 0.82rem; text-align: center;
+            padding: 2rem 1rem; line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+
+    <!-- Map area -->
+    <div class="map-area" id="mapArea">
+        <div id="zoomContainer">
+            <div id="mapWrapper">
+                <img id="mapImg" src="" alt="">
+                <canvas id="gridCanvas"></canvas>
+                <canvas id="overlayCanvas"></canvas>
+                <canvas id="fogCanvas"></canvas>
+                <div id="tokenLayer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar wrapper (slides in/out) -->
+    <div class="sidebar-wrapper" id="sidebarWrapper">
+        <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+            <span class="arrow">◀</span>
+            <span>INIT</span>
+        </div>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <span>⚔ Inisiatif</span>
+                <span id="roundDisplay">Putaran 1</span>
+            </div>
+            <div class="sidebar-list" id="initList">
+                <div class="no-source">Membuka sesi pertarungan…</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Zoom controls -->
+<div id="zoomPanel">
+    <button class="zoom-btn" onclick="changeZoom(-0.1)">−</button>
+    <span id="zoomLabel">100%</span>
+    <button class="zoom-btn" onclick="changeZoom(0.1)">+</button>
+    <button class="zoom-btn" onclick="resetZoom()" style="font-size:0.65rem;width:auto;padding:0 8px;">Reset</button>
+</div>
+
+<script>
+'use strict';
+
+const MAP_W = 1280, MAP_H = 720;
+let localZoom    = 1.0;
+let sidebarOpen  = true;
+
+/* ── SIDEBAR TOGGLE ── */
+function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
+    document.getElementById('sidebarWrapper').classList.toggle('hidden', !sidebarOpen);
+}
+
+/* ── ZOOM ── */
+function applyZoom() {
+    const wrapper   = document.getElementById('mapWrapper');
+    const container = document.getElementById('zoomContainer');
+    wrapper.style.transform       = 'scale(' + localZoom + ')';
+    wrapper.style.transformOrigin = '0 0';
+    container.style.width  = Math.round(MAP_W * localZoom) + 'px';
+    container.style.height = Math.round(MAP_H * localZoom) + 'px';
+    document.getElementById('zoomLabel').textContent = Math.round(localZoom * 100) + '%';
+}
+
+function changeZoom(delta) {
+    localZoom = Math.max(0.2, Math.min(3.0, localZoom + delta));
+    applyZoom();
+}
+
+function resetZoom() {
+    localZoom = 1.0;
+    applyZoom();
+}
+
+document.addEventListener('wheel', (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) {
+        e.preventDefault();
+        changeZoom(e.deltaY < 0 ? 0.05 : -0.05);
+    }
+}, { passive: false });
+
+/* ── SYNC LOOP ── */
+const COND_LABELS = {
+    poisoned: '☠ Poisoned', stunned: '⚡ Stunned', blinded: '👁 Blinded',
+    prone: '⬇ Prone', dead: '💀 Dead', conc: '✦ Conc'
+};
+
+function sync() {
+    const opener = window.opener;
+    if (!opener || opener.closed) {
+        document.getElementById('initList').innerHTML =
+            '<div class="no-source">Sesi combat tracker telah ditutup.</div>';
+        return;
+    }
+
+    // 1. Sync map image
+    try {
+        const parentImg = opener.document.getElementById('mapImg');
+        const childImg  = document.getElementById('mapImg');
+        if (parentImg && childImg && childImg.src !== parentImg.src) {
+            childImg.src = parentImg.src;
+        }
+    } catch(e) {}
+
+    // 2. Sync token layer (innerHTML clone — includes pings as .ping-marker elements)
+    try {
+        const parentLayer = opener.document.getElementById('tokenLayer');
+        const childLayer  = document.getElementById('tokenLayer');
+        if (parentLayer && childLayer) {
+            childLayer.innerHTML = parentLayer.innerHTML;
+        }
+    } catch(e) {}
+
+    // 3. Sync canvases (pixel-copy: grid, aoe/ruler overlay, fog)
+    ['gridCanvas', 'overlayCanvas', 'fogCanvas'].forEach(id => {
+        try {
+            const src  = opener.document.getElementById(id);
+            const dest = document.getElementById(id);
+            if (!src || !dest) return;
+            if (dest.width  !== src.width)  dest.width  = src.width;
+            if (dest.height !== src.height) dest.height = src.height;
+            const ctx = dest.getContext('2d');
+            ctx.clearRect(0, 0, dest.width, dest.height);
+            ctx.drawImage(src, 0, 0);
+        } catch(e) {}
+    });
+
+    // 4. Sync initiative list via the state bridge exposed by combat_tracker.html
+    //    (opener.tokens is NOT accessible directly because top-level let/const
+    //     in a <script> are not on window — we use opener.getPresentationState())
+    try {
+        if (typeof opener.getPresentationState === 'function') {
+            const state  = opener.getPresentationState();
+            const tokens = state.tokens || [];
+            const active = state.activeTurnId;
+
+            // Update round display
+            document.getElementById('roundDisplay').textContent = 'Putaran ' + (state.round || 1);
+
+            // Rebuild initiative rows
+            const list = document.getElementById('initList');
+            list.innerHTML = '';
+            if (tokens.length === 0) {
+                list.innerHTML = '<div class="no-source">Belum ada pertarungan aktif.</div>';
+            } else {
+                tokens.forEach(t => {
+                    const row  = document.createElement('div');
+                    const dead = t.conditions.includes('dead');
+                    row.className = 'init-row ' + t.type + '-row'
+                        + (t.id === active ? ' active-turn' : '')
+                        + (dead ? ' dead' : '');
+
+                    const condHtml = t.conditions.map(c =>
+                        '<span class="cond-badge cond-' + c + '">' + (COND_LABELS[c] || c) + '</span>'
+                    ).join('');
+
+                    row.innerHTML =
+                        '<div class="init-dot ' + t.type + '">'
+                            + (t.imgUrl ? '<img src="' + t.imgUrl + '">' : t.name.slice(0, 2).toUpperCase())
+                        + '</div>'
+                        + '<div class="init-info">'
+                            + '<div class="init-name">' + t.name + '</div>'
+                            + '<div class="init-type ' + t.type + '">' + (t.type === 'ally' ? '⚔ Kawan' : '☠ Lawan') + '</div>'
+                            + (condHtml ? '<div class="cond-wrap">' + condHtml + '</div>' : '')
+                            + (t.note   ? '<div class="init-note">📝 ' + t.note + '</div>' : '')
+                        + '</div>'
+                        + '<div class="init-score">' + (t.initScore || '—') + '</div>';
+
+                    list.appendChild(row);
+                });
+            }
+        }
+    } catch(e) {}
+
+    requestAnimationFrame(sync);
+}
+
+requestAnimationFrame(sync);
+</script>
+</body>
+</html>

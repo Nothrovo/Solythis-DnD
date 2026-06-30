@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Aurelion — Scene Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cinzel+Decorative:wght@700&family=Lora:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-glow: rgba(212,175,55,0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            width: 100%; height: 100%;
+            background: #07080f; overflow: hidden;
+            font-family: 'Lora', serif;
+        }
+
+        /* ── SCENE IMAGE ── */
+        #sceneImg {
+            position: fixed; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            display: block;
+            transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1);
+        }
+        #sceneImg.fading { opacity: 0; }
+
+        /* Cinematic gradient overlays */
+        #overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1;
+            background:
+                radial-gradient(ellipse at center, transparent 38%, rgba(0,0,0,0.52) 100%),
+                linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 65%, rgba(0,0,0,0.75) 100%);
+        }
+
+        /* ── NO SOURCE MESSAGE ── */
+        #noSource {
+            position: fixed; inset: 0; z-index: 50;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 1rem;
+            background: #07080f;
+            font-family: 'Cinzel', serif;
+            color: rgba(212,175,55,0.5); font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            transition: opacity 0.4s;
+        }
+        #noSource.hidden { opacity: 0; pointer-events: none; }
+        #noSource svg { width: 48px; height: 48px; fill: rgba(212,175,55,0.3); }
+        #noSource p { font-size: 0.75rem; color: rgba(255,255,255,0.25); letter-spacing: 0.08em; }
+    </style>
+</head>
+<body>
+
+<!-- No-source placeholder (hidden once scene loads) -->
+<div id="noSource">
+    <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zm-10-7l-4 5h8l-3-4-2 2.5L11 12z"/></svg>
+    Menunggu Scene Viewer…
+    <p>Buka Scene Viewer lalu klik ⬡ Presentasi</p>
+</div>
+
+<img id="sceneImg" src="" alt="">
+<div id="overlay"></div>
+
+<script>
+'use strict';
+
+let lastImgSrc = '';
+
+function setScene(state) {
+    const noSrc = document.getElementById('noSource');
+    const img   = document.getElementById('sceneImg');
+
+    // Hide placeholder once we have real data
+    if (!noSrc.classList.contains('hidden')) {
+        noSrc.classList.add('hidden');
+    }
+
+    // Cross-fade image when source changes
+    if (state.imgSrc && state.imgSrc !== lastImgSrc) {
+        lastImgSrc = state.imgSrc;
+        img.classList.add('fading');
+        setTimeout(() => {
+            img.src = state.imgSrc;
+            img.onload = () => img.classList.remove('fading');
+        }, 350);
+    }
+}
+
+function sync() {
+    const opener = window.opener;
+    if (!opener || opener.closed) {
+        // Show placeholder if source window is gone
+        const noSrc = document.getElementById('noSource');
+        if (noSrc.classList.contains('hidden')) {
+            noSrc.classList.remove('hidden');
+            document.getElementById('noSource').querySelector('p').textContent =
+                'Scene Viewer telah ditutup.';
+        }
+        return;
+    }
+
+    try {
+        if (typeof opener.getScenePresentationState === 'function') {
+            const state = opener.getScenePresentationState();
+            if (state) setScene(state);
+        }
+    } catch(e) {}
+
+    requestAnimationFrame(sync);
+}
+
+requestAnimationFrame(sync);
+</script>
+</body>
+</html>

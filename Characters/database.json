@@ -39,7 +39,7 @@
         "Shrine of the Waning Bell (Kuil Utama dewa Kurumagatsu)"
       ]
     },
-    "sprite_path": null,
+    "sprite_path": "CharSprite/Party Solmarch/Charlie.png",
     "has_deep_backstory": true,
     "backstory_path": "Charbackstory/Charlie.md"
   },
@@ -228,7 +228,7 @@
         "Church of the Eternal Silent (Didirikan sendiri: Organisasi kedok penyebaran ajaran stasis)"
       ]
     },
-    "sprite_path": "CharSprite/Party Vaelthar/Estella.png",
+    "sprite_path": "CharSprite/Party Vaelthar/Estelle.png",
     "has_deep_backstory": true,
     "backstory_path": "Charbackstory/Estelle Heidi El Rath.md"
   }

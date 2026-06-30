@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solythis D&D — Arena Pertarungan</title>
+  <link rel="stylesheet" href="../theme.css">
+  <style>
+    /* ── CUSTOM EXTENSIONS TO THEME ──────────────── */
+    body {
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #star-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .page-header-block {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .page-title {
+      font-family: var(--sol-font-display);
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 25px rgba(255,255,255,0.1);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-title span {
+      color: var(--sol-gold);
+      font-family: var(--sol-font-deco);
+    }
+
+    .page-subtitle {
+      color: var(--sol-text-dim);
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── GALLERY GRID ────────────────────────────── */
+    .arena-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .arena-card {
+      background: var(--sol-bg-card);
+      border: 1px solid var(--sol-gold-border);
+      border-radius: var(--sol-r-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all var(--sol-t) var(--sol-ease);
+      position: relative;
+      cursor: pointer;
+      box-shadow: var(--sol-shadow-sm);
+    }
+
+    .arena-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--sol-gold);
+      box-shadow: var(--sol-shadow-gold), 0 12px 30px rgba(0,0,0,0.5);
+    }
+
+    .arena-preview {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      background: #0f1220;
+    }
+
+    .arena-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--sol-t-slow) var(--sol-ease);
+    }
+
+    .arena-card:hover .arena-img {
+      transform: scale(1.06);
+    }
+
+    .arena-info {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--sol-border);
+      background: rgba(13, 15, 26, 0.5);
+    }
+
+    .arena-label {
+      font-family: var(--sol-font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.03em;
+    }
+
+    .arena-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--sol-gold-light);
+      background: var(--sol-gold-dim);
+      border: 1px solid var(--sol-gold-border);
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .arena-delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(239, 68, 68, 0.85);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all var(--sol-t) var(--sol-ease);
+      opacity: 0;
+      transform: scale(0.9);
+    }
+
+    .arena-card:hover .arena-delete-btn {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .arena-delete-btn:hover {
+      background: var(--sol-danger);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+      transform: scale(1.1);
+    }
+
+    /* ── ADD NEW ARENA CARD ──────────────────────── */
+    .add-arena-card {
+      background: rgba(212, 175, 55, 0.02);
+      border: 2px dashed var(--sol-gold-border);
+      border-radius: var(--sol-r-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 250px;
+      cursor: pointer;
+      transition: all var(--sol-t) var(--sol-ease);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .add-arena-card:hover {
+      background: rgba(212, 175, 55, 0.05);
+      border-color: var(--sol-gold);
+      box-shadow: var(--sol-shadow-gold);
+    }
+
+    .add-arena-icon {
+      font-size: 2.5rem;
+      color: var(--sol-gold-light);
+      margin-bottom: 1rem;
+      transition: transform var(--sol-t) var(--sol-ease);
+    }
+
+    .add-arena-card:hover .add-arena-icon {
+      transform: scale(1.15) rotate(90deg);
+    }
+
+    .add-arena-title {
+      font-family: var(--sol-font-display);
+      font-size: 1.2rem;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.5rem;
+    }
+
+    .add-arena-desc {
+      font-size: 0.8rem;
+      color: var(--sol-text-dim);
+      max-width: 220px;
+    }
+
+    /* ── MODAL DIALOGS ───────────────────────────── */
+    .sol-modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(5, 7, 10, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .sol-modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sol-modal-content {
+      background: var(--sol-bg-2);
+      border: 1px solid var(--sol-gold);
+      border-radius: var(--sol-r-lg);
+      width: 100%;
+      max-width: 480px;
+      padding: 2rem;
+      box-shadow: var(--sol-shadow-lg), var(--sol-shadow-gold);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .sol-modal.show .sol-modal-content {
+      transform: scale(1);
+    }
+
+    .sol-modal-title {
+      font-family: var(--sol-font-display);
+      font-size: 1.4rem;
+      color: var(--sol-gold-light);
+      border-bottom: 1px solid var(--sol-border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.03em;
+    }
+
+    .sol-form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .sol-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--sol-text-dim);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sol-input {
+      width: 100%;
+      background: var(--sol-bg-input);
+      border: 1px solid var(--sol-border);
+      color: #fff;
+      padding: 0.65rem 0.9rem;
+      border-radius: var(--sol-r-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+
+    .sol-input:focus {
+      outline: none;
+      border-color: var(--sol-gold);
+      box-shadow: 0 0 10px var(--sol-gold-glow);
+    }
+
+    .file-upload-box {
+      border: 1px dashed var(--sol-gold-border);
+      background: rgba(255, 255, 255, 0.01);
+      padding: 1.5rem;
+      border-radius: var(--sol-r-sm);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--sol-t) var(--sol-ease);
+    }
+
+    .file-upload-box:hover {
+      background: rgba(212, 175, 55, 0.03);
+      border-color: var(--sol-gold);
+    }
+
+    .file-upload-icon {
+      font-size: 1.8rem;
+      color: var(--sol-text-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    .file-upload-name {
+      font-size: 0.8rem;
+      color: var(--sol-gold-light);
+      word-break: break-all;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--sol-border);
+      padding-top: 1.25rem;
+    }
+
+    .sol-btn {
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--sol-r-sm);
+      cursor: pointer;
+      transition: all var(--sol-t) var(--sol-ease);
+      letter-spacing: 0.02em;
+    }
+
+    .sol-btn-secondary {
+      background: transparent;
+      border: 1px solid var(--sol-border);
+      color: var(--sol-text-dim);
+    }
+
+    .sol-btn-secondary:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    .sol-btn-primary {
+      background: var(--sol-gold-dim);
+      border: 1px solid var(--sol-gold-border);
+      color: var(--sol-gold-light);
+    }
+
+    .sol-btn-primary:hover {
+      background: var(--sol-gold);
+      border-color: var(--sol-gold);
+      color: var(--sol-bg);
+      box-shadow: 0 0 15px var(--sol-gold-glow);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Star Background Canvas -->
+  <canvas id="star-canvas"></canvas>
+
+  <!-- ── HEADER TOP BAR ────────────────────────── -->
+  <div class="sol-topbar">
+    <a href="../dashboard.html" class="sol-back-btn">← Ke Dashboard</a>
+    <a href="index.html" class="sol-topbar-brand">SOLYTHIS <span>⚔</span> ARENA SELECTOR</a>
+    <span style="width: 100px;"></span> <!-- Spacer for alignment -->
+  </div>
+
+  <main class="main-container">
+    
+    <!-- Hero / Intro -->
+    <header class="page-header-block">
+      <h1 class="page-title">Pilih Arena <span>Pertarungan</span></h1>
+      <p class="page-subtitle">Jelajahi medan tempur yang tersedia untuk kampanye petualangan Anda. Klik arena untuk membuka Tactical Initiative Combat Tracker, atau unggah map baru.</p>
+    </header>
+
+    <!-- Arena Gallery Grid -->
+    <div class="arena-grid" id="arenaGrid">
+      <!-- Dynamic list elements will be populated here -->
+      
+      <!-- Card Template for Add Arena (Always present at end) -->
+      <div class="add-arena-card" onclick="openUploadModal()">
+        <div class="add-arena-icon">+</div>
+        <div class="add-arena-title">Unggah Map Baru</div>
+        <div class="add-arena-desc">Simpan map kustom secara lokal untuk langsung digunakan bertarung</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── MODAL UPLOAD ARENA ─────────────────────── -->
+  <div class="sol-modal" id="uploadModal">
+    <div class="sol-modal-content">
+      <h2 class="sol-modal-title">Unggah Map Kustom Baru</h2>
+      
+      <div class="sol-form-group">
+        <label class="sol-label" for="mapNameInput">Nama Arena</label>
+        <input type="text" class="sol-input" id="mapNameInput" placeholder="Contoh: Gua Goblin, Hutan Kabut">
+      </div>
+
+      <div class="sol-form-group">
+        <label class="sol-label">File Gambar Map</label>
+        <div class="file-upload-box" onclick="document.getElementById('mapFileInput').click()">
+          <div class="file-upload-icon">📂</div>
+          <div class="file-upload-name" id="mapFileName">Klik untuk memilih file gambar (PNG, JPG, JPEG)</div>
+        </div>
+        <input type="file" id="mapFileInput" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
+      </div>
+
+      <div class="modal-actions">
+        <button class="sol-btn sol-btn-secondary" onclick="closeUploadModal()">Batal</button>
+        <button class="sol-btn sol-btn-primary" onclick="saveUploadedMap()">Simpan Arena</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    /* ── STAR CANVAS BACKGROUND ───────────────────── */
+    (function() {
+      const canvas = document.getElementById('star-canvas');
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      const N = 120;
+
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function init() {
+        stars = [];
+        for (let i = 0; i < N; i++) {
+          stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 1.4 + 0.2,
+            a: Math.random() * 0.7 + 0.1,
+            da: (Math.random() * 0.007 + 0.002) * (Math.random() < 0.5 ? 1 : -1),
+            vy: Math.random() * 0.025 + 0.005
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const s of stars) {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, Math.min(1, s.a));
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+          s.a += s.da;
+          if (s.a > 0.85 || s.a < 0.05) s.da *= -1;
+          s.y += s.vy;
+          if (s.y > canvas.height + 2) { s.y = -2; s.x = Math.random() * canvas.width; }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      resize(); init(); draw();
+      window.addEventListener('resize', () => { resize(); init(); });
+    })();
+
+
+    /* ── INDEXEDDB HELPERS ───────────────────────── */
+    const DB_NAME = 'dnd_combat_maps_db';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'maps';
+
+    const DEFAULT_MAPS = [
+      { id: 'highspire', label: 'Highspire', src: 'Aurelion/Highspire.png', isCustom: false },
+      { id: 'old-battlefield', label: 'Old Battlefield', src: 'Aurelion/Old Battlefield.jpeg', isCustom: false }
+    ];
+
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+          }
+        };
+        request.onsuccess = (e) => resolve(e.target.result);
+        request.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    function getStoreData(db, storeName) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readonly');
+        const store = transaction.objectStore(storeName);
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function saveToStore(db, storeName, item) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.put(item);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function deleteFromStore(db, storeName, id) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+
+    /* ── PAGE ENGINE ─────────────────────────────── */
+    let dbInstance = null;
+    let mapsList = [];
+    let tempMapBase64 = null;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        dbInstance = await initDB();
+        await loadAndRenderArenas();
+      } catch (err) {
+        console.error('Failed to initialize database:', err);
+      }
+    });
+
+    async function loadAndRenderArenas() {
+      let data = await getStoreData(dbInstance, STORE_NAME);
+      if (data.length === 0) {
+        // Pre-populate with default maps
+        for (const map of DEFAULT_MAPS) {
+          await saveToStore(dbInstance, STORE_NAME, map);
+        }
+        data = await getStoreData(dbInstance, STORE_NAME);
+      }
+      mapsList = data;
+      renderGallery();
+    }
+
+    function renderGallery() {
+      const grid = document.getElementById('arenaGrid');
+      
+      // Remove all current cards except the "Add Arena" card
+      const addCard = grid.querySelector('.add-arena-card');
+      grid.innerHTML = '';
+      
+      mapsList.forEach(map => {
+        const card = document.createElement('div');
+        card.className = 'arena-card';
+        card.onclick = () => launchCombatTracker(map.id);
+        
+        // Preview image container
+        const preview = document.createElement('div');
+        preview.className = 'arena-preview';
+        
+        const img = document.createElement('img');
+        img.className = 'arena-img';
+        img.src = map.src;
+        img.alt = map.label;
+        preview.appendChild(img);
+        
+        // Delete button for custom maps
+        if (map.isCustom) {
+          const delBtn = document.createElement('button');
+          delBtn.className = 'arena-delete-btn';
+          delBtn.innerHTML = '🗑';
+          delBtn.title = 'Hapus arena kustom ini';
+          delBtn.onclick = (e) => {
+            e.stopPropagation(); // Avoid launching tracker
+            deleteCustomMap(map.id, map.label);
+          };
+          card.appendChild(delBtn);
+        }
+        
+        card.appendChild(preview);
+        
+        // Info footer
+        const info = document.createElement('div');
+        info.className = 'arena-info';
+        
+        const name = document.createElement('span');
+        name.className = 'arena-label';
+        name.textContent = map.label;
+        info.appendChild(name);
+        
+        const badge = document.createElement('span');
+        badge.className = 'arena-badge';
+        badge.textContent = map.isCustom ? 'Kustom' : 'Bawaan';
+        info.appendChild(badge);
+        
+        card.appendChild(info);
+        grid.appendChild(card);
+      });
+      
+      // Append the add card back
+      grid.appendChild(addCard);
+    }
+
+    function launchCombatTracker(mapId) {
+      window.location.href = `combat_tracker.html?map=${encodeURIComponent(mapId)}`;
+    }
+
+    /* ── UPLOAD MODAL ACTIONS ────────────────────── */
+    function openUploadModal() {
+      tempMapBase64 = null;
+      document.getElementById('mapNameInput').value = '';
+      document.getElementById('mapFileName').textContent = 'Klik untuk memilih file gambar (PNG, JPG, JPEG)';
+      document.getElementById('uploadModal').classList.add('show');
+      setTimeout(() => document.getElementById('mapNameInput').focus(), 80);
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.remove('show');
+    }
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById('mapFileName').textContent = file.name;
+      
+      // Fill the name input if empty
+      const nameInput = document.getElementById('mapNameInput');
+      if (!nameInput.value.trim()) {
+        nameInput.value = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        tempMapBase64 = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveUploadedMap() {
+      const nameInput = document.getElementById('mapNameInput');
+      const name = nameInput.value.trim();
+      if (!name) { alert('Nama arena harus diisi!'); return; }
+      if (!tempMapBase64) { alert('Pilih file gambar map terlebih dahulu!'); return; }
+
+      const newMap = {
+        id: `map-${Date.now()}`,
+        label: name,
+        src: tempMapBase64,
+        isCustom: true
+      };
+
+      try {
+        await saveToStore(dbInstance, STORE_NAME, newMap);
+        closeUploadModal();
+        await loadAndRenderArenas();
+      } catch (err) {
+        console.error('Save arena error:', err);
+        alert('Gagal menyimpan arena ke database local.');
+      }
+    }
+
+    async function deleteCustomMap(id, label) {
+      if (confirm(`Apakah Anda yakin ingin menghapus arena "${label}"?`)) {
+        try {
+          await deleteFromStore(dbInstance, STORE_NAME, id);
+          await loadAndRenderArenas();
+        } catch (err) {
+          console.error('Delete arena error:', err);
+          alert('Gagal menghapus arena.');
+        }
+      }
+    }
+  </script>
+</body>
+</html>

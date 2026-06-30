@@ -27,6 +27,7 @@
             --greymere-color: #fb923c;
             --accent-purple: #a855f7;
             --accent-green: #10b981;
+            --eldenfall-color: #9b59b6;
         }
 
         * {
@@ -1304,6 +1305,38 @@
                     <li>
                         <a class="nav-link sub-link" data-target="tab-greymere-pointer">
                             <span class="sub-indicator" style="color: var(--greymere-color);">•</span> Pointer
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Eldenfall Dropdown Sub-section -->
+            <li class="nav-item">
+                <div class="nav-section-title" id="eldenfall-toggle">
+                    <div style="display: flex; align-items: center; gap: 0.85rem;">
+                        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:var(--eldenfall-color);filter:drop-shadow(0 0 5px rgba(155,89,182,0.3));">
+                            <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                        </svg>
+                        <span style="color: var(--eldenfall-color);">Eldenfall</span>
+                    </div>
+                    <svg class="chevron-icon" viewBox="0 0 24 24" style="width: 16px; height: 16px;">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </div>
+                <ul class="nav-submenu">
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-eldenfall-naratif">
+                            <span class="sub-indicator" style="color: var(--eldenfall-color);">•</span> Naratif
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-eldenfall-scene">
+                            <span class="sub-indicator" style="color: var(--eldenfall-color);">•</span> Scene
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link sub-link" data-target="tab-eldenfall-pointer">
+                            <span class="sub-indicator" style="color: var(--eldenfall-color);">•</span> Pointer
                         </a>
                     </li>
                 </ul>
@@ -2682,8 +2715,8 @@
                         <span class="meta-badge" style="color: #60a5fa;">⚡ Tensi: Rendah (Pencarian Dokumen)</span>
                     </div>
                     <div class="scene-body">
-                        <p><strong>Kejadian:</strong> Baik lewat jalur mafia (bawah tanah) maupun penyusupan murni (lantai atas), Party C akhirnya menemukan berkas usang bersegel kerajaan: <strong>Varkath Intelligence Memo</strong> dan <strong>Royal Decree 1300-A</strong>.</p>
-                        <p>Dokumen ini membuktikan bahwa pembunuhan Prosperina didasari fitnah adu domba dari intelijen Varkath. Surat eksekusi tidur/buta dikeluarkan oleh Raja Aurelion sendiri karena paranoia yang hebat. Pahlawan mereka tidak gugur terhormat di medan perang, melainkan dieksekusi secara keji.</p>
+                        <p><strong>Kejadian:</strong> Baik lewat jalur mafia (bawah tanah) maupun penyusupan murni (lantai atas), Party C akhirnya menemukan berkas usang bersegel kerajaan: <strong>Dokumen I — The Ashveil Correspondence</strong>, <strong>Dokumen II — Royal Decree 1300-A</strong>, dan <strong>Dokumen III — Proposal Kerjasama Membangun Greymere</strong>.</p>
+                        <p>Dokumen-dokumen ini membuktikan bahwa pembunuhan Prosperina didasari fitnah adu domba dari propaganda Varkath (Surat Ashveil) dan perintah eksekusi tergesa-gesa raja, serta surat proposal resmi pembangunan Greymere dari Varkath yang setelah diterjemahkan menyembunyikan memo intelijen bersandi: <em>"Bibit telah ditanam. Bibit telah disebar. Kini hanya tinggal menuai."</em></p>
                     </div>
                 </div>
 
@@ -2848,22 +2881,64 @@
                 </div>
 
                 <!-- Item 2 -->
-                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.3); background: linear-gradient(90deg, rgba(251, 146, 60, 0.04) 0%, rgba(10, 13, 20, 0.5) 100%);">
+                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.3); background: linear-gradient(90deg, rgba(251, 146, 60, 0.04) 0%, rgba(10, 13, 20, 0.5) 100%); margin-bottom: 1.5rem;">
                     <div class="item-card-header">
                         <div class="item-avatar" style="border-color: rgba(251, 146, 60, 0.3); background: rgba(251, 146, 60, 0.1);">📜</div>
                         <div class="item-identity">
-                            <h3>Memo Intelijen &amp; Royal Decree 1300-A</h3>
-                            <span class="item-badge" style="background: rgba(251, 146, 60, 0.15); color: #fb923c; border-color: rgba(251, 146, 60, 0.2);">Dokumen Sangat Rahasia</span>
+                            <h3>Dokumen I — The Ashveil Correspondence</h3>
+                            <span class="item-badge" style="background: rgba(251, 146, 60, 0.15); color: #fb923c; border-color: rgba(251, 146, 60, 0.2);">Propaganda Varkath</span>
                         </div>
                     </div>
                     <div class="item-specs-grid">
                         <div class="item-spec-box">
-                            <div class="item-spec-title" style="color: #fb923c;">Isi Memo Varkath</div>
-                            <div class="item-spec-value">"Bibit telah ditanam. Bibit telah disebar. Kini hanya tinggal menuai." (Rencana adu domba Varkath agar Aurelion membunuh pahlawannya sendiri).</div>
+                            <div class="item-spec-title" style="color: #fb923c;">Isi Dokumen</div>
+                            <div class="item-spec-value">Surat-surat anonim yang menyebutkan bahwa Prosperina ingin "mengganti raja" dan bahwa party Prosperina "terlalu berpengaruh".</div>
                         </div>
                         <div class="item-spec-box">
-                            <div class="item-spec-title" style="color: #fb923c;">Fakta Kunci</div>
-                            <div class="item-spec-value">Prosperina tidak gugur di tangan iblis, melainkan dieksekusi secara buta oleh rajanya sendiri karena fitnah Varkath. Dokumen disembunyikan di arsip.</div>
+                            <div class="item-spec-title" style="color: #fb923c;">📌 Petunjuk (Clue)</div>
+                            <div class="item-spec-value">Ditulis menggunakan bahasa diplomatik khas Varkath.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.3); background: linear-gradient(90deg, rgba(251, 146, 60, 0.04) 0%, rgba(10, 13, 20, 0.5) 100%); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(251, 146, 60, 0.3); background: rgba(251, 146, 60, 0.1);">📜</div>
+                        <div class="item-identity">
+                            <h3>Dokumen II — Royal Decree 1300-A</h3>
+                            <span class="item-badge" style="background: rgba(251, 146, 60, 0.15); color: #fb923c; border-color: rgba(251, 146, 60, 0.2);">Perintah Darurat Raja</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #fb923c;">Isi Dokumen</div>
+                            <div class="item-spec-value">Surat perintah penangkapan seluruh party Prosperina. Surat ini sama sekali tidak menyebutkan bukti-bukti konkret.</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #fb923c;">📌 Petunjuk (Clue)</div>
+                            <div class="item-spec-value">Ditandatangani di bawah tekanan waktu yang sempit dengan stempel tergesa-gesa yang tidak biasa.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="item-card" style="border-color: rgba(251, 146, 60, 0.3); background: linear-gradient(90deg, rgba(251, 146, 60, 0.04) 0%, rgba(10, 13, 20, 0.5) 100%);">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(251, 146, 60, 0.3); background: rgba(251, 146, 60, 0.1);">📜</div>
+                        <div class="item-identity">
+                            <h3>Dokumen III — Proposal Kerjasama Membangun Greymere</h3>
+                            <span class="item-badge" style="background: rgba(251, 146, 60, 0.15); color: #fb923c; border-color: rgba(251, 146, 60, 0.2);">Memo Intelijen Bersandi</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #fb923c;">Isi Dokumen</div>
+                            <div class="item-spec-value">Proposal pembangunan Greymere dari Varkath yang di baliknya menyembunyikan memo intelijen rahasia Varkath berbunyi: <em>"Bibit telah ditanam. Bibit telah disebar. Kini hanya tinggal menuai."</em> (Rencana adu domba Varkath).</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #fb923c;">📌 Petunjuk (Clue)</div>
+                            <div class="item-spec-value">Memo intelijen rahasia yang tersembunyi dalam bahasa sandi di balik proposal kerjasama pembangunan resmi.</div>
                         </div>
                     </div>
                 </div>
@@ -2941,6 +3016,453 @@
             </div>
         </div>
 
+
+        <!-- ==================== TAB: ELDENFALL NARATIF ==================== -->
+        <div id="tab-eldenfall-naratif" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--eldenfall-color);">Skenario Aurelion — Eldenfall</div>
+                <h1 style="border-bottom-color: var(--eldenfall-color);">Ziarah Semu &amp; Sangkar Kosmik</h1>
+                <p class="section-desc">Eksplorasi dungeon klasik, puzzle berdarah, pengungkapan kebohongan Kerajaan Aurelion secara utuh, dan Boss Battle klimaks penutup arc pertama.</p>
+            </header>
+
+            <!-- Condition Card -->
+            <div class="info-banner" style="border-color: var(--eldenfall-color); background: linear-gradient(90deg, rgba(155,89,182,0.08) 0%, rgba(10,13,20,0.4) 100%);">
+                <span class="info-banner-badge" style="background: var(--eldenfall-color);">Kondisi Awal</span>
+                <h3>Eldenfall &amp; Aurelion Harvest Festival</h3>
+                <p>Party C tiba di Eldenfall yang dipenuhi peziarah dan warga merayakan <strong>Aurelion Harvest Festival</strong>. Tidak ada kekacauan di permukaan — kota ini damai dan festive. Namun di bawah kaki mereka, di bawah patung Prosperina yang megah, sebuah mesin kosmik raksasa berdenyut perlahan... dan Dewi Keabadian sedang menunggu.</p>
+            </div>
+
+            <!-- Narrative Timeline -->
+            <div class="scene-container">
+
+                <!-- Scene 1 -->
+                <div class="scene-box" style="border-left-color: var(--eldenfall-color);">
+                    <span class="scene-num">Scene I</span>
+                    <h3 class="scene-title">Ziarah di Atas Kebohongan</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Jalanan Kota Eldenfall &amp; Alun-Alun Utama</span>
+                        <span class="meta-badge" style="color: var(--eldenfall-color);">🕊️ Tensi: Damai tapi Ganjil</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Party C tiba di Eldenfall. Kota dipenuhi peziarah dan warga yang merayakan Aurelion Harvest Festival. Di ujung alun-alun berdiri megah <strong>Patung Prosperina</strong> di depan makamnya. Peziarah meletakkan bunga dan menyalakan lilin.</p>
+                        <p>Namun bagi Party C — terutama Si Jangkar dan Penumpang — mereka bisa melihat <strong>aura kosmik ungu keemasan</strong> yang berdenyut lambat dari celah tanah di bawah patung tersebut, seolah ada "mesin raksasa" yang hidup di bawah sana. Kompas yang mereka bawa berkedip dan memanas, menunjuk ke makam.</p>
+                        <p>Malam harinya, Party menyelinap saat alun-alun sepi dan turun melalui <strong>celah tangga rahasia di bawah patung</strong> menuju <em>Sepulcher of the Savior</em>.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Transisi mulus dari kedamaian kota menuju kengerian di bawah tanah.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 2 -->
+                <div class="scene-box" style="border-left-color: var(--eldenfall-color);">
+                    <span class="scene-num">Scene II</span>
+                    <h3 class="scene-title">Lore Drop 1: Sejarah yang Dihapus</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Vestibule of Remembrance &amp; Hall of Silenced Truths</span>
+                        <span class="meta-badge" style="color: #60a5fa;">🔍 Tensi: Investigasi</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Di lorong pertama (<em>Vestibule of Remembrance</em>), relief di dinding memuja Prosperina sebagai pahlawan agung yang mengalahkan Varkath — sangat cocok dengan narasi festival di atas.</p>
+                        <p>Namun saat mereka masuk ke lorong kedua (<em>Hall of Silenced Truths</em>), reliefnya berubah drastis. Prosperina digambarkan berdiri <strong>sendirian</strong>, sementara gambar anggota party-nya telah <strong>dihancurkan/dihapus paksa</strong> dari batu oleh pahatan kasar.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Bukti pertama bahwa Kerajaan Aurelion sengaja melenyapkan eksistensi kawan-kawan Prosperina dari sejarah.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 3 -->
+                <div class="scene-box" style="border-left-color: var(--eldenfall-color);">
+                    <span class="scene-num">Scene III</span>
+                    <h3 class="scene-title">Lore Drop 2: Rantai Iblis &amp; Jurnal Keputusasaan</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Chamber of Chains &amp; Archive of Ash</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚡ Tensi: Menegangkan (Ada Trap)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Chamber of Chains:</strong> Ruangan berlantai retak dengan rantai-rantai neraka (infernal) tertanam di batunya. Mereka yang gagal <em>Wisdom Save</em> akan mendengar bisikan iblis Belzareth: <em>"Janji tidak dibayar, seseorang harus membayar."</em> — membuktikan kontrak iblis yang tak dilunasi.</p>
+                        <p><strong>Archive of Ash:</strong> Ruangan kecil seperti kapel, lantai tertutup abu (⚠️ Trap: abu bergerak seperti pasir hisap — Perception rendah = jatuh prone + Fire/Necrotic damage). Di atas meja batu, mereka menemukan <strong>Sisa Pecahan Jurnal Prosperina</strong>, diakhiri kalimat pilu: <em>"Aku hanya ingin ini berhenti."</em></p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Terungkap bahwa Prosperina membuat kontrak iblis murni karena keputusasaan setelah dikhianati rajanya sendiri.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 4 -->
+                <div class="scene-box" style="border-left-color: var(--eldenfall-color);">
+                    <span class="scene-num">Scene IV</span>
+                    <h3 class="scene-title">Ambang Batas Sang Penyelamat — Puzzle Cawan Martir</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Threshold of the Savior</span>
+                        <span class="meta-badge" style="color: #a78bfa;">💜 Tensi: Emosional, Sunyi, Sakral</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Party tiba di depan pintu batu raksasa tanpa lubang kunci. Di depannya: sebuah altar batu bernoda hitam kecokelatan (darah purba) dengan cawan-cawan perak kosong berjejer — jumlahnya sama persis dengan siluet anggota party Prosperina yang dihapus di Hall of Silenced Truths.</p>
+                        <p>Terpahat inskripsi kuno: <em>"Batu dapat dipahat untuk berdusta, dan nama dapat dilenyapkan oleh kuasa. Namun sumpah yang terikat nyawa hanya bisa ditebus oleh nyawa. Keadilan tidak meminta emas, ia meminta ingatan... Bagi kalian yang datang untuk membongkar takdir, tumpahkanlah darah kalian hari ini, untuk menggantikan mereka yang dikorbankan di masa lalu."</em></p>
+                        <p><strong>Mekanik (D&amp;D):</strong> Pemain harus mengiris telapak tangan dan meneteskan darah ke cawan-cawan. Mereka mengorbankan <em>1d6 atau 1d8 HP (Slashing/Necrotic)</em> yang tidak bisa di-heal sampai Boss Battle selesai.</p>
+                        <p><strong>Reward:</strong> Darah mendidih dan menyala ungu keemasan. Bisikan gema banyak suara (roh rekan Prosperina): <em>"Terima kasih... bebaskan dia."</em> Pintu batu bergetar dan terbelah tanpa suara, melepaskan hawa sedingin es dari Inner Sanctum.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Party memikul beban para martir yang dihapus sejarah. Pintu menuju kebenaran akhirnya terbuka.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 5 -->
+                <div class="scene-box" style="border-left-color: var(--eldenfall-color);">
+                    <span class="scene-num">Scene V</span>
+                    <h3 class="scene-title">Percakapan Terakhir — Dialog Arwah Prosperina</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Inner Sanctum (Ruang Inti Makam)</span>
+                        <span class="meta-badge" style="color: var(--eldenfall-color);">💜 Tensi: Emosional Tinggi (Roleplay)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Di tengah ruangan, arwah Prosperina berdiri — tubuhnya diikat oleh <strong>benang-benang cahaya kosmik ungu keemasan</strong> yang menjuntai dari langit-langit.</p>
+                        <p>Sebelum Dewi Keabadian mengambil alih, kesadaran asli Prosperina masih merespons. Ia membeberkan kebenaran utuh: <strong>Varkath menanam fitnah → Raja Aurelion yang paranoid mengeksekusi rekan-rekannya → karena keputusasaan ia mengikat kontrak dengan Iblis Belzareth.</strong></p>
+                        <p>Ia menambahkan (New Lore): <em>"Aku menanti iblis itu menagih janjinya... tapi entitas lain datang lebih dulu. Jiwaku dirantai, makam ini dijadikan sangkar ujian. Lari... dia sedang 'mengevaluasi' kalian."</em></p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Lore reveal pamungkas terkonfirmasi — ancaman bukan iblis, tapi entitas kosmik dari Tokoshie.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 6 -->
+                <div class="scene-box" style="border-left-color: #ef4444;">
+                    <span class="scene-num">Scene VI</span>
+                    <h3 class="scene-title">Boneka Sang Dewi — Boss Battle</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Inner Sanctum</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚔️ Tensi: COMBAT (Hard)</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Percakapan terputus. Mata Prosperina <strong>menyala ungu terang</strong>. Suaranya berubah menjadi dua lapis — bergema dengan otoritas kosmik Kurumagatsu: <em>"Ujian kelayakan dimulai."</em></p>
+                        <p><strong>Pertarungan Boss:</strong> Prosperina menggunakan kombinasi sihir api + serangan resonansi waktu/kosmik dari sang Dewi. Gerakan kosmik memerlukan konsentrasi dan keputusan cepat dari party.</p>
+                        <p><strong>Objektif Battle:</strong> Party C tidak hanya menyerang tubuhnya, tapi harus memutus <strong>Benang-benang Kosmik</strong> yang mengendalikan jiwa Prosperina di setiap sudut ruangan — di samping menurunkan HP boss-nya.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Sesi klimaks. Kekuatan Kurumagatsu dibuktikan secara langsung oleh seluruh party.</p>
+                    </div>
+                </div>
+
+                <!-- Scene 7 -->
+                <div class="scene-box" style="border-left-color: var(--accent-green);">
+                    <span class="scene-num">Scene VII</span>
+                    <h3 class="scene-title">Keluar dari Sangkar — Closure Arc</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Jalan Keluar Makam &amp; Pagi di Eldenfall</span>
+                        <span class="meta-badge" style="color: var(--accent-green);">🌅 Tensi: Closure Emosional</span>
+                    </div>
+                    <div class="scene-body">
+                        <p>Saat benang terakhir diputus dan HP Boss habis, pengaruh Kurumagatsu hancur. Jiwa asli Prosperina tersenyum lega, memberikan pesan terakhir kepada Si Jangkar dan Penumpang, lalu <strong>memudar menjadi abu cahaya yang damai</strong>.</p>
+                        <p>Ledakan energi dari lepasnya jiwa menciptakan resonansi. <strong>Si Jangkar</strong> mungkin sekilas melihat undangan gaib atau merasakan tarikan dari negeri jauh (menuju Tokoshie).</p>
+                        <p>Party C berjalan keluar dari makam ke alun-alun Eldenfall — pagi telah tiba. Festival di atas masih berlanjut, peziarah tidak sadar akan kengerian yang baru saja diselesaikan di bawah kaki mereka.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Misi di Solmarch selesai. Kiamat fana berakhir — kiamat kosmik baru saja dimulai.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: ELDENFALL SCENE ==================== -->
+        <div id="tab-eldenfall-scene" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--eldenfall-color);">Skenario Aurelion — Eldenfall</div>
+                <h1>Scene Sesi — Eldenfall: Ziarah Semu &amp; Sangkar Kosmik</h1>
+                <p class="section-desc">Panduan penanganan scene, parameter tensi naratif, deskripsi dungeon area, dan mekanik D&amp;D untuk Dungeon Master.</p>
+            </header>
+
+            <!-- Scene Overview Callout -->
+            <div class="cosmic-alert" style="background: rgba(155,89,182,0.015); border-color: rgba(155,89,182,0.3);">
+                <div class="cosmic-title" style="color: var(--eldenfall-color);">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    Fokus Utama Sesi — Eldenfall
+                </div>
+                <p style="font-size: 0.98rem; color: var(--text-secondary); line-height: 1.6;">Eksplorasi dungeon klasik The Sepulcher of the Savior, puzzle pengorbanan berdarah (Cawan Martir), pengungkapan kebohongan Kerajaan Aurelion secara utuh melalui relief dan jurnal, serta Boss Battle klimaks penutup arc pertama melawan boneka sang Dewi Keabadian.</p>
+            </div>
+
+            <div class="scene-container">
+
+                <!-- Area 1 -->
+                <div class="scene-box">
+                    <span class="scene-num" style="color: var(--eldenfall-color);">Area 1</span>
+                    <h3 class="scene-title">Vestibule of Remembrance</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Ruang Masuk Makam</span>
+                        <span class="meta-badge" style="color: #60a5fa;">🔍 Fokus: Propaganda Resmi Aurelion</span>
+                        <span class="meta-badge" style="color: #fbbf24;">⚡ Tensi: Eksplorasi</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Visual:</strong> Lorong batu persegi panjang dengan langit-langit tinggi. Lantainya utuh dan bersih, seolah terus dirawat oleh sihir.</p>
+                        <p><strong>Lore Drop:</strong> Dinding lorong dipenuhi pahatan relief megah yang menunjukkan kemenangan Prosperina melawan pasukan Varkath — representasi "sejarah palsu" atau propaganda resmi yang selama ini dipercaya masyarakat luas.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Pengenalan dungeon. Pemain merasa ini tempat suci biasa... untuk sementara.</p>
+                    </div>
+                </div>
+
+                <!-- Area 2 -->
+                <div class="scene-box">
+                    <span class="scene-num" style="color: var(--eldenfall-color);">Area 2</span>
+                    <h3 class="scene-title">Hall of Silenced Truths</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Lorong Kebenaran yang Dibungkam</span>
+                        <span class="meta-badge" style="color: var(--eldenfall-color);">💜 Fokus: Manipulasi Sejarah Aurelion</span>
+                        <span class="meta-badge" style="color: #fbbf24;">⚡ Tensi: Meningkat</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Visual:</strong> Lorong memanjang dan bercabang dua, diterangi cahaya redup kemerahan dari celah-celah lantai batu.</p>
+                        <p><strong>Lore Drop (Event):</strong> Relief berubah drastis — Prosperina berdiri sendirian, sementara anggota party-nya <strong>dihancurkan/dihapus paksa dari pahatan batu</strong>. Siluet-siluet itu dipahat kasar, sengaja dilenyapkan dari sejarah oleh Aurelion.</p>
+                        <p><strong>Catatan DM:</strong> Jumlah siluet yang dihapus = jumlah cawan di Threshold of the Savior nantinya. Victor (Wizard) atau pemain cerdas bisa menghitung dan mengingat ini.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Momen kunci — pemain menyadari Kerajaan Aurelion menyembunyikan kebenaran bahkan di dalam makam "suci" ini.</p>
+                    </div>
+                </div>
+
+                <!-- Area 3 -->
+                <div class="scene-box">
+                    <span class="scene-num" style="color: var(--eldenfall-color);">Area 3</span>
+                    <h3 class="scene-title">Chamber of Chains</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Ruang Rantai Kontrak</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚡ Tensi: Menegangkan</span>
+                        <span class="meta-badge" style="color: #f87171;">⚠️ Mekanik: Wisdom Save</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Visual:</strong> Ruangan bundar berlantai retak-retak. Di tengahnya, rantai-rantai neraka (infernal) berkarat tertanam kuat menembus batu ke arah bawah tanah.</p>
+                        <p><strong>Trap/Mekanik:</strong> Jika pemain tidak berhati-hati melintas, rantai aktif menjerat mereka. Karakter yang terjerat harus melakukan Wisdom Save — yang gagal mendengar bisikan iblis Belzareth: <em>"Janji tidak dibayar, seseorang harus membayar."</em></p>
+                        <p><strong>Lore Drop:</strong> Bukti pertama bahwa sang pahlawan agung terikat dengan kontrak iblis dan ilmu hitam.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Kontrak Belzareth terkonfirmasi secara fisik. Atmosfer dungeon menjadi jauh lebih gelap.</p>
+                    </div>
+                </div>
+
+                <!-- Area 4 -->
+                <div class="scene-box">
+                    <span class="scene-num" style="color: var(--eldenfall-color);">Area 4</span>
+                    <h3 class="scene-title">Archive of Ash</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Ruang Catatan Terakhir</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚠️ Trap: Lantai Abu (Ash Sinkhole)</span>
+                        <span class="meta-badge" style="color: var(--eldenfall-color);">📖 Lore: Jurnal Prosperina</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Visual:</strong> Ruangan kecil seperti kapel, udara sangat panas. Seluruh lantai tertutup abu hangat.</p>
+                        <p><strong>⚠️ Trap — Ash Sinkhole:</strong> Abu tersebut bergerak perlahan seperti pasir hisap (simpul leyline aktif di bawahnya). Pemain dengan Perception rendah yang asal melangkah akan terperosok — jatuh <em>prone</em> + menerima Fire/Necrotic damage ringan.</p>
+                        <p><strong>Lore Drop:</strong> Di atas meja batu, terdapat pecahan jurnal pribadi Prosperina — simbol Aurelion dicoret kasar. Isinya: keraguan pada Raja, keputusasaan melihat party-nya ditangkap, ditutup: <em>"Aku hanya ingin ini berhenti."</em></p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Humanisasi Prosperina — ia bukan pahlawan palsu, tapi manusia yang dikhianati dan putus asa.</p>
+                    </div>
+                </div>
+
+                <!-- Area 5 -->
+                <div class="scene-box">
+                    <span class="scene-num" style="color: var(--eldenfall-color);">Area 5</span>
+                    <h3 class="scene-title">Threshold of the Savior — Puzzle Cawan Martir</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Gerbang Ruang Inti</span>
+                        <span class="meta-badge" style="color: #a78bfa;">🩸 Mekanik: Puzzle Darah</span>
+                        <span class="meta-badge" style="color: #fbbf24;">⚡ Tensi: Emosional &amp; Sakral</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Visual:</strong> Pintu batu raksasa tanpa lubang kunci. Altar batu bernoda hitam kecokelatan (darah purba). Cawan-cawan perak kosong — <em>jumlahnya = jumlah siluet dihapus di Hall of Silenced Truths</em>.</p>
+                        <p><strong>Inskripsi:</strong> <em>"Batu dapat dipahat untuk berdusta, dan nama dapat dilenyapkan oleh kuasa. Namun sumpah yang terikat nyawa hanya bisa ditebus oleh nyawa. Keadilan tidak meminta emas, ia meminta ingatan... Bagi kalian yang datang untuk membongkar takdir, tumpahkanlah darah kalian hari ini, untuk menggantikan mereka yang dikorbankan di masa lalu."</em></p>
+                        <p><strong>Mekanik D&amp;D:</strong> Bukan puzzle logika — ini puzzle dedikasi. Pemain harus mengiris telapak tangan dan meneteskan darah ke cawan (<em>1d6 atau 1d8 HP Slashing/Necrotic — tidak bisa di-heal sampai Boss selesai</em>).</p>
+                        <p><strong>Efek:</strong> Darah mendidih, menyala ungu-emas. Bisikan roh rekan Prosperina: <em>"Terima kasih... bebaskan dia."</em> Pintu terbelah tanpa suara. Hawa dingin es dari Inner Sanctum merembes masuk.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Momen paling sakral di seluruh dungeon. Party sudah berkomitmen penuh — mereka membawa beban para martir.</p>
+                    </div>
+                </div>
+
+                <!-- Area 6 -->
+                <div class="scene-box" style="border-left-color: #ef4444;">
+                    <span class="scene-num" style="color: #ef4444;">Area 6</span>
+                    <h3 class="scene-title">Inner Sanctum — Dialog &amp; Boss Battle</h3>
+                    <div class="scene-meta">
+                        <span class="meta-badge">📍 Ruang Inti Makam</span>
+                        <span class="meta-badge" style="color: #ef4444;">⚔️ COMBAT: Hard — Boss Battle</span>
+                    </div>
+                    <div class="scene-body">
+                        <p><strong>Visual:</strong> Ruang altar terdalam — dingin, gelap, diterangi benang-benang kosmik ungu-emas menjuntai dari langit-langit.</p>
+                        <p><strong>Dialog Awal:</strong> Arwah Prosperina terikat benang-benang kosmik. Kesadarannya masih miliknya. Ia mengonfirmasi semua lore: fitnah Varkath, paranoia Raja, kontrak Belzareth, dan pembajakan makam oleh Dewi Keabadian.</p>
+                        <p><strong>The Possession:</strong> Tiba-tiba mata Prosperina menyala ungu terang. Suara dua lapis (Kurumagatsu): <em>"Ujian kelayakan dimulai!"</em></p>
+                        <p><strong>Mekanik Boss:</strong> Serang kombinasi sihir api + resonansi kosmik. <em>Dual Objective:</em> Turunkan HP boss <strong>DAN</strong> putus benang-benang kosmik di setiap sudut ruangan untuk membebaskan jiwa Prosperina.</p>
+                        <p><strong>Ending:</strong> Jiwa asli Prosperina terbebas → tersenyum lega → pesan terakhir ke Si Jangkar dan Penumpang → hancur menjadi abu cahaya damai.</p>
+                        <p style="margin-top: 0.5rem; color: var(--gold-secondary);"><strong>Output Scene:</strong> Boss Battle klimaks. Arc pertama selesai. Kurumagatsu dibuktikan sebagai ancaman nyata.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: ELDENFALL POINTER ==================== -->
+        <div id="tab-eldenfall-pointer" class="tab-content">
+            <header>
+                <div class="subtitle" style="color: var(--eldenfall-color);">Skenario Aurelion — Eldenfall</div>
+                <h1>Pointer Sesi — Eldenfall (Makam Prosperina)</h1>
+                <p class="section-desc">Master data lokasi penting, profil NPC, lore drop kunci, dan mekanik item untuk panduan DM selama sesi berlangsung.</p>
+            </header>
+
+            <!-- Lokasi Penting -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-top-color: var(--eldenfall-color);">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    🏚️ Bangunan &amp; Lokasi Penting
+                </h2>
+                <div class="locations-grid">
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.25);">
+                        <div class="location-icon">🏛️</div>
+                        <h3 class="location-name">Eldenfall Grand Plaza</h3>
+                        <p class="location-desc">Pusat festival dan "Ziarah Suci". Dipenuhi tenda peziarah, wangi dupa, dan keamanan militer Aurelion. <em>Permukaan yang damai menyembunyikan kengerian di bawahnya.</em></p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.25);">
+                        <div class="location-icon">🗿</div>
+                        <h3 class="location-name">Monumen Prosperina</h3>
+                        <p class="location-desc">Patung raksasa di tengah alun-alun. Di sekeliling bawah patung inilah hawa dan pendar ungu kosmik merembes pelan. Di bawahnya tersembunyi tangga rahasia menuju Sepulcher.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.25);">
+                        <div class="location-icon">⚰️</div>
+                        <h3 class="location-name">The Sepulcher of the Savior</h3>
+                        <p class="location-desc">Dungeon utama tersembunyi di bawah patung. Makam yang telah dirusak nilai sejarahnya oleh Aurelion, kini dibajak tata ruang jiwanya oleh Dewi Keabadian sebagai saringan ujian.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.15);">
+                        <div class="location-icon">🚪</div>
+                        <h3 class="location-name">Vestibule of Remembrance</h3>
+                        <p class="location-desc">Lorong pertama. Lantai bersih, relief propaganda resmi. Gerbang masuk ke kebenaran yang tersembunyi.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.15);">
+                        <div class="location-icon">🪨</div>
+                        <h3 class="location-name">Hall of Silenced Truths</h3>
+                        <p class="location-desc">Lorong bercabang dua, cahaya redup kemerahan dari celah batu. Relief berubah — anggota party Prosperina dihancurkan paksa dari sejarah.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.15);">
+                        <div class="location-icon">⛓️</div>
+                        <h3 class="location-name">Chamber of Chains</h3>
+                        <p class="location-desc">Ruangan bundar berlantai retak. Rantai infernal tertanam ke bawah bumi. Trap: rantai menjerat pemain lalai → Wisdom Save atau mendengar bisikan Belzareth.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.15);">
+                        <div class="location-icon">🔥</div>
+                        <h3 class="location-name">Archive of Ash</h3>
+                        <p class="location-desc">Kapel kecil bersuhu tinggi. Lantai abu bergerak seperti pasir hisap (Ash Sinkhole Trap). Di meja batu tersimpan pecahan jurnal terakhir Prosperina.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.15);">
+                        <div class="location-icon">🩸</div>
+                        <h3 class="location-name">Threshold of the Savior</h3>
+                        <p class="location-desc">Gerbang batu raksasa. Altar darah purba dengan cawan-cawan perak. Puzzle pengorbanan darah untuk membuka jalan menuju Inner Sanctum.</p>
+                    </div>
+                    <div class="location-card" style="border-color: rgba(155,89,182,0.25); background: rgba(155,89,182,0.05);">
+                        <div class="location-icon">👁️</div>
+                        <h3 class="location-name">Inner Sanctum</h3>
+                        <p class="location-desc">Ruang altar terdalam. Benang-benang kosmik ungu-emas menjuntai dari langit-langit. Tempat arwah Prosperina terikat dan Boss Battle berlangsung.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NPC Penting -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-top-color: var(--eldenfall-color);">
+                    <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    👥 NPC Penting di Eldenfall
+                </h2>
+                <div class="npc-grid">
+                    <div class="npc-card" style="border-color: rgba(155,89,182,0.2);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: rgba(155,89,182,0.3); background: rgba(155,89,182,0.1);">🕊️</div>
+                            <div class="npc-identity">
+                                <h3>Para Peziarah &amp; Warga Eldenfall</h3>
+                                <span>NPC Penguji Ilusi</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> Penguat ilusi. Mereka merayakan pengorbanan Prosperina yang penuh kebohongan — tidak sadar akan kengerian di bawah kaki mereka.</div>
+                            <div class="npc-meta-item"><strong>Peran Naratif:</strong> Kontras dramatis antara kepolosan permukaan vs kengerian dungeon. Reminder bahwa kebenaran tidak selalu diketahui oleh rakyat biasa.</div>
+                            <div class="npc-quote">"Prosperina adalah pahlawan kita! Kerajaan ini berdiri karena pengorbanannya."</div>
+                        </div>
+                    </div>
+
+                    <div class="npc-card" style="border-color: rgba(155,89,182,0.3); background: rgba(155,89,182,0.03);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: rgba(155,89,182,0.4); background: rgba(155,89,182,0.15);">👻</div>
+                            <div class="npc-identity">
+                                <h3>Arwah Prosperina</h3>
+                                <span>NPC Utama — Lore Dump &amp; Boss</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Lokasi:</strong> Inner Sanctum, terikat benang-benang kosmik ungu-emas.</div>
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> NPC utama lore-dump yang membeberkan konspirasi masa lalu (Raja Aurelion + Varkath), sekaligus Boss dalam sesi ini saat jiwa-nya dibajak Kurumagatsu.</div>
+                            <div class="npc-meta-item"><strong>Kepribadian:</strong> Lelah, putus asa, namun penuh ketulusan. Ia hanya ingin dibebaskan — bukan dihormati.</div>
+                            <div class="npc-meta-item"><strong>New Lore yang Direveal:</strong> Sebelum iblis Belzareth menagih, Dewi Keabadian datang lebih dulu dan membajak makam ini sebagai saringan ujian Jangkar.</div>
+                            <div class="npc-quote">"Aku menanti iblis itu menagih janjinya... tapi entitas lain datang lebih dulu. Lari... dia sedang mengevaluasi kalian."</div>
+                        </div>
+                    </div>
+
+                    <div class="npc-card" style="border-color: rgba(239,68,68,0.2);">
+                        <div class="npc-header">
+                            <div class="npc-avatar" style="border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.08);">😈</div>
+                            <div class="npc-identity">
+                                <h3>Iblis Belzareth</h3>
+                                <span>Entitas Off-Screen — Suara Bisikan</span>
+                            </div>
+                        </div>
+                        <div class="npc-body">
+                            <div class="npc-meta-item"><strong>Kehadiran:</strong> Tidak muncul secara fisik. Kehadirannya hanya terasa melalui bisikan dan rantai infernal di Chamber of Chains.</div>
+                            <div class="npc-meta-item"><strong>Fungsi:</strong> Memvalidasi bahwa kontrak Prosperina nyata dan belum dilunasi. Memberikan kedalaman lore pada motivasi Prosperina.</div>
+                            <div class="npc-quote">"Janji tidak dibayar, seseorang harus membayar."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lore Drop Kunci -->
+            <div class="section-block">
+                <h2 class="section-block-title" style="border-top-color: var(--eldenfall-color);">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+                    📜 Lore Drop &amp; Event Kunci
+                </h2>
+                <div class="item-card" style="border-color: rgba(155,89,182,0.2); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(155,89,182,0.3); background: rgba(155,89,182,0.08);">🪨</div>
+                        <div class="item-identity">
+                            <h3>Relief Pahlawan yang Dihapus</h3>
+                            <span class="item-badge" style="background: rgba(155,89,182,0.1); color: var(--eldenfall-color); border-color: rgba(155,89,182,0.2);">Event Eksplorasi</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--eldenfall-color);">Lokasi</div>
+                            <div class="item-spec-value">Hall of Silenced Truths</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--eldenfall-color);">Reveal</div>
+                            <div class="item-spec-value">Pemain menemukan sejarah manipulatif Kerajaan Aurelion yang menghapus eksistensi party masa lalu Prosperina dari pahatan batu. Bukti fisik propaganda kerajaan.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-card" style="border-color: rgba(155,89,182,0.2); margin-bottom: 1.5rem;">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.08);">📓</div>
+                        <div class="item-identity">
+                            <h3>Rantai Iblis Belzareth &amp; Pecahan Jurnal</h3>
+                            <span class="item-badge" style="background: rgba(239,68,68,0.1); color: #f87171; border-color: rgba(239,68,68,0.2);">Investigasi</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #f87171;">Lokasi</div>
+                            <div class="item-spec-value">Chamber of Chains (rantai) + Archive of Ash (jurnal)</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: #f87171;">Reveal</div>
+                            <div class="item-spec-value">Validasi bahwa pahlawan agung membuat kontrak gelap murni karena keputusasaan — bukan ambisi kekuasaan. Jurnal diakhiri: <em>"Aku hanya ingin ini berhenti."</em></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-card" style="border-color: rgba(155,89,182,0.3); background: rgba(155,89,182,0.03);">
+                    <div class="item-card-header">
+                        <div class="item-avatar" style="border-color: rgba(155,89,182,0.4); background: rgba(155,89,182,0.12);">🌌</div>
+                        <div class="item-identity">
+                            <h3>Dialog Intervensi Kurumagatsu</h3>
+                            <span class="item-badge" style="background: rgba(155,89,182,0.15); color: var(--eldenfall-color); border-color: rgba(155,89,182,0.3);">Event Boss — Reveal Kosmik</span>
+                        </div>
+                    </div>
+                    <div class="item-specs-grid">
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--eldenfall-color);">Lokasi</div>
+                            <div class="item-spec-value">Inner Sanctum — saat Prosperina dirasuki</div>
+                        </div>
+                        <div class="item-spec-box">
+                            <div class="item-spec-title" style="color: var(--eldenfall-color);">Reveal</div>
+                            <div class="item-spec-value">Mengonfirmasi ke pemain bahwa ancaman terbesar bukan lagi intrik politik atau iblis, melainkan <strong>Dewi Keabadian Kurumagatsu</strong> yang memonopoli jiwa untuk eksperimen time-loop dari Tokoshie.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
     </main>
 
     <!-- Tab switching and interactive scripts -->
@@ -2975,6 +3497,14 @@
 
         greymereToggle.addEventListener('click', function(e) {
             greymereParent.classList.toggle('expanded');
+        });
+
+        // Dropdown toggle for Eldenfall
+        const eldenfallToggle = document.getElementById('eldenfall-toggle');
+        const eldenfallParent = eldenfallToggle.closest('.nav-item');
+
+        eldenfallToggle.addEventListener('click', function(e) {
+            eldenfallParent.classList.toggle('expanded');
         });
 
         // Tab Switching Logic
@@ -3018,6 +3548,8 @@
                         oldbattlefieldParent.classList.add('expanded');
                     } else if (targetId.includes('greymere')) {
                         greymereParent.classList.add('expanded');
+                    } else if (targetId.includes('eldenfall')) {
+                        eldenfallParent.classList.add('expanded');
                     }
 
                     // Smooth scroll to top of page
